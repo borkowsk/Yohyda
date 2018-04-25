@@ -11,3 +11,7 @@ Założenia systemu (nazwa robocza projektu: "Facies")
 5) "WOLNOĆ TOMKU W SWOIM DOMKU" - użytkownik decyduje nie tylko co chce oglądać, ale też jakie kategorie komunikatów publicznych przechowuje i przekazuje dalej jego osobisty kliento-serwer
 6) OTWARTE OCENY - oceny użytkowników dotyczące innych użytkowników są publiczną informacją, z której każdy może korzystać, ale nie musi. Może też podobnie jak w przypadku innych komunikatów w pełni określić swoje preferencje - ocenom jakich grup ufa i bierze je pod uwagę, a które ignoruje.
 7) NIEOGRANICZONY PRZEPŁYW ZASOBÓW SPOŁECZNOŚCIOWYCH - przynajmniej jednokierunkowe spięcie systemu z istniejącymi portalami społecznościowymi - to co użytkownik pisze na Facebooku, Twitterze, LinkedIn, ResearchGate etc. może być także automatycznie udostępniane za pośrednictwem systemu. Także komentarze w tych systemach są śledzone i linkowane do postu. Zapis postów w jednolitym otwartym kodzie XML (albo jako JSON) może z czasem służyć wypromowaniu standardu wymiany informacji między portalami społecznościowymi co pozwoli na włączenie starszych portali społecznościowych do systemu na równych zasadach. 
+
+
+Link do grupy na Facebooku:https://www.facebook.com/groups/141043869907657/permalink/141998329812211/
+Link do "społeczności" na G+:https://plus.google.com/communities/107225354537883894305 
