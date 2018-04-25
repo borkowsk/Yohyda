@@ -14,4 +14,5 @@ Założenia systemu (nazwa robocza projektu: "Facies")
 
 
 Link do grupy na Facebooku:https://www.facebook.com/groups/141043869907657/permalink/141998329812211/
+
 Link do "społeczności" na G+:https://plus.google.com/communities/107225354537883894305 
