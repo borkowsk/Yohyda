@@ -1,3 +1,4 @@
+/*
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -45,6 +46,7 @@
             <div class="section-body">
               <h3>doc/html/boost_asio/example/cpp11/http/server/server.hpp</h3>
 <pre>
+*/
 //
 // server.hpp
 // ~~~~~~~~~~
@@ -112,6 +114,7 @@ private:
 } // namespace http
 
 #endif // HTTP_SERVER_HPP
+/*
 </pre>
             </div>
           </div>
@@ -157,3 +160,4 @@ private:
   </div>
 </body>
 </html>
+*/

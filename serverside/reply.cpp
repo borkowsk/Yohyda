@@ -1,3 +1,4 @@
+/*
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -45,6 +46,7 @@
             <div class="section-body">
               <h3>doc/html/boost_asio/example/cpp11/http/server/reply.cpp</h3>
 <pre>
+*/
 //
 // reply.cpp
 // ~~~~~~~~~
@@ -300,6 +302,7 @@ reply reply::stock_reply(reply::status_type status)
 
 } // namespace server
 } // namespace http
+/*
 </pre>
             </div>
           </div>
@@ -345,3 +348,4 @@ reply reply::stock_reply(reply::status_type status)
   </div>
 </body>
 </html>
+*/

@@ -1,3 +1,4 @@
+/*
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -44,7 +45,8 @@
           <div class="section-0">
             <div class="section-body">
               <h3>doc/html/boost_asio/example/cpp11/http/server/server.cpp</h3>
-<pre>
+<pre> 
+*/
 //
 // server.cpp
 // ~~~~~~~~~~
@@ -139,6 +141,7 @@ void server::do_await_stop()
 
 } // namespace server
 } // namespace http
+/*
 </pre>
             </div>
           </div>
@@ -184,3 +187,4 @@ void server::do_await_stop()
   </div>
 </body>
 </html>
+*/

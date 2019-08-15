@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+/*<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -45,6 +45,7 @@
             <div class="section-body">
               <h3>doc/html/boost_asio/example/cpp11/http/server/reply.hpp</h3>
 <pre>
+*/
 //
 // reply.hpp
 // ~~~~~~~~~
@@ -109,6 +110,7 @@ struct reply
 } // namespace http
 
 #endif // HTTP_REPLY_HPP
+/*
 </pre>
             </div>
           </div>
@@ -154,3 +156,4 @@ struct reply
   </div>
 </body>
 </html>
+*/

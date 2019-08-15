@@ -1,3 +1,4 @@
+/*
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -45,6 +46,7 @@
             <div class="section-body">
               <h3>doc/html/boost_asio/example/cpp11/http/server/mime_types.hpp</h3>
 <pre>
+*/
 //
 // mime_types.hpp
 // ~~~~~~~~~~~~~~
@@ -72,6 +74,7 @@ std::string extension_to_type(const std::string&amp; extension);
 } // namespace http
 
 #endif // HTTP_MIME_TYPES_HPP
+/*
 </pre>
             </div>
           </div>
@@ -117,3 +120,4 @@ std::string extension_to_type(const std::string&amp; extension);
   </div>
 </body>
 </html>
+*/

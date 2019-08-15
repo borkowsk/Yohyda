@@ -1,98 +1,49 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>doc/html/boost_asio/example/cpp11/http/server/connection_manager.hpp - 1.62.0</title>  <link rel="icon" href="/favicon.ico" type="image/ico" />
-  <link rel="stylesheet" type="text/css" href="/style-v2/section-doc.css" />
-  <!--[if IE 7]> <style type="text/css"> body { behavior: url(/style-v2/csshover3.htc); } </style> <![endif]-->
-
-</head>
-
-<body>
-  <div id="heading">
-    <div class="heading-inner">
-  <div class="heading-placard"></div>
-
-  <h1 class="heading-title">
-  <a href="/">
-  <img src="/gfx/space.png" alt= "Boost C++ Libraries" class="heading-logo" />
-  <span class="heading-boost">Boost</span>
-  <span class="heading-cpplibraries">C++ Libraries</span>
-  </a></h1>
-
-  <p class="heading-quote">
-  <q>...one of the most highly
-  regarded and expertly designed C++ library projects in the
-  world.</q> <span class="heading-attribution">&mdash; <a href=
-  "http://www.gotw.ca/" class="external">Herb Sutter</a> and <a href=
-  "http://en.wikipedia.org/wiki/Andrei_Alexandrescu" class="external">Andrei
-  Alexandrescu</a>, <a href=
-  "http://safari.awprofessional.com/?XmlId=0321113586" class="external">C++
-  Coding Standards</a></span></p>
-</div>
-  </div>
-  <div class="boost-common-header-notice"><a class="boost-common-header-inner" href="/doc/libs/release/doc/html/boost_asio/example/cpp11/http/server/connection_manager.hpp">This is the documentation for an old version of Boost.
-                Click here to view this page for the latest version.</a></div>
-
-  <div id="body">
-    <div id="body-inner">
-      <div id="content">
-        <div class="section" id="docs">
-          <div class="section-0">
-            <div class="section-body">
-              <h3>doc/html/boost_asio/example/cpp11/http/server/connection_manager.hpp</h3>
-<pre>
 //
-// connection_manager.hpp
+// connection_manager.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2016 Christopher M. Kohlhoff (chris at kohlhoff dot com)
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at <a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>)
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef HTTP_CONNECTION_MANAGER_HPP
-#define HTTP_CONNECTION_MANAGER_HPP
-
-#include &lt;set&gt;
-#include &quot;connection.hpp&quot;
+#include "connection_manager.hpp"
 
 namespace http {
 namespace server {
 
-/// Manages open connections so that they may be cleanly stopped when the server
-/// needs to shut down.
-class connection_manager
+connection_manager::connection_manager()
 {
-public:
-  connection_manager(const connection_manager&amp;) = delete;
-  connection_manager&amp; operator=(const connection_manager&amp;) = delete;
+}
 
-  /// Construct a connection manager.
-  connection_manager();
+void connection_manager::start(connection_ptr c)
+{
+  connections_.insert(c);
+  c->start();
+}
 
-  /// Add the specified connection to the manager and start it.
-  void start(connection_ptr c);
+void connection_manager::stop(connection_ptr c)
+{
+  connections_.erase(c);
+  c->stop();
+}
 
-  /// Stop the specified connection.
-  void stop(connection_ptr c);
-
-  /// Stop all connections.
-  void stop_all();
-
-private:
-  /// The managed connections.
-  std::set&lt;connection_ptr&gt; connections_;
-};
+void connection_manager::stop_all()
+{
+  for (auto c: connections_)
+    c->stop();
+  connections_.clear();
+}
 
 } // namespace server
 } // namespace http
 
+Revised $Date$
+
+
 #endif // HTTP_CONNECTION_MANAGER_HPP
+/*
 </pre>
             </div>
           </div>
@@ -138,3 +89,4 @@ private:
   </div>
 </body>
 </html>
+*/

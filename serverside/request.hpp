@@ -1,3 +1,4 @@
+/*
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
@@ -45,6 +46,7 @@
             <div class="section-body">
               <h3>doc/html/boost_asio/example/cpp11/http/server/request.hpp</h3>
 <pre>
+*/
 //
 // request.hpp
 // ~~~~~~~~~~~
@@ -79,6 +81,7 @@ struct request
 } // namespace http
 
 #endif // HTTP_REQUEST_HPP
+/*
 </pre>
             </div>
           </div>
@@ -124,3 +127,4 @@ struct request
   </div>
 </body>
 </html>
+*/
