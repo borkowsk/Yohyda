@@ -3,11 +3,14 @@ B. Serwer może być napisany w C++, Javie lub Pythonie, oraz innych językach k
 C. Niezaleznie od użytego języka wszystkie wersje muszą być funkcjonalnie równoważne i być w stanie działać na tym samym zestawie plików roboczych
 D. ... z dokładnością do obszaru przechowywania danych, który w przypadku większych maszyn może być i lokalny i sieciowy (od serwisu ftp po chmurowy - pośrednikiem są małe aplikacje przenoszące dane), natomiast komórki i tablety są raczej skazane na zewnętrzne repozytoria, które mogą współdzielić z serwerami stacjonarnymi tych samych użytkowników.   
 
+TESTOWANE NA UBUNTU 16.04 z biblioteką boost 1.65 
+
 Punktem startowym jest serwer HTML przykładowy dla biblioteki boost:
 
 HTTP Server
 
-This example illustrates the use of asio in a simple single-threaded server implementation of HTTP 1.0. It demonstrates how to perform a clean shutdown by cancelling all outstanding asynchronous operations.
+"This example illustrates the use of asio in a simple single-threaded server implementation of HTTP 1.0. It demonstrates how to perform a clean shutdown by cancelling all outstanding asynchronous operations."
+
 
     boost_asio/example/cpp11/http/server/connection.cpp
     boost_asio/example/cpp11/http/server/connection.hpp
@@ -28,4 +31,4 @@ This example illustrates the use of asio in a simple single-threaded server impl
     boost_asio/example/cpp11/http/server/server.hpp
 
 https://www.boost.org/doc/libs/1_62_0/doc/html/boost_asio/examples/cpp11_examples.html
-
+https://www.boost.org/doc/libs/1_63_0/doc/html/boost_asio/examples.html (nowsze. Tu jako WWW Server 1.)
