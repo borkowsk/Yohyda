@@ -1,7 +1,10 @@
 //Local server of "facies/facjata" resources stored in json files
 //
-//Based on examples from: http://techgate.fr/boost-property-tree/
-//
+//Based on examples from: 
+//      http://techgate.fr/boost-property-tree/
+//      https://stackoverflow.com/questions/12346787/send-complex-data-structure-via-boost-message-queue
+//And docs:
+//      https://www.boost.org/doc/libs/1_71_0/doc/html/boost/interprocess/message_queue_t.html
 //
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
