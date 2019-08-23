@@ -15,11 +15,15 @@ include_directories(
                      ${Boost_INCLUDE_DIR}
                     )
 
-add_executable(treeserver
+add_executable( treeserver
     "${SRCPATH}/treeserver1/main.cpp"
-            )
+                )
+
+add_executable( treeedit
+    "${SRCPATH}/tools/treeedit/main.cpp"
+                )
                     
-add_executable(wwwserver
+add_executable( wwwserver
     "${SRCPATH}/wwwserver1/connection.cpp"
     "${SRCPATH}/wwwserver1/connection_manager.cpp"
     "${SRCPATH}/wwwserver1/main.cpp"
@@ -29,8 +33,9 @@ add_executable(wwwserver
     "${SRCPATH}/wwwserver1/request_parser.cpp"
     "${SRCPATH}/wwwserver1/server.cpp"
                 )
-                
+       
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" )
+target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" )
 target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" )
 
 target_link_libraries(treeserver LINK_PUBLIC
@@ -38,6 +43,15 @@ target_link_libraries(treeserver LINK_PUBLIC
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    rt
+    )
+
+target_link_libraries(treeedit  LINK_PUBLIC
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    rt
     )
 
 target_link_libraries(wwwserver LINK_PUBLIC
@@ -45,6 +59,7 @@ target_link_libraries(wwwserver LINK_PUBLIC
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    rt
     )
 
 
