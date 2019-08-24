@@ -2,11 +2,53 @@
 //
 #include "memory_pool.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 
 using namespace facjata;
 
 string MyName("TREEEDIT-");
+string Prefix("/");
+bool   finish=false;
+
+bool do_local_processing(const string& data)
+{
+    string::size_type outsize=0;
+    if((outsize=data.find("prefix",0,6))==0)
+    {
+        std::cerr<<outsize<<"!"<<data<<std::endl;
+        int PIDpos=data.find_first_of(":=");
+        if(PIDpos>0)
+        {
+            Prefix=(data.c_str()+PIDpos+1);
+            std::cout<<"prefix='"<<Prefix<<"'"<<std::endl;
+        }
+        return true;
+     }
+    else
+    if((outsize=data.find("help",0,4))==0)
+    {
+        std::cerr<<outsize<<"?"<<data<<std::endl;
+        std::cout<<"Type 'done' to finish."<<std::endl;
+        return true;
+    }
+    else
+    if((outsize=data.find("done",0,4))==0)
+    {
+        finish=true;
+        return true;
+    }
+    else
+    if((outsize=data.find("exit",0,4))==0)
+    {
+        finish=true;
+        return true;
+    }
+
+    std::cerr<<outsize<<":"<<data<<std::endl;
+    return false;
+}
 
 void do_work(facjata::MemoryPool& MyPool)//Real work to do
 {
@@ -16,8 +58,15 @@ void do_work(facjata::MemoryPool& MyPool)//Real work to do
         std::cout.flush();
         //std::cin.getline(iline,'\n');
         std::cin>>iline;
-        std::cerr<<MyName<<" get input line:'"<<iline<<"'"<<std::endl;
-    }while(!std::cin.eof());
+        std::cerr<<MyName<<" get input:'"<<iline<<"'"<<std::endl;
+        if(!do_local_processing(iline.c_str()))
+        {
+            std::cerr<<MyName<<" sending..."<<std::endl;
+            MyPool.send_request(Prefix+iline,MemoryPool::ContentType::Read);
+            std::cerr<<MyName<<" waiting for response..."<<std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+        }
+    }while(!std::cin.eof() && !finish);
 }
 
 int main(int argc, char* argv[])

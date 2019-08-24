@@ -10,10 +10,9 @@
 ///
 ///
 #include "memory_pool.h"
-#include <boost/property_tree/ptree.hpp>
-#include <boost/interprocess/ipc/message_queue.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 
 using namespace facjata;
@@ -31,19 +30,19 @@ pt::ptree root;
 // Control if it is more to do
 unsigned NumberOfClients=0;
 
-void process_request(string data, MemoryPool::ContentType msgType,facjata::MemoryPool& MyPool)
+void do_local_processing(string& data, MemoryPool::ContentType msgType,facjata::MemoryPool& MyPool)
 {
     switch(msgType)
     {
     case MemoryPool::ContentType::Control://There are no responses for control messages
-    if(data.find_first_of("HelloFromPID")==0)
+    if(data.find("HelloFromPID",0)==0)
     {
         int PIDpos=data.find_first_of(":");
         if(PIDpos>0)
             std::cerr<<MyName<<" registered client PID"<<data.c_str()+PIDpos<<std::endl;
         NumberOfClients++;
     }
-    else if(data.find_first_of("ByeFromPID")==0)
+    else if(data.find("ByeFromPID",0)==0)
     {
         int PIDpos=data.find_first_of(":");
         if(PIDpos>0)
@@ -68,10 +67,9 @@ int main(int argc, char* argv[])
 
         if(argc<2 || (string("--force"))!=argv[1])
         try{
-            std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
             facjata::MemoryPool TestPool;//Próbuje się podłączyć jako klient
             //Jesli się uda to znaczy że server już działa
-            std::cerr<<"Only one TREESERVER is alloved for single name"<<std::endl;
+            std::cerr<<"Only one TREESERVER is alloved!\nKill the not responding server and start again with --force"<<std::endl;
             return 1;
         }
         catch(const interprocess_exception& exc)//Raczej spodziewamy się błędu
@@ -82,6 +80,7 @@ int main(int argc, char* argv[])
 
         //Teraz dopiero uznaje że może być serwerem
         try{
+            std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
             facjata::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
 
             pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
@@ -91,18 +90,18 @@ int main(int argc, char* argv[])
             ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
             *stringToShare=
                     (
-                        string("Facies/Facjata treeserver version 0.002; PID:")
+                        string("Facies/Facjata treeserver version 0.003; PID:")
                             +boost::lexical_cast<string>(getpid())
                         ).c_str();
 
-            //Reciving request
+            //receive & process the request!
             do{
-                std::cerr<<MyName<<" reciving..."<<std::endl;
+                std::cerr<<MyName<<" receiving..."<<std::endl;
                 string data;
                 MemoryPool::ContentType msgType;
                 data=MyMemPool.receive(msgType);//Tu poczeka na pierwszego klienta przynajmniej jakiś czas
-                std::cerr<<MyName<<" recivided '"<<data<<"'"<<std::endl;
-                process_request(data,msgType,MyMemPool);
+                std::cerr<<MyName<<" received '"<<data<<"'"<<std::endl;
+                do_local_processing(data,msgType,MyMemPool);
                 sleep(1);
             }while(NumberOfClients>0);
 
