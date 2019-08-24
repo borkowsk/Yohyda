@@ -11,6 +11,7 @@
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/containers/string.hpp>
+#include <iostream>
 #include <cassert>
 
 using namespace boost::interprocess;
@@ -66,8 +67,11 @@ public:
     {
         if(I_am_tree_server)
         {
-            //Remove shared memory on destruction
-            shared_memory_object::remove(MEM_POOL_NAME);    
+            //Remove shared memory & queue on destruction
+            std::cerr<<"MEMORY_POOL removing system resources"<<std::endl;
+            shared_memory_object::remove(MEM_POOL_NAME);
+            message_queue::remove(MSGQ_NAME);
+            std::cerr<<". DONE!"<<std::endl;
         }
     }  
 
@@ -104,7 +108,7 @@ public:
         string                     data;
         data.resize(facjata::MSG_MAX_LEN);
         request_queue.receive(&data[0],facjata::MSG_MAX_LEN,recvd_size,priority);        assert(recvd_size<facjata::MSG_MAX_LEN);
-                                                                              assert(priority<ContentType::Maxim);
+                                                                                         assert(priority<ContentType::Maxim);
         Type=ContentType(priority);
         return data;
     }

@@ -8,6 +8,18 @@ using namespace facjata;
 
 string MyName("TREEEDIT-");
 
+void do_work(facjata::MemoryPool& MyPool)//Real work to do
+{
+    string iline;
+    do{
+        std::cout<<">";
+        std::cout.flush();
+        //std::cin.getline(iline,'\n');
+        std::cin>>iline;
+        std::cerr<<MyName<<" get input line:'"<<iline<<"'"<<std::endl;
+    }while(!std::cin.eof());
+}
+
 int main(int argc, char* argv[])
 {
         MyName+=boost::lexical_cast<string>(getpid());
@@ -34,10 +46,10 @@ int main(int argc, char* argv[])
 
             //Send Hello to server
             string Msg("HelloFromPID:");
-            Msg+=boost::lexical_cast<string>(getpid());
+            Msg+=boost::lexical_cast<string>(getpid())+" ТRЕЕЕDIT";
             MyMemPool.send_request(Msg,MemoryPool::ContentType::Control);//Control message
 
-            sleep(5);//Real job ;-)
+            do_work(MyMemPool);//Real work to do
 
             //Send BYE to server
             Msg="ByeFromPID:"+boost::lexical_cast<string>(getpid());

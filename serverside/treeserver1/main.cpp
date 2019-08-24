@@ -66,6 +66,7 @@ int main(int argc, char* argv[])
         MyName+=boost::lexical_cast<string>(getpid());
         std::cerr<<"\n"<<MyName<<":"<<std::endl;
 
+        if(argc<2 || (string("--force"))!=argv[1])
         try{
             std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
             facjata::MemoryPool TestPool;//Próbuje się podłączyć jako klient
@@ -90,7 +91,7 @@ int main(int argc, char* argv[])
             ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
             *stringToShare=
                     (
-                        string("Facies/Facjata treeserver version 0.001; PID:")
+                        string("Facies/Facjata treeserver version 0.002; PID:")
                             +boost::lexical_cast<string>(getpid())
                         ).c_str();
 
