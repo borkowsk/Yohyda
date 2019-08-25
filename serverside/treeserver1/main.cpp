@@ -30,32 +30,35 @@ pt::ptree root;
 // Control if it is more to do
 unsigned NumberOfClients=0;
 
-void do_local_processing(string& data, MemoryPool::ContentType msgType,facjata::MemoryPool& MyPool)
+void do_local_processing(string& request, MemoryPool::ContentType msgType,facjata::MemoryPool& MyPool)
 {
     switch(msgType)
     {
     case MemoryPool::ContentType::Control://There are no responses for control messages
-    if(data.find("HelloFromPID",0)==0)
-    {
-        int PIDpos=data.find_first_of(":");
-        if(PIDpos>0)
-            std::cerr<<MyName<<" registered client PID"<<data.c_str()+PIDpos<<std::endl;
-        NumberOfClients++;
-    }
-    else if(data.find("ByeFromPID",0)==0)
-    {
-        int PIDpos=data.find_first_of(":");
-        if(PIDpos>0)
-            std::cerr<<MyName<<" unregistered client PID"<<data.c_str()+PIDpos<<std::endl;
-        NumberOfClients--;
-    }
+        if(request.find("HelloFromPID",0)==0)
+        {
+            int PIDpos=request.find_first_of(":");
+            if(PIDpos>0)
+                std::cerr<<MyName<<" registered client PID"<<request.c_str()+PIDpos<<std::endl;
+            NumberOfClients++;
+        }
+        else if(request.find("ByeFromPID",0)==0)
+        {
+            int PIDpos=request.find_first_of(":");
+            if(PIDpos>0)
+                std::cerr<<MyName<<" unregistered client PID"<<request.c_str()+PIDpos<<std::endl;
+            NumberOfClients--;
+        }
         break;
     case MemoryPool::ContentType::Write:
+        MyPool.do_writer_request(request);
         break;
     case MemoryPool::ContentType::Read:
+        MyPool.do_reader_request(request);
         break;
     default:
-        std::cerr<<MyName<<" recived message of unexpected type "<<msgType<<", with content '"<<data<<"'"<<std::endl;
+        std::cerr<<MyName<<" recived message of unexpected type "<<msgType
+                <<", with content '"<<request<<"'"<<std::endl;
         break;
     }
 }
@@ -85,12 +88,12 @@ int main(int argc, char* argv[])
 
             pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
 
-            ShmCharAllocator     charallocator(MyMemPool.segm().get_segment_manager());
+            ShmCharAllocator charallocator(MyMemPool.segm().get_segment_manager());
             //do{
             ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
             *stringToShare=
                     (
-                        string("Facies/Facjata treeserver version 0.003; PID:")
+                        string("Facies/Facjata treeserver version 0.004; PID:")
                             +boost::lexical_cast<string>(getpid())
                         ).c_str();
 
@@ -102,10 +105,10 @@ int main(int argc, char* argv[])
                 data=MyMemPool.receive(msgType);//Tu poczeka na pierwszego klienta przynajmniej jakiś czas
                 std::cerr<<MyName<<" received '"<<data<<"'"<<std::endl;
                 do_local_processing(data,msgType,MyMemPool);
-                sleep(1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
             }while(NumberOfClients>0);
 
-            MyMemPool->destroy<ShmString>("TreeServerEmp");
+            MyMemPool.free_data("TreeServerEmp");
             std::cerr<<MyName<<": I'm finished."<<std::endl;
             return 0;
         }
@@ -116,6 +119,5 @@ int main(int argc, char* argv[])
         }
 
         return -9999;//Nie powinien tu trafić
-
 }
 

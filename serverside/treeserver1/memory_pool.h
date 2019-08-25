@@ -77,7 +77,7 @@ public:
         }
     }  
 
-    bool is_server()
+    bool is_server() const
     {
         return I_am_tree_server;
     }
@@ -102,9 +102,45 @@ public:
         request_queue.send(Content.c_str(),Content.length(),int(Type));//Send text message
     }
 
+    ShmString* wait_for_data(const string& ReqContent,
+                             int DelayMs=10,int Repeat=200)//Wait some time until particular respond will be ready
+    {
+        if(is_server()) throw( interprocess_exception("Only client can wait for data prepared in server!") );
+        try{
+            for(int i=0;i<Repeat;i++)
+            {
+                std::pair<ShmString*, managed_shared_memory::size_type> res;
+                res = segment.find<ShmString>(ReqContent.c_str());
+                if(res.first!=nullptr)
+                    return res.first;
+                std::this_thread::sleep_for(std::chrono::milliseconds(DelayMs));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+            }
+        }
+        catch(const interprocess_exception& exc)
+        {
+            std::cerr<<"MEMORY_POOL: Unavailable response about '"<<ReqContent<<"' because '"<<exc.what()<<"'"<<std::endl;
+            return nullptr;
+        }
+
+        std::cerr<<"MEMORY_POOL: Time limit for response about '"<<ReqContent<<"'"<<std::endl;
+        return nullptr;
+    }
+
+    void free_data(const char* Request)
+    {
+        segment.destroy<ShmString>(Request);
+    }
+
+    void free_data(string& Request)
+    {
+        segment.destroy<ShmString>(Request.c_str());
+    }
+
+//server_only:
     string receive(ContentType& Type)//Recive request on server side only
     {
-        if(!is_server()) throw( interprocess_exception("You cannot recive from server queue!")) ;
+        if(!is_server()) throw( interprocess_exception("You cannot recive from server queue!"));
+
         message_queue::size_type recvd_size;
         unsigned int               priority; //can be used to distinguish messages: control, write or just read
         string                     data;
@@ -115,10 +151,49 @@ public:
         return data;
     }
 
-    ShmString* wait_for_data(string& ReqContent,ContentType& Type,
-                             int DelayMs=10,int Repeat=100)//Wait some time until particular respond will be ready
+    void do_writer_request(const string& request)
     {
-        return nullptr;
+        if(!is_server()) throw( interprocess_exception("Only server can prepare answer!"));
+        ShmCharAllocator charallocator(segment.get_segment_manager());
+        ShmString *stringToShare = segment.construct<ShmString>(request.c_str())(charallocator);
+        string path;
+        string processor;
+        string parameters;
+        string proto;
+        if(split_request(request,proto,path,processor,parameters))
+        {
+            //...
+        }
+        else //a wyjątki? TODO!?!?!
+        {
+            if(stringToShare!=nullptr)
+            {
+                *stringToShare="MEMORY_POOL - invalid request, split failed";
+            }
+        }
+    }
+
+    void do_reader_request(const string& request)
+    {
+        if(!is_server()) throw( interprocess_exception("Only server can prepare answer!"));
+        ShmCharAllocator charallocator(segment.get_segment_manager());
+        ShmString *stringToShare = segment.construct<ShmString>(request.c_str())(charallocator);
+        string proto;
+        string path;
+        string processor;
+        string parameters;
+
+        if(split_request(request,proto,path,processor,parameters))
+        {
+            //...
+        }
+        else //a wyjątki? TODO!?!?!
+        {
+            if(stringToShare!=nullptr)
+            {
+                *stringToShare="MEMORY_POOL - invalid request, split failed";
+            }
+        }
     }
 
 protected:
@@ -130,6 +205,11 @@ protected:
     message_queue& operator () () //Direct acces to queue
     {
         return request_queue;
+    }
+
+    bool split_request(const string& request,string& proto,string& path,string& processor,string& parameters)
+    {
+        return false;
     }
 
 };

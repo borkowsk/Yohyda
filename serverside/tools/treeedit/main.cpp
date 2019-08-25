@@ -2,8 +2,6 @@
 //
 #include "memory_pool.h"
 #include <boost/lexical_cast.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 
 using namespace facjata;
@@ -17,7 +15,7 @@ bool do_local_processing(const string& data)
     string::size_type outsize=0;
     if((outsize=data.find("prefix",0,6))==0)
     {
-        std::cerr<<outsize<<"!"<<data<<std::endl;
+        //std::cerr<<outsize<<"!"<<data<<std::endl;
         int PIDpos=data.find_first_of(":=");
         if(PIDpos>0)
         {
@@ -29,8 +27,10 @@ bool do_local_processing(const string& data)
     else
     if((outsize=data.find("help",0,4))==0)
     {
-        std::cerr<<outsize<<"?"<<data<<std::endl;
-        std::cout<<"Type 'done' to finish."<<std::endl;
+        //std::cerr<<outsize<<"?"<<data<<std::endl;
+        std::cout<<"Type 'done' or 'exit' to finish."<<std::endl;
+        std::cout<<"Type prefix=/something/ for set prefix."<<std::endl;
+        std::cout<<"Anything other will be send to server"<<std::endl;
         return true;
     }
     else
@@ -46,7 +46,7 @@ bool do_local_processing(const string& data)
         return true;
     }
 
-    std::cerr<<outsize<<":"<<data<<std::endl;
+    //std::cerr<<outsize<<":"<<data<<std::endl;
     return false;
 }
 
@@ -62,9 +62,19 @@ void do_work(facjata::MemoryPool& MyPool)//Real work to do
         if(!do_local_processing(iline.c_str()))
         {
             std::cerr<<MyName<<" sending..."<<std::endl;
-            MyPool.send_request(Prefix+iline,MemoryPool::ContentType::Read);
+            string req=Prefix+iline;
+            MyPool.send_request(req,MemoryPool::ContentType::Read);
             std::cerr<<MyName<<" waiting for response..."<<std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+            ShmString* response=MyPool.wait_for_data(req);
+            if(response==nullptr)
+            {
+                std::cout<<MyName<<": Response unavailable"<<std::endl;
+            }
+            else
+            {
+                std::cout<<*response<<std::endl;
+                MyPool.free_data(req);
+            }
         }
     }while(!std::cin.eof() && !finish);
 }
