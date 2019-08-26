@@ -151,50 +151,13 @@ public:
         return data;
     }
 
-    void do_writer_request(const string& request)
-    {
-        if(!is_server()) throw( interprocess_exception("Only server can prepare answer!"));
-        ShmCharAllocator charallocator(segment.get_segment_manager());
-        ShmString *stringToShare = segment.construct<ShmString>(request.c_str())(charallocator);
-        string path;
-        string processor;
-        string parameters;
-        string proto;
-        if(split_request(request,proto,path,processor,parameters))
-        {
-            //...
-        }
-        else //a wyjątki? TODO!?!?!
-        {
-            if(stringToShare!=nullptr)
-            {
-                *stringToShare="MEMORY_POOL - invalid request, split failed";
-            }
-        }
-    }
-
-    void do_reader_request(const string& request)
-    {
-        if(!is_server()) throw( interprocess_exception("Only server can prepare answer!"));
-        ShmCharAllocator charallocator(segment.get_segment_manager());
-        ShmString *stringToShare = segment.construct<ShmString>(request.c_str())(charallocator);
-        string proto;
-        string path;
-        string processor;
-        string parameters;
-
-        if(split_request(request,proto,path,processor,parameters))
-        {
-            //...
-        }
-        else //a wyjątki? TODO!?!?!
-        {
-            if(stringToShare!=nullptr)
-            {
-                *stringToShare="MEMORY_POOL - invalid request, split failed";
-            }
-        }
-    }
+    //http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?reader&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
+    //http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?writer&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
+    //   \__/   \_________________/\___/\_____________________/ \___________________________________/ \________________/
+    //     |             |           |             |                              |                            |
+    //  schemat         host        port   ścieżka do pliku                   zapytanie                     fragment
+    //(protokół)   (nazwa serwera)
+    //bool server::split_request(const string& request,string& proto,string& path,string& processor,string& parameters);
 
 protected:
     message_queue& rq() //Direct acces to queue
@@ -207,14 +170,7 @@ protected:
         return request_queue;
     }
 
-    bool split_request(const string& request,string& proto,string& path,string& processor,string& parameters)
-    {
-        return false;
-    }
-
 };
-
-
 
 }
 

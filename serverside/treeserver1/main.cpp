@@ -30,6 +30,66 @@ pt::ptree root;
 // Control if it is more to do
 unsigned NumberOfClients=0;
 
+
+//http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?reader&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
+//http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?writer&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
+//   \__/   \_________________/\___/\_____________________/ \___________________________________/ \________________/
+//     |             |           |             |                              |                            |
+//  schemat         host        port   ścieżka do pliku                   zapytanie                     fragment
+//(protokół)   (nazwa serwera)
+//
+//https://stackoverflow.com/questions/2616011/easy-way-to-parse-a-url-in-c-cross-platform ?
+bool split_request(const string& request,string& proto,string& path,string& processor,string& parameters)
+{
+    string::size_type br1=request.find(':');
+    string::size_type br2=request.find('?');
+    return false;
+}
+
+void do_writer_request(const string& request,facjata::MemoryPool& MyPool)
+{
+    ShmCharAllocator charallocator(MyPool->get_segment_manager());
+    ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
+    string path;
+    string processor;
+    string parameters;
+    string proto;
+    if(split_request(request,proto,path,processor,parameters))
+    {
+        //...
+    }
+    else //a wyjątki? TODO!?!?!
+    {
+        if(stringToShare!=nullptr)
+        {
+            *stringToShare=(MyName+": invalid request, split failed").c_str();
+        }
+    }
+}
+
+void do_reader_request(const string& request,facjata::MemoryPool& MyPool)
+{
+    ShmCharAllocator charallocator(MyPool->get_segment_manager());
+    ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
+    string proto;
+    string path;
+    string processor;
+    string parameters;
+
+    if(split_request(request,proto,path,processor,parameters))
+    {
+        *stringToShare=(proto+'\n'+path+'\n'+processor+'\n'+parameters).c_str();
+    }
+    else //a wyjątki? TODO!?!?!
+    {
+        if(stringToShare!=nullptr)
+        {
+            *stringToShare=(MyName+": invalid request, split failed").c_str();
+        }
+    }
+}
+
+
 void do_local_processing(string& request, MemoryPool::ContentType msgType,facjata::MemoryPool& MyPool)
 {
     switch(msgType)
@@ -51,10 +111,10 @@ void do_local_processing(string& request, MemoryPool::ContentType msgType,facjat
         }
         break;
     case MemoryPool::ContentType::Write:
-        MyPool.do_writer_request(request);
+        do_writer_request(request,MyPool);
         break;
     case MemoryPool::ContentType::Read:
-        MyPool.do_reader_request(request);
+        do_reader_request(request,MyPool);
         break;
     default:
         std::cerr<<MyName<<" recived message of unexpected type "<<msgType
