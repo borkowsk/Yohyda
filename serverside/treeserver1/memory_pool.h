@@ -1,3 +1,5 @@
+/// File "memory_pool.h" - communication between treeserver and its clients (including wwwserver)
+///
 #ifndef FACJATA_MEMORY_POOL
 #define FACJATA_MEMORY_POOL (1)
 
@@ -28,7 +30,8 @@ typedef basic_string<char, std::char_traits<char>,ShmCharAllocator>      ShmStri
 typedef allocator<ShmString, managed_shared_memory::segment_manager>     ShmStringAllocator;  
 typedef vector<ShmString, ShmStringAllocator>                            ShmVectorOfString;
 
-namespace facjata {
+namespace facjata
+{
 
 const char*     MEM_POOL_NAME="FacjataDefMemoryPool";
 const size_t    MEM_POOL_SIZE=0xffffff;
@@ -151,12 +154,7 @@ public:
         return data;
     }
 
-    //http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?reader&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
-    //http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?writer&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
-    //   \__/   \_________________/\___/\_____________________/ \___________________________________/ \________________/
-    //     |             |           |             |                              |                            |
-    //  schemat         host        port   ścieżka do pliku                   zapytanie                     fragment
-    //(protokół)   (nazwa serwera)
+    //Rozbite na funkcje w serwerze i klasę parsingu URL
     //bool server::split_request(const string& request,string& proto,string& path,string& processor,string& parameters);
 
 protected:
@@ -172,7 +170,7 @@ protected:
 
 };
 
-}
+}//namespace facjata
 
 #endif //FACJATA_MEMORY_POOL
 

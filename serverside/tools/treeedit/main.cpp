@@ -7,7 +7,7 @@
 using namespace facjata;
 
 string MyName("TREEEDIT-");
-string Prefix("/");
+string Prefix("http://localhost:8000/");
 bool   finish=false;
 
 bool do_local_processing(const string& data)

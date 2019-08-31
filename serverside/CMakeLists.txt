@@ -5,18 +5,20 @@ project(facjata)
 set( SRCPATH "./")
 
 FIND_PACKAGE( Threads REQUIRED)
-FIND_PACKAGE( Boost 1.60 COMPONENTS system program_options REQUIRED )
+FIND_PACKAGE( Boost 1.60 COMPONENTS system program_options regex REQUIRED )
 SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
                     "${SRCPATH}"
                     "${SRCPATH}/wwwserver1/"
                     "${SRCPATH}/treeserver1/"
+                    "${SRCPATH}/tools/URLparserLib/"
                      ${Boost_INCLUDE_DIR}
                     )
 
 add_executable( treeserver
     "${SRCPATH}/treeserver1/main.cpp"
+    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
                 )
 
 add_executable( treeedit
@@ -32,6 +34,7 @@ add_executable( wwwserver
     "${SRCPATH}/wwwserver1/request_handler.cpp"
     "${SRCPATH}/wwwserver1/request_parser.cpp"
     "${SRCPATH}/wwwserver1/server.cpp"
+    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
                 )
        
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" )

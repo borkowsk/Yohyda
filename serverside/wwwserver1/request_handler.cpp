@@ -16,6 +16,8 @@
 #include "reply.hpp"
 #include "request.hpp"
 
+#include "URLparser.hpp" //facies compatible URL parser
+
 namespace http {
 namespace server {
 
