@@ -12,7 +12,7 @@
 #include "memory_pool.h"
 #include "URLparser.hpp"
 #include <boost/lexical_cast.hpp>
-#include <boost/interprocess/streams/vectorstream.hpp>
+//#include <boost/interprocess/streams/vectorstream.hpp>//to jednak nie tak dziala jakbym chcial
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <iostream>
@@ -35,7 +35,7 @@ unsigned NumberOfClients=0;
 inline URLparser split_request(const string& request)//May throw exceptions
 {
     URLparser URL(request.c_str());
-    //... Test or additional work
+    //... Test or add some extra work
     return URL;
 }
 
@@ -43,15 +43,21 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
 {
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
-    URLparser URL=split_request(request);//May throw exceptions
-    if(URL.find("path")!= URL.end())//Sciezka musi byc zawsze
-    {
+    if(stringToShare==nullptr)
+        throw( interprocess_exception("You cannot construct shared memory string!") );
 
-        *stringToShare=( URL["protocol"]+'\n'
-                        +URL["domain"]+'\n'
-                        +URL["path"]+'\n'
-                        +URL["processor"]+'\n'
-                        +URL["query"]).c_str();
+    URLparser URL=split_request(request);//May throw exceptions
+    if(URL.find("&path")!= URL.end())//Sciezka musi byc zawsze
+    {
+        //ShmStream outstr(*stringToShare);charallocator? //to jednak nie tak dziala jakbym chcial
+        //outstr << URL["protocol"] << '\n'<< URL["domain"] << '\n'<< URL["path"] << '\n'<< URL["processor"] << '\n'<< URL["query"] << std::endl;
+        for(auto p:URL)
+        {
+            (*stringToShare)+=p.first.c_str();
+            (*stringToShare)+=" = ";
+            (*stringToShare)+=p.second.c_str();
+            (*stringToShare)+="\n";
+        }
     }
     else
     {
@@ -62,20 +68,21 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
     }
 }
 
-
-
 void do_writer_request(const string& request,facjata::MemoryPool& MyPool)//May throw exceptions
 {
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
+    if(stringToShare==nullptr)
+        throw( interprocess_exception("You cannot construct shared memory string!") );
+
     URLparser URL=split_request(request);//May throw exceptions
-    if(URL.find("path")!= URL.end())//Sciezka musi byc zawsze
+    if(URL.find("&path")!= URL.end())//Sciezka musi byc zawsze
     {
-        *stringToShare=(URL["protocol"]+'\n'
-                        +URL["domain"]+'\n'
-                        +URL["path"]+'\n'
-                        +URL["processor"]+'\n'
-                        +URL["query"]).c_str();
+        *stringToShare=(URL["&protocol"]+'\n'
+                        +URL["&domain"]+'\n'
+                        +URL["&path"]+'\n'
+                        +URL["&processor"]+'\n'
+                        +URL["&query"]).c_str();
     }
     else //a wyjątki? TODO!?!?!
     {
@@ -149,7 +156,7 @@ int main(int argc, char* argv[])
             ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
             *stringToShare=
                     (
-                        string("Facies/Facjata treeserver version 0.005; PID:")
+                        string("Facies/Facjata treeserver version 0.006; PID:")
                             +boost::lexical_cast<string>(getpid())
                         ).c_str();
 
