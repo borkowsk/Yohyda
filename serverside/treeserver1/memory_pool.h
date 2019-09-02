@@ -1,18 +1,14 @@
 /// File "memory_pool.h" - communication between treeserver and its clients (including wwwserver)
 ///
-#ifndef FACJATA_MEMORY_POOL
-#define FACJATA_MEMORY_POOL (1)
+#ifndef FACJATA_MEMORY_POOL_H
+#define FACJATA_MEMORY_POOL_H (1)
 
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
-
+#include "tree_types.h"
 #include <boost/interprocess/ipc/message_queue.hpp>
-#include <boost/interprocess/managed_shared_memory.hpp>
 #include <boost/interprocess/exceptions.hpp>
-#include <boost/interprocess/allocators/allocator.hpp>
-#include <boost/interprocess/containers/vector.hpp>
-#include <boost/interprocess/containers/string.hpp>
 #include <chrono>
 #include <thread>
 #include <iostream>
@@ -20,19 +16,8 @@
 
 using namespace boost::interprocess;
 
-//Define an STL compatible allocator of ints that allocates from the managed_shared_memory.
-//This allocator will allow placing containers in the segment
-//typedef allocator<int,  managed_shared_memory::segment_manager>         ShmIntAllocator;
-//...
-//From: https://www.boost.org/doc/libs/1_38_0/doc/html/interprocess/allocators_containers.html
-typedef allocator<char, managed_shared_memory::segment_manager>          ShmCharAllocator;
-typedef basic_string<char, std::char_traits<char>,ShmCharAllocator>      ShmString;
-typedef allocator<ShmString, managed_shared_memory::segment_manager>     ShmStringAllocator;  
-typedef vector<ShmString, ShmStringAllocator>                            ShmVectorOfString;
-
 namespace facjata
 {
-
 const char*     MEM_POOL_NAME="FacjataDefMemoryPool";
 const size_t    MEM_POOL_SIZE=0xffffff;
 const char*     MSGQ_NAME="FacjataDefMemoryPoolQ";
@@ -172,5 +157,5 @@ protected:
 
 }//namespace facjata
 
-#endif //FACJATA_MEMORY_POOL
+#endif //FACJATA_MEMORY_POOL_H
 

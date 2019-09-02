@@ -10,6 +10,7 @@
 ///
 ///
 #include "memory_pool.h"
+#include "tree_processor.h"
 #include "URLparser.hpp"
 #include <boost/lexical_cast.hpp>
 //#include <boost/interprocess/streams/vectorstream.hpp>//to jednak nie tak dziala jakbym chcial
@@ -24,7 +25,7 @@ string MyName("TREESERVER-");//Process name
 const char debug_path[]="/data/wb/SCC/working_copies/facies/private/TimelineOfTheEarth/posts/posts.json";
 
 // Short alias for this namespace
-namespace pt = boost::property_tree;
+
 
 // Create a root of the tree
 pt::ptree root;
@@ -57,6 +58,27 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
             (*stringToShare)+=" = ";
             (*stringToShare)+=p.second.c_str();
             (*stringToShare)+="\n";
+        }
+
+        try{
+            tree_processor& TheProcessor=tree_processor::getReadProcessor( URL["&processor"] );
+            val_string& path=URL["&path"];
+            (*stringToShare)+=path+"\n";
+            pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path, '/'}) );
+            (*stringToShare)+="VAL\n";
+            TheProcessor.read_tree((*stringToShare),branch,URL);
+        }
+        catch(const pt::ptree_error& exc)
+        {
+            *stringToShare+=exc.what();
+        }
+        catch(const std::runtime_error& exc)
+        {
+            *stringToShare+=exc.what();
+        }
+        catch(...)
+        {
+             *stringToShare+="UNEXPECTED ERROR @" + boost::lexical_cast<std::string>( __LINE__ );
         }
     }
     else

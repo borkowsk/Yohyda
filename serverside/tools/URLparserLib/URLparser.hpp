@@ -1,11 +1,12 @@
 /// File "URLparser.hpp" - Facies/Facjata compatible URL parser
 ///
-#ifndef FACJATA_URL_PARSER
-#define FACJATA_URL_PARSER (1)
+#ifndef FACJATA_URL_PARSER_H
+#define FACJATA_URL_PARSER_H (1)
 
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
+
 #include <string>
 #include <string_view>
 #include <map>
@@ -29,7 +30,7 @@
  * &protocol = http
  * &query = ls&color&info=full&lhc
  * color = true
- * info = full
+ * info = fullstd
  * lhc = true
  */
 namespace facjata
@@ -39,16 +40,19 @@ using val_string=std::string;
 
 class URLparser:public std::map<key_string,val_string>
 {
+protected://Configuration & redundancy
     bool parse_query;
-public:
+    val_string bakURL;
+
+public://Construction, destruction etc.
     URLparser(bool pq=false):parse_query(pq){}
     URLparser(const char* URL,bool pq=true):parse_query(pq){Parse(URL);}
    ~URLparser(){}
+
+protected://Implementation
     void Parse(const val_string& URL);//May throw on errors!
-//OUTPUT:
-    val_string bakURL;
 };
 
 }//namespace facjata
 
-#endif //FACJATA_URL_PARSER
+#endif //FACJATA_URL_PARSER_H
