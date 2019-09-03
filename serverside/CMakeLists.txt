@@ -18,6 +18,10 @@ include_directories(
 
 add_executable( treeserver
     "${SRCPATH}/treeserver1/main.cpp"
+    "${SRCPATH}/treeserver1/tree_processor.cpp"
+    "${SRCPATH}/treeserver1/processor_get.cpp"
+    "${SRCPATH}/treeserver1/processor_ls.cpp"
+    "${SRCPATH}/treeserver1/processor_dfs.cpp"
     "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
                 )
 

@@ -2,34 +2,76 @@
 //
 #include "memory_pool.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
+#include <string_view>
 
 using namespace facjata;
 
 string MyName("TREEEDIT-");
-string Prefix("http://localhost:8000/");
+const char* defaultPrefix="http://localhost:8000/";
+string Prefix(defaultPrefix);
+bool   verbose=false;
 bool   finish=false;
 
-bool do_local_processing(const string& data)
+bool do_local_processing(const string& data,facjata::MemoryPool& MyPool)
 {
     string::size_type outsize=0;
+    if((outsize=data.find("verbose",0,7))==0)
+    {
+        verbose=!verbose;
+        return true;
+    }
+    else
+    if((outsize=data.find("inspect:",0,8))==0)
+    {
+        const char* what=(data.c_str()+8);
+        std::cout<<what<<":";
+        std::pair<ShmString*, managed_shared_memory::size_type> res = MyPool->find<ShmString>(what);
+        if(res.second!=0)
+            std::cout<<res.first<<"  '"<<*res.first<<"'"<<std::endl;
+        else
+            std::cout<<" NOT FOUND"<<std::endl;
+        return true;
+    }
+    else
+    if((outsize=data.find("delete:",0,7))==0)
+    {
+        const char* what=(data.c_str()+7);
+        MyPool.free_data(what);
+        return true;
+    }
+    else
     if((outsize=data.find("prefix",0,6))==0)
     {
         //std::cerr<<outsize<<"!"<<data<<std::endl;
-        int PIDpos=data.find_first_of(":=");
-        if(PIDpos>0)
+        if(data[6]=='=')
         {
-            Prefix=(data.c_str()+PIDpos+1);
-            std::cout<<"prefix='"<<Prefix<<"'"<<std::endl;
+            Prefix=(data.c_str()+7);
+            if(Prefix=="default")
+               Prefix=defaultPrefix;
         }
+        else if(data[6]=='+')
+        {
+            Prefix+=(data.c_str()+7);
+        }
+        if(data[6]=='-')
+        {
+            Prefix.erase(Prefix.rfind('/'));
+        }
+
+        std::cout<<"prefix='"<<Prefix<<"'"<<std::endl;
         return true;
      }
     else
     if((outsize=data.find("help",0,4))==0)
     {
         //std::cerr<<outsize<<"?"<<data<<std::endl;
-        std::cout<<"Type 'done' or 'exit' to finish."<<std::endl;
-        std::cout<<"Type prefix=/something/ for set prefix."<<std::endl;
+        std::cout<<"Type 'done' or 'exit' to finish. Other commands are:"<<std::endl;
+        std::cout<<"prefix=/path/ or default for set prefix;"<<std::endl;
+        std::cout<<"prefix+path/ or prefix- for change prefix;"<<std::endl;
+        std::cout<<"inspect:/path/ for see remains in shared memory;"<<std::endl;
+        std::cout<<"delete:/path/ for erase remains in shared memory."<<std::endl;
         std::cout<<"Anything other will be send to server"<<std::endl;
         return true;
     }
@@ -54,27 +96,79 @@ void do_work(facjata::MemoryPool& MyPool)//Real work to do
 {
     string iline;
     do{
-        std::cout<<">";
-        std::cout.flush();
-        //std::cin.getline(iline,'\n');
-        std::cin>>iline;
-        std::cerr<<MyName<<" get input:'"<<iline<<"'"<<std::endl;
-        if(!do_local_processing(iline.c_str()))
+        try
         {
-            std::cerr<<MyName<<" sending..."<<std::endl;
-            string req=Prefix+iline;
-            MyPool.send_request(req,MemoryPool::ContentType::Read);
-            std::cerr<<MyName<<" waiting for response..."<<std::endl;
-            ShmString* response=MyPool.wait_for_data(req);
-            if(response==nullptr)
+            std::cout<<"\n"<<Prefix<<">";
+            std::cout.flush();
+            std::cin>>iline;
+            if(verbose) std::cerr<<MyName<<" get input:'"<<iline<<"'"<<std::endl;
+
+            if(!do_local_processing(iline.c_str(),MyPool) )
             {
-                std::cout<<MyName<<": Response unavailable"<<std::endl;
+                if(verbose) std::cerr<<MyName<<" sending..."<<std::endl;
+                string req=Prefix+iline;
+
+                if(1)//How to check this?
+                    MyPool.send_request(req,MemoryPool::ContentType::Read);
+                else
+                    MyPool.send_request(req,MemoryPool::ContentType::Write);
+
+                if(verbose) std::cerr<<MyName<<" waiting for response..."<<std::endl;
+
+                ShmString* response=MyPool.wait_for_data(req);
+
+                if(response==nullptr)
+                {
+                    std::cout<<MyName<<": Response unavailable"<<std::endl;
+                }
+                else
+                {
+                    string::size_type begpos=0;
+                    string::size_type endpos=string::npos;
+                    unsigned replays=0;
+                    do
+                    {
+                      //endpos=response->find(string_view(facjata::MEM_END),begpos);//C++17
+                      endpos=response->find(facjata::MEM_END,begpos,strlen(facjata::MEM_END));
+                      if(endpos!=string::npos)
+                      {
+                          //std::cout<<"("<<endpos<<")"<<std::endl;
+                          std::cout<<"("<<response->c_str()+endpos<<")"<<std::endl;
+                          response->erase(endpos);
+                          replays=0;
+                      }
+                      else
+                      {
+                          replays++;
+                      }
+
+                      const char* lastpos=response->c_str()+begpos;
+                      std::cout<<lastpos;
+
+                      if(replays!=0)//Jesli trzeba poczekac
+                      {
+                        begpos+=strlen(lastpos);//Przesuwamy o to co juz wydrukowane
+                        std::cout<<".";std::cout.flush();
+                        std::this_thread::sleep_for(std::chrono::milliseconds(200));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+                      }
+
+                    }while(endpos==string::npos && replays<10);
+
+                    if(replays!=0)//Nie doczekal sie
+                    {
+                       std::cerr<<"\n"<<MyName<<" waiting "<<replays*200<<"ms for continuation"<<std::endl;
+                       std::cerr<<"Shared memory for '"<<req<<"' potentially remain available for inspection"<<std::endl;
+                    }
+                    else
+                        MyPool.free_data(req);//Tylko wtedy mozna usunac obszar!
+                }
             }
-            else
-            {
-                std::cout<<*response<<std::endl;
-                MyPool.free_data(req);
-            }
+        }
+        catch(...)
+        {
+            std::cerr <<MyName<<
+                ": Unexpected exception, diagnostic information follows:\n" <<
+                boost::current_exception_diagnostic_information();
         }
     }while(!std::cin.eof() && !finish);
 }
@@ -120,6 +214,12 @@ int main(int argc, char* argv[])
         {
             std::cerr<<MyName<<" recive an unexpected communication exception:'"<<exc.what()<<"'"<<std::endl;
             return -2;
+        }
+        catch(...)
+        {
+            std::cerr <<MyName<<
+                ": Unexpected exception, diagnostic information follows:\n" <<
+                boost::current_exception_diagnostic_information();
         }
 
         return -9999;//Nie powinien tu trafić

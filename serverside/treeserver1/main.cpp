@@ -16,6 +16,7 @@
 //#include <boost/interprocess/streams/vectorstream.hpp>//to jednak nie tak dziala jakbym chcial
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
 
 using namespace facjata;
@@ -43,11 +44,22 @@ inline URLparser split_request(const string& request)//May throw exceptions
 void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May throw exceptions
 {
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
-    ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
+    ShmString *stringToShare = nullptr;
+    try
+    {
+        stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
+    }
+    catch(...)
+    {
+        std::cerr <<MyName<<
+            ": Unexpected exception, diagnostic information follows:\n" <<
+            boost::current_exception_diagnostic_information();
+        stringToShare=nullptr;
+    }
     if(stringToShare==nullptr)
-        throw( interprocess_exception("You cannot construct shared memory string!") );
+        throw( interprocess_exception("Server was not able to construct shared memory string!") );
 
-    URLparser URL=split_request(request);//May throw exceptions
+    URLparser URL=split_request(request);//May throw excepti            ons
     if(URL.find("&path")!= URL.end())//Sciezka musi byc zawsze
     {
         //ShmStream outstr(*stringToShare);charallocator? //to jednak nie tak dziala jakbym chcial
@@ -63,22 +75,25 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
         try{
             tree_processor& TheProcessor=tree_processor::getReadProcessor( URL["&processor"] );
             val_string& path=URL["&path"];
-            (*stringToShare)+=path+"\n";
+            (*stringToShare)+="path:"+path+"\n";
             pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path, '/'}) );
-            (*stringToShare)+="VAL\n";
+            (*stringToShare)+="VAL:\n";
             TheProcessor.read_tree((*stringToShare),branch,URL);
         }
         catch(const pt::ptree_error& exc)
         {
             *stringToShare+=exc.what();
+            *stringToShare+=MEM_END;
         }
         catch(const std::runtime_error& exc)
         {
             *stringToShare+=exc.what();
+            *stringToShare+=MEM_END;
         }
         catch(...)
         {
-             *stringToShare+="UNEXPECTED ERROR @" + boost::lexical_cast<std::string>( __LINE__ );
+             *stringToShare+=("UNEXPECTED ERROR @" + boost::lexical_cast<std::string>( __LINE__ )
+                              +MEM_END);
         }
     }
     else
@@ -86,12 +101,13 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
         if(stringToShare!=nullptr)
         {
             *stringToShare=(MyName+": invalid request, split failed").c_str();
+            *stringToShare+=MEM_END;
         }
     }
 }
 
 void do_writer_request(const string& request,facjata::MemoryPool& MyPool)//May throw exceptions
-{
+{   //SUBJECT TO CHANGE! TODO
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
     if(stringToShare==nullptr)
@@ -105,12 +121,14 @@ void do_writer_request(const string& request,facjata::MemoryPool& MyPool)//May t
                         +URL["&path"]+'\n'
                         +URL["&processor"]+'\n'
                         +URL["&query"]).c_str();
+        *stringToShare+=MEM_END;
     }
     else //a wyjątki? TODO!?!?!
     {
         if(stringToShare!=nullptr)
         {
             *stringToShare=(MyName+": invalid request, split failed").c_str();
+            *stringToShare+=MEM_END;
         }
     }
 }

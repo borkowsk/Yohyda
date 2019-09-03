@@ -2,6 +2,7 @@
 //local server of "facies/facjata" resources stored
 //
 
+#include "tree_consts.h"
 #include "tree_processor.h"
 #include <iostream>
 
@@ -36,6 +37,7 @@ void tree_processor::read_tree(ShmString& o,const pt::ptree& top,URLparser& requ
     if(procCategory!=READER)
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT A READER"));
     _implement_read(o,top,request);
+    o+=MEM_END;
 }
 
 //Do some work, call _implement_write, clean & return
@@ -44,6 +46,7 @@ void tree_processor::write_tree(ShmString& o,pt::ptree& top,URLparser& request)/
     if(procCategory!=WRITER)
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS NOT A WRITER"));
     _implement_write(o,top,request);
+    o+=MEM_END;
 }
 
 tree_processor& tree_processor::getReadProcessor (const char* name)//may throw

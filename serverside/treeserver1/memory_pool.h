@@ -6,7 +6,10 @@
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
+
 #include "tree_types.h"
+#include "tree_consts.h"
+
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <chrono>
@@ -18,11 +21,6 @@ using namespace boost::interprocess;
 
 namespace facjata
 {
-const char*     MEM_POOL_NAME="FacjataDefMemoryPool";
-const size_t    MEM_POOL_SIZE=0xffffff;
-const char*     MSGQ_NAME="FacjataDefMemoryPoolQ";
-const size_t    MSGQ_SIZE=1000;
-const size_t    MSG_MAX_LEN=0xfff;
 
 class MemoryPool
 {

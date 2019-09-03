@@ -61,9 +61,9 @@ namespace facjata
         {return getWriteProcessor(name.c_str());}
 
     public://Interface
-        //Do some work, call _implement_read, clean & return
+        //Does some work, calls _implement_read, cleans, adds MEM_END & returns
         void read_tree(ShmString& o,const pt::ptree& top,URLparser& request);//may throw
-        //Do some work, call _implement_write, clean & return
+        //Does some work, calls _implement_read, cleans, adds MEM_END & returns
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw
 };
 
