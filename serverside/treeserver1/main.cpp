@@ -59,7 +59,7 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
     if(stringToShare==nullptr)
         throw( interprocess_exception("Server was not able to construct shared memory string!") );
 
-    URLparser URL=split_request(request);//May throw excepti            ons
+    URLparser URL=split_request(request);//May throw exceptions
     if(URL.find("&path")!= URL.end())//Sciezka musi byc zawsze
     {
         //ShmStream outstr(*stringToShare);charallocator? //to jednak nie tak dziala jakbym chcial
@@ -75,9 +75,10 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
         try{
             tree_processor& TheProcessor=tree_processor::getReadProcessor( URL["&processor"] );
             val_string& path=URL["&path"];
-            (*stringToShare)+="path:"+path+"\n";
-            pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path, '/'}) );
-            (*stringToShare)+="VAL:\n";
+            //(*stringToShare)+="path:"+path+"\t";
+            //Pierszy slash ścieżki stanowi problem...
+            pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path.c_str()+1, '/'}) );
+            //(*stringToShare)+="==\n";
             TheProcessor.read_tree((*stringToShare),branch,URL);
         }
         catch(const pt::ptree_error& exc)

@@ -1,4 +1,6 @@
+#include "tree_types.h"
 #include "processor_ls.h"
+#include <iostream>
 
 namespace facjata
 {
@@ -13,11 +15,22 @@ processor_ls::processor_ls(const char* name):
 
 processor_ls::~processor_ls()
 {}
-
+//TODO - problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
+//https://stackoverflow.com/questions/48407925/boostproperty-treeptree-accessing-arrays-first-complex-element
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-
-    o+=(procName+"OK").c_str();
+    bool longformat=(request.find("long")!=request.end()?true:false);
+    o+="ls:\n";
+    for(auto p:top)
+    {
+        std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
+        o+=std::string(p.first.data())+std::string(":")+std::string(p.second.data());
+        if(longformat)
+            o+=";\n";
+        else
+            o+=";\t";
+    }
+    o+="\nOK";
 }
 
 

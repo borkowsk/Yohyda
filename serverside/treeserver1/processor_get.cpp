@@ -1,4 +1,5 @@
 #include "processor_get.h"
+#include <boost/lexical_cast.hpp>
 
 namespace facjata
 {
@@ -17,8 +18,9 @@ processor_get::~processor_get()
 void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     std::string tmp=top.get_value<std::string>();
+    unsigned    noc=top.size();
     if(request["verbose"]=="true")
-        o+="'"+request["&path"] + "' = '" + tmp + "'";
+        o+="'"+request["&path"] + "' = '" + tmp + "' ["+boost::lexical_cast<std::string>(noc)+"]";
     else
         o+=tmp;
 }

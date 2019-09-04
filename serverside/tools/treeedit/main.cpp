@@ -133,7 +133,7 @@ void do_work(facjata::MemoryPool& MyPool)//Real work to do
                       if(endpos!=string::npos)
                       {
                           //std::cout<<"("<<endpos<<")"<<std::endl;
-                          std::cout<<"("<<response->c_str()+endpos<<")"<<std::endl;
+                          //std::cout<<"("<<response->c_str()+endpos<<")"<<std::endl;
                           response->erase(endpos);
                           replays=0;
                       }
@@ -148,7 +148,7 @@ void do_work(facjata::MemoryPool& MyPool)//Real work to do
                       if(replays!=0)//Jesli trzeba poczekac
                       {
                         begpos+=strlen(lastpos);//Przesuwamy o to co juz wydrukowane
-                        std::cout<<".";std::cout.flush();
+                        //std::cout<<".";std::cout.flush();
                         std::this_thread::sleep_for(std::chrono::milliseconds(200));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
                       }
 
