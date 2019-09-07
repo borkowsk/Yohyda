@@ -6,3 +6,4 @@ Lokalny mini-serwer Facies mógłby z w takim stringu (zawierającym widok z Fb,
 znaleźć posty swojego użytkownika i przekazać ich treść do systemu p2p 
 (oczywiście sprawdzając czy już tego wcześniej nie zrobił, chyba że treść postu się zmieniła na skutek edycji)
 Czyli chodzi o implementacje pkt 7 z założeń projektu.  
+Być może to niemożliwe lub trudne, wtedy alternatywą byłby server proxy przechwytujący posty użytkownika wysyłane do innych sieci społecznościwych.
