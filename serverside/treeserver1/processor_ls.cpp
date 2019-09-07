@@ -2,7 +2,7 @@
 #include "processor_ls.h"
 #include <iostream>
 
-namespace facjata
+namespace fasada
 {
 
 static processor_ls LS;//Istnieje conajmniej jedna taka zmienna. I wystarczy, chyba że ktoś chce robić aliasy
@@ -39,4 +39,4 @@ void processor_ls::_implement_write(ShmString& o,pt::ptree& top,URLparser& reque
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
 }
 
-}//namespace facjata
+}//namespace "fasada"

@@ -1,4 +1,4 @@
-//Local tree console editor for facies/facjata
+//Local tree console editor for "fasada"
 //
 #include "memory_pool.h"
 #include <boost/lexical_cast.hpp>
@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string_view>
 
-using namespace facjata;
+using namespace fasada;
 
 string MyName("TREEEDIT-");
 const char* defaultPrefix="http://localhost:8000/";
@@ -14,7 +14,7 @@ string Prefix(defaultPrefix);
 bool   verbose=false;
 bool   finish=false;
 
-bool do_local_processing(const string& data,facjata::MemoryPool& MyPool)
+bool do_local_processing(const string& data,fasada::MemoryPool& MyPool)
 {
     string::size_type outsize=0;
     if((outsize=data.find("verbose",0,7))==0)
@@ -92,7 +92,7 @@ bool do_local_processing(const string& data,facjata::MemoryPool& MyPool)
     return false;
 }
 
-void do_work(facjata::MemoryPool& MyPool)//Real work to do
+void do_work(fasada::MemoryPool& MyPool)//Real work to do
 {
     string iline;
     do{
@@ -128,8 +128,8 @@ void do_work(facjata::MemoryPool& MyPool)//Real work to do
                     unsigned replays=0;
                     do
                     {
-                      //endpos=response->find(string_view(facjata::MEM_END),begpos);//C++17
-                      endpos=response->find(facjata::MEM_END,begpos,strlen(facjata::MEM_END));
+                      //endpos=response->find(string_view(fasada::MEM_END),begpos);//C++17
+                      endpos=response->find(fasada::MEM_END,begpos,strlen(fasada::MEM_END));
                       if(endpos!=string::npos)
                       {
                           //std::cout<<"("<<endpos<<")"<<std::endl;
@@ -181,7 +181,7 @@ int main(int argc, char* argv[])
         try{
             std::cerr<<"Looking for treeserver"<<std::endl;
 
-            facjata::MemoryPool MyMemPool; //To jest klient! Konstruktor bez parametru
+            fasada::MemoryPool MyMemPool; //To jest klient! Konstruktor bez parametru
 
             //The first data may be used for checking if it is a valid treeserver
             std::pair<ShmString*, managed_shared_memory::size_type> res;

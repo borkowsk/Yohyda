@@ -13,7 +13,7 @@
 
 namespace pt = boost::property_tree;
 
-namespace facjata
+namespace fasada
 {
     /// The boost::ptree have its own exception class ptree_error
     /// and derived class of exceptions.
@@ -68,5 +68,5 @@ namespace facjata
 };
 
 
-}//namespace facjata
+}//namespace "fasada"
 #endif // TREE_PROCESSOR_H

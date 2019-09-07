@@ -15,7 +15,7 @@
 //typedef allocator<int,  managed_shared_memory::segment_manager>         ShmIntAllocator;
 //...
 //From: https://www.boost.org/doc/libs/1_38_0/doc/html/interprocess/allocators_containers.html
-namespace facjata
+namespace fasada
 {
     namespace ipc = boost::interprocess;
 
@@ -37,5 +37,5 @@ namespace facjata
         return t+=s.c_str();
     }
 
-}//namespace facjata
+}//namespace "fasada"
 #endif // TREE_TYPES_H

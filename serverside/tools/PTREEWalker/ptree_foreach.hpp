@@ -1,14 +1,17 @@
 #ifndef PTREE_FOREACH_HPP
 #define PTREE_FOREACH_HPP
-//Tymczasem wszystko w naglowku do JEDNOKROTNEGO includowania
+
+#if defined(BOOST_HAS_PRAGMA_ONCE)
+#  pragma once
+#endif
+
 #include <string>
 #include <queue>
 #include <stack>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/numeric/conversion/cast.hpp> // Konwersja na void*
-//#include <boost/foreach.hpp>//W C++11 niepotrzebne https://www.boost.org/doc/libs/1_65_1/doc/html/foreach.html
+#include <boost/numeric/conversion/cast.hpp> /// Konwersja na void*
 
-namespace facjata
+namespace fasada
 {
 
 using boost::property_tree::ptree;
@@ -18,23 +21,26 @@ using boost::property_tree::ptree;
 /// oraz sam węzeł ptree& tree/t
 /// No więc i dane węzła tree.data() i wszystko co poniżej.
 
-typedef const std::function<bool (ptree& tree,std::string key)> pred;
+using pred = const std::function<bool (ptree& tree,std::string key)>;//Typ predykatu
 
-bool  never(ptree& t,std::string k){return true;}//Predykat "zawsze nie"
+inline
+bool  never(ptree& t,std::string k){ return true; }//Predykat "zawsze nie"
+inline
+bool always(ptree& t,std::string k){ return true; }//Predykat "zawsze tak"
 
 ///Funkcja odwiedza wszytkie wezly i liscie drzewa ptree
 /// UWAGA NA MODYFIKACJE DRZEWA!!!
 /// W miarę bezpiecznie można to zrobić tylko w funkcji „after”
 ///
-void for_ptree(ptree &tree, std::string key,
-               pred& filter,
-               pred& before=never,
-               pred& after=never);
+inline
+void foreach_node(ptree &tree,      //Korzen drzewa
+                    std::string key,//Sciezka do węzła - niekonieczna niby ale zwykle przydatna
+                    pred& filter,   //Predykat wykonywany zawsze
+                    pred& before=never,//Predykat wykonywany gdy pierwszy zwróci true - przed iteracją dzieci
+                    pred& after=never);//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
 
-///Pomocne predykaty
-bool always(ptree& t,std::string k){ return true; }//Predykat "zawsze tak"
-
-bool  print(ptree& t,std::string k){ //Drukuj i zwracaj true. Dobry do testowania
+///Pomocny predykat testowy
+bool  print(ptree& t,std::string k){ //Drukuj i zwracaj true
                                  std::cout<< k <<":\t";
                                  std::cout<< t.data() <<" ; "<<std::endl;
                                  return true; }
@@ -49,7 +55,7 @@ ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
                             //Odczytuje i konwertuje
 
 //IMPLEMENTACJA:
-/// for_ptree(...) to ogólny algorytm robienia czegoś z elementami ptree
+/// foreach_node(...) to ogólny algorytm robienia czegoś z elementami ptree
 /// (Dobry do lambd, ale jeszcze nie jako template)
 /// Przechodzi wszystkie elementy, wykonując "filter", ale
 ///     jeśli "filter" zwróci "true" to
@@ -58,7 +64,7 @@ ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
 ///               jeśli "before" zwróciło "true" to
 ///                      wykonuje "after"
 
-void for_ptree(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/)
+void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/)
 {
     std::string nkey;
     bool do_after=false;
@@ -74,7 +80,7 @@ void for_ptree(ptree &tree, std::string key, pred& filter, pred& before/*=never*
     auto end = tree.end();
     for (auto it = tree.begin(); it != end; ++it)
     {
-      for_ptree(it->second, nkey + it->first ,filter,before,after);
+      foreach_node(it->second, nkey + it->first ,filter,before,after);
     }
 
     if(do_after)
@@ -96,7 +102,7 @@ int insert_ups(ptree& pt)
     pointers.push(nullptr); //Root tez cos musi sobie wstawic.
                             //NULL symbolizuje brak wyzszej instancji
 
-    for_ptree(pt,"//",
+    foreach_node(pt,"//",
         [&pointers](ptree& t,std::string k)
         {
             pointers.push(&t);// Wklada swoj adres dla swoich dzieci
@@ -117,7 +123,7 @@ int insert_ups(ptree& pt)
 int delete_ups(ptree& pt)
 //usuwa symboliczne linki do rodziców
 {
-    for_ptree(pt,"//",always,always,
+    foreach_node(pt,"//",always,always,
         [](ptree& t,std::string k) //Usuwanie dozwolone tylko po iteracji
         {
             t.erase("^");
@@ -165,7 +171,7 @@ ptree* get_parent(ptree& pt)
 
 int print_all(ptree& pt)
 {
-    for_ptree(pt,"root",always,[](ptree& t,std::string k)
+    foreach_node(pt,"root",always,[](ptree& t,std::string k)
     {
         std::cout<< k <<":\t";
         std::cout<< t.data() <<" ; "<<std::endl;
@@ -174,6 +180,6 @@ int print_all(ptree& pt)
     return 1;
 }
 
-}//namespace facjata
+}//namespace "fasada"
 
 #endif // PTREE_FOREACH_HPP

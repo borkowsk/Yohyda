@@ -1,4 +1,4 @@
-/// File "URLparser.hpp" - Facies/Facjata compatible URL parser
+/// File "URLparser.hpp" - "fasada" compatible URL parser
 ///
 #ifndef FACJATA_URL_PARSER_H
 #define FACJATA_URL_PARSER_H (1)
@@ -16,7 +16,7 @@
  *
  * Additionally, when parse_query is true all parameters in query are available
  * on their own names. First parameter without value is available under name
- * "&processor" - it`s specific for the Facjata technology.
+ * "&processor" - it`s specific for the "fasada" technology.
  *
  * Example:
  * https://localhost:8000/public/index.html?ls&color&info=full&lhc
@@ -33,7 +33,7 @@
  * info = fullstd
  * lhc = true
  */
-namespace facjata
+namespace fasada
 {
 using key_string=std::string;//string_view? https://stackoverflow.com/questions/50608392/using-const-char-as-key-for-map-unordered-map
 using val_string=std::string;
@@ -53,6 +53,6 @@ protected://Implementation
     void Parse(const val_string& URL);//May throw on errors!
 };
 
-}//namespace facjata
+}//namespace "fasada"
 
 #endif //FACJATA_URL_PARSER_H

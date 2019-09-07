@@ -19,7 +19,7 @@
 
 using namespace boost::interprocess;
 
-namespace facjata
+namespace fasada
 {
 
 class MemoryPool
@@ -130,8 +130,8 @@ public:
         message_queue::size_type recvd_size;
         unsigned int               priority; //can be used to distinguish messages: control, write or just read
         string                     data;
-        data.resize(facjata::MSG_MAX_LEN);
-        request_queue.receive(&data[0],facjata::MSG_MAX_LEN,recvd_size,priority);        assert(recvd_size<facjata::MSG_MAX_LEN);
+        data.resize(fasada::MSG_MAX_LEN);
+        request_queue.receive(&data[0],fasada::MSG_MAX_LEN,recvd_size,priority);        assert(recvd_size<fasada::MSG_MAX_LEN);
                                                                                          assert(priority<ContentType::Maxim);
         Type=ContentType(priority);
         return data;
@@ -153,7 +153,7 @@ protected:
 
 };
 
-}//namespace facjata
+}//namespace "fasada"
 
 #endif //FACJATA_MEMORY_POOL_H
 

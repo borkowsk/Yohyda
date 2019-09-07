@@ -1,4 +1,4 @@
-//Local server of "facies/facjata" resources stored in json files
+//Local server of "fasada" resources stored in json files
 //
 //Based on examples from: 
 //      http://techgate.fr/boost-property-tree/
@@ -11,15 +11,16 @@
 ///
 #include "memory_pool.h"
 #include "tree_processor.h"
-#include "URLparser.hpp"
+#include "URLparserLib/URLparser.hpp"
 #include <boost/lexical_cast.hpp>
 //#include <boost/interprocess/streams/vectorstream.hpp>//to jednak nie tak dziala jakbym chcial
+#include "PTREEWalker/ptree_foreach.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
 
-using namespace facjata;
+using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
@@ -41,7 +42,7 @@ inline URLparser split_request(const string& request)//May throw exceptions
     return URL;
 }
 
-void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May throw exceptions
+void do_reader_request(const string& request,fasada::MemoryPool& MyPool)//May throw exceptions
 {
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = nullptr;
@@ -107,7 +108,7 @@ void do_reader_request(const string& request,facjata::MemoryPool& MyPool)//May t
     }
 }
 
-void do_writer_request(const string& request,facjata::MemoryPool& MyPool)//May throw exceptions
+void do_writer_request(const string& request,fasada::MemoryPool& MyPool)//May throw exceptions
 {   //SUBJECT TO CHANGE! TODO
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);
@@ -134,7 +135,7 @@ void do_writer_request(const string& request,facjata::MemoryPool& MyPool)//May t
     }
 }
 
-void do_local_processing(string& request, MemoryPool::ContentType msgType,facjata::MemoryPool& MyPool)//May throw exceptions
+void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada::MemoryPool& MyPool)//May throw exceptions
 {
     switch(msgType)
     {
@@ -174,7 +175,7 @@ int main(int argc, char* argv[])
 
         if(argc<2 || (string("--force"))!=argv[1])
         try{
-            facjata::MemoryPool TestPool;//Próbuje się podłączyć jako klient
+            fasada::MemoryPool TestPool;//Próbuje się podłączyć jako klient
             //Jesli się uda to znaczy że server już działa
             std::cerr<<"Only one TREESERVER is alloved!\nKill the not responding server and start again with --force"<<std::endl;
             return 1;
@@ -188,7 +189,7 @@ int main(int argc, char* argv[])
         //Teraz dopiero uznaje że może być serwerem
         try{
             std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
-            facjata::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
+            fasada::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
 
             pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
 
@@ -197,7 +198,7 @@ int main(int argc, char* argv[])
             ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
             *stringToShare=
                     (
-                        string("Facies/Facjata treeserver version 0.006; PID:")
+                        string("FASADA treeserver version 0.007; PID:")
                             +boost::lexical_cast<string>(getpid())
                         ).c_str();
 

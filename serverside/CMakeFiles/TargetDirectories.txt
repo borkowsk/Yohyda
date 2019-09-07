@@ -1,0 +1,5 @@
+/data/wb/SCC/working_copies/facies/serverside/CMakeFiles/wwwserver.dir
+/data/wb/SCC/working_copies/facies/serverside/CMakeFiles/rebuild_cache.dir
+/data/wb/SCC/working_copies/facies/serverside/CMakeFiles/treeserver.dir
+/data/wb/SCC/working_copies/facies/serverside/CMakeFiles/edit_cache.dir
+/data/wb/SCC/working_copies/facies/serverside/CMakeFiles/treeedit.dir

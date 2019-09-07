@@ -1,12 +1,12 @@
 //Base class for all json data processors working inside
-//local server of "facies/facjata" resources stored
+//local server of "fasada" resources stored
 //
 
 #include "tree_consts.h"
 #include "tree_processor.h"
 #include <iostream>
 
-namespace facjata
+namespace fasada
 {
 using processors_map=std::map<key_string,tree_processor*> ;
 using processor_pair=std::pair<key_string,tree_processor*>;
@@ -67,4 +67,4 @@ tree_processor& tree_processor::getWriteProcessor(const char* name)//may throw
     return *tmp;
 }
 
-}//namespace facjata
+}//namespace "fasada"

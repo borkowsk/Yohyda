@@ -1,7 +1,7 @@
 #include "processor_get.h"
 #include <boost/lexical_cast.hpp>
 
-namespace facjata
+namespace fasada
 {
 
 static processor_get GET;//Istnieje conajmniej jedna taka zmienna. I wystarczy, chyba że ktoś chce robić aliasy
@@ -31,4 +31,4 @@ void processor_get::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
 }
 
-}//namespace facjata
+}//namespace "fasada"

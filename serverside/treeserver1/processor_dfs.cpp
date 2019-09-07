@@ -1,7 +1,7 @@
 #include "processor_dfs.h"
 
 
-namespace facjata
+namespace fasada
 {
 
 static processor_dfs DFS;//Istnieje conajmniej jedna taka zmienna. I wystarczy, chyba że ktoś chce robić aliasy
@@ -26,4 +26,4 @@ void processor_dfs::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
 }
 
-}//namespace facjata
+}//namespace "fasada"

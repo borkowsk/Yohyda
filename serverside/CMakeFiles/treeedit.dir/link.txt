@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/treeedit.dir/tools/treeedit/main.cpp.o  -o treeedit -lboost_system -lboost_program_options -lboost_system -lboost_program_options -lpthread -lrt 

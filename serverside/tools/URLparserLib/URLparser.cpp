@@ -1,4 +1,4 @@
-/// File "URLparser.cpp" - Facies/Facjata compatible URL parser
+/// File "URLparser.cpp" - "fasada" compatible URL parser
 ///
 ///
 #include "URLparser.hpp"
@@ -35,7 +35,7 @@ using std::stringstream;
 //   z RESTSDK (https://github.com/microsoft/cpprestsdk)
 //http://think-async.com/Urdl/doc/html/ ? Cała duża biblioteka
 //http://cppcms.com/wikipp/en/page/ref_cppcms_url_parser ? też inna biblioteka: http://cppcms.com/wikipp/en/page/main
-namespace facjata
+namespace fasada
 {
     void URLparser::Parse(const val_string& URL)
     //May throw on errors!
