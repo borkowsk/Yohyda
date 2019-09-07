@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/treeserver.dir/treeserver1/main.cpp.o  -o treeserver -lboost_system -lboost_program_options -lboost_system -lboost_program_options -lpthread -lrt 
