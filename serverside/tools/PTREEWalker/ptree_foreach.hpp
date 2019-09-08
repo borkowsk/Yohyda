@@ -8,6 +8,7 @@
 #include <string>
 #include <queue>
 #include <stack>
+#include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/numeric/conversion/cast.hpp> /// Konwersja na void*
 
@@ -21,12 +22,11 @@ using boost::property_tree::ptree;
 /// oraz sam węzeł ptree& tree/t
 /// No więc i dane węzła tree.data() i wszystko co poniżej.
 
-using pred = const std::function<bool (ptree& tree,std::string key)>;//Typ predykatu
+using pred  = const std::function<bool (ptree& tree,std::string key)>;//Typ predykatu
+using predc = const std::function<bool (const ptree& tree,std::string key)>;//Typ predykatu dla stałego ptree
 
-inline
-bool  never(ptree& t,std::string k){ return true; }//Predykat "zawsze nie"
-inline
-bool always(ptree& t,std::string k){ return true; }//Predykat "zawsze tak"
+inline bool  never(const ptree& t,std::string k){ return true; }//Predykat "zawsze nie"
+inline bool always(const ptree& t,std::string k){ return true; }//Predykat "zawsze tak"
 
 ///Funkcja odwiedza wszytkie wezly i liscie drzewa ptree
 /// UWAGA NA MODYFIKACJE DRZEWA!!!
@@ -39,19 +39,26 @@ void foreach_node(ptree &tree,      //Korzen drzewa
                     pred& before=never,//Predykat wykonywany gdy pierwszy zwróci true - przed iteracją dzieci
                     pred& after=never);//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
 
+inline
+void foreach_node(const ptree &tree,//Korzen drzewa w wersji const!
+                    std::string key,//Sciezka do węzła - niekonieczna niby ale zwykle przydatna
+                    predc& filter,   //Predykat wykonywany zawsze
+                    predc& before=never,//Predykat wykonywany gdy pierwszy zwróci true - przed iteracją dzieci
+                    predc& after=never);//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
+
 ///Pomocny predykat testowy
-bool  print(ptree& t,std::string k){ //Drukuj i zwracaj true
+inline bool  print(const ptree& t,std::string k){ //Drukuj i zwracaj true
                                  std::cout<< k <<":\t";
                                  std::cout<< t.data() <<" ; "<<std::endl;
                                  return true; }
 
 /// Funkcja testowa - drukowanie na stdout
-int print_all(ptree& pt); //Drukuje wszystko
+inline int print_all(ptree& pt); //Drukuje wszystko
 
 /// OBSŁUGA "LINKU SYMBOLICZNEGO" DO RODZICA
-int insert_ups(ptree& pt);//wstawia do ptree symboliczne linki do rodziców
-int delete_ups(ptree& pt);//usuwa z ptree symboliczne linki do rodziców
-ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
+inline int insert_ups(ptree& pt);//wstawia do ptree symboliczne linki do rodziców
+inline int delete_ups(ptree& pt);//usuwa z ptree symboliczne linki do rodziców
+inline ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
                             //Odczytuje i konwertuje
 
 //IMPLEMENTACJA:
@@ -65,6 +72,29 @@ ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
 ///                      wykonuje "after"
 
 void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/)
+{
+    std::string nkey;
+    bool do_after=false;
+
+    if (!key.empty())
+    {
+      nkey = key + ".";  // separator!!! TODO?
+    }
+
+    if(filter(tree,key))
+        do_after=before(tree,key);
+
+    auto end = tree.end();
+    for (auto it = tree.begin(); it != end; ++it)
+    {
+      foreach_node(it->second, nkey + it->first ,filter,before,after);
+    }
+
+    if(do_after)
+        after(tree,key);
+}
+
+void foreach_node(const ptree &tree, std::string key, predc& filter, predc& before/*=never*/, predc& after/*=never*/)
 {
     std::string nkey;
     bool do_after=false;

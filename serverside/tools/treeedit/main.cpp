@@ -152,7 +152,7 @@ void do_work(fasada::MemoryPool& MyPool)//Real work to do
                         std::this_thread::sleep_for(std::chrono::milliseconds(200));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
                       }
 
-                    }while(endpos==string::npos && replays<10);
+                    }while(endpos==string::npos && replays<20);
 
                     if(replays!=0)//Nie doczekal sie
                     {

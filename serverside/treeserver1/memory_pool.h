@@ -122,7 +122,7 @@ public:
         segment.destroy<ShmString>(Request.c_str());
     }
 
-//server_only:
+    //server_only:
     string receive(ContentType& Type)//Recive request on server side only
     {
         if(!is_server()) throw( interprocess_exception("You cannot recive from server queue!"));
