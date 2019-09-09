@@ -14,20 +14,23 @@
 #include "URLparserLib/URLparser.hpp"
 #include <boost/lexical_cast.hpp>
 //#include <boost/interprocess/streams/vectorstream.hpp>//to jednak nie tak dziala jakbym chcial
-#include "PTREEWalker/ptree_foreach.hpp"
+#include "ptree_foreach.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
+
+//Procesory same się rejestrują
+#include "processor_ls.h"
+
+#include "processor_get.h"
+#include "processor_dfs.h"
 
 using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
 const char debug_path[]="/data/wb/SCC/working_copies/facies/private/TimelineOfTheEarth/posts/posts.json";
-
-// Short alias for this namespace
-
 
 // Create a root of the tree
 pt::ptree root;
@@ -170,65 +173,86 @@ void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada
 
 int main(int argc, char* argv[])
 {
-        MyName+=boost::lexical_cast<string>(getpid());
-        std::cerr<<"\n"<<MyName<<":"<<std::endl;
+    //Dopiero w main jest pewność że wewnętrzne struktury static zostały zainicjalizowane. Ale to słabe...
+    fasada::processor_get GET;//Istnieje conajmniej jedna taka zmienna.
+    fasada::processor_dfs DFS;//--//---
+    fasada::processor_ls  LS; //--//---
+    fasada::processor_ls  Def("default");//chyba że ktoś chce robić aliasy
 
-        if(argc<2 || (string("--force"))!=argv[1])
-        try{
-            fasada::MemoryPool TestPool;//Próbuje się podłączyć jako klient
-            //Jesli się uda to znaczy że server już działa
-            std::cerr<<"Only one TREESERVER is alloved!\nKill the not responding server and start again with --force"<<std::endl;
-            return 1;
-        }
-        catch(const interprocess_exception& exc)//Raczej spodziewamy się błędu
+    MyName+=boost::lexical_cast<string>(getpid());
+    std::cerr<<"\n"<<MyName<<":"<<std::endl;
+
+    if(argc<2 || (string("--force"))!=argv[1])
+    try{
+        fasada::MemoryPool TestPool;//Próbuje się podłączyć jako klient
+        //Jesli się uda to znaczy że server już działa
+        std::cerr<<"Only one TREESERVER is alloved!\nKill the not responding server and start again with --force"<<std::endl;
+        return 1;
+    }
+    catch(const interprocess_exception& exc)//Raczej spodziewamy się błędu
+    {
+        //To exception jest OK
+        exc.get_error_code();
+    }
+
+    //Teraz dopiero uznaje że może być serwerem
+    try{
+        std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
+        fasada::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
+
+        pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
+
+        unsigned id=1;//Jak nadać id węzłom o pustych nazwach?
+        fasada::foreach_node(root,"",
+        [   ](const ptree& t,std::string k)
         {
-            //To exception jest OK
-            exc.get_error_code();
-        }
-
-        //Teraz dopiero uznaje że może być serwerem
-        try{
-            std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
-            fasada::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
-
-            pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
-
-            ShmCharAllocator charallocator(MyMemPool.segm().get_segment_manager());
-            //do{
-            ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
-            *stringToShare=
-                    (
-                        string("FASADA treeserver version 0.007; PID:")
-                            +boost::lexical_cast<string>(getpid())
-                        ).c_str();
-
-            //receive & process the request!
-            do{
-                std::cerr<<MyName<<" receiving..."<<std::endl;
-                string data;
-                MemoryPool::ContentType msgType;
-                try{
-                    data=MyMemPool.receive(msgType);//Tu poczeka na pierwszego klienta przynajmniej jakiś czas
-                    std::cerr<<MyName<<" received '"<<data<<"'"<<std::endl;
-                    do_local_processing(data,msgType,MyMemPool);
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
-                }
-                catch(const interprocess_exception& exc)
-                {
-                    std::cerr<<MyName<<": in loop communication exception:'"<<exc.what()<<"'"<<std::endl;
-                }
-           }while(NumberOfClients>0);
-
-            MyMemPool.free_data("TreeServerEmp");
-            std::cerr<<MyName<<": I'm finished."<<std::endl;
-            return 0;
-        }
-        catch(const interprocess_exception& exc)
+            return true;
+        },
+        always,
+        [&id](ptree& t,std::string k)
         {
-            std::cerr<<MyName<<" recive an unexpected communication exception:'"<<exc.what()<<"'"<<std::endl;
-            return -2;
+            std::cout<<k<<std::endl;
+            return true;
         }
+        );
 
-        return -9999;//Nie powinien tu trafić
+
+        ShmCharAllocator charallocator(MyMemPool.segm().get_segment_manager());
+        //do{
+        ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
+        *stringToShare=
+                (
+                    string("FASADA treeserver version 0.007; PID:")
+                        +boost::lexical_cast<string>(getpid())
+                    ).c_str();
+
+        //receive & process the request!
+        do{
+            std::cerr<<MyName<<" receiving..."<<std::endl;
+            string data;
+            MemoryPool::ContentType msgType;
+            try{
+                data=MyMemPool.receive(msgType);//Tu poczeka na pierwszego klienta przynajmniej jakiś czas
+                std::cerr<<MyName<<" received '"<<data<<"'"<<std::endl;
+                do_local_processing(data,msgType,MyMemPool);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+            }
+            catch(const interprocess_exception& exc)
+            {
+                std::cerr<<MyName<<": in loop communication exception:'"<<exc.what()<<"'"<<std::endl;
+            }
+       }while(NumberOfClients>0);
+
+        MyMemPool.free_data("TreeServerEmp");
+        std::cerr<<MyName<<": I'm finished."<<std::endl;
+        return 0;
+    }
+    catch(const interprocess_exception& exc)
+    {
+        std::cerr<<MyName<<" recive an unexpected communication exception:'"<<exc.what()<<"'"<<std::endl;
+        return -2;
+    }
+
+    return -9999;//Nie powinien tu trafić
 }
 

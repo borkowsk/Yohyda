@@ -10,20 +10,23 @@ SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
                     "${SRCPATH}"
-                    "${SRCPATH}/wwwserver1/"
-                    "${SRCPATH}/treeserver1/"
                     "${SRCPATH}/tools/"
-                    "${SRCPATH}/tools/URLparserLib/"
+                    "${SRCPATH}/fasada/"
+                    "${SRCPATH}/tools/URLparserLib"
+                    "${SRCPATH}/tools/PTREEWalkersLib"
                      ${Boost_INCLUDE_DIR}
                     )
 
+add_library(fasada
+    "${SRCPATH}/fasada/tree_processor.cpp"
+    "${SRCPATH}/fasada/processor_get.cpp"
+    "${SRCPATH}/fasada/processor_ls.cpp"
+    "${SRCPATH}/fasada/processor_dfs.cpp"
+    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
+    )
+
 add_executable( treeserver
     "${SRCPATH}/treeserver1/main.cpp"
-    "${SRCPATH}/treeserver1/tree_processor.cpp"
-    "${SRCPATH}/treeserver1/processor_get.cpp"
-    "${SRCPATH}/treeserver1/processor_ls.cpp"
-    "${SRCPATH}/treeserver1/processor_dfs.cpp"
-    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
                 )
 
 add_executable( treeedit
@@ -47,6 +50,16 @@ target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" )
 target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" )
 
 target_link_libraries(treeserver LINK_PUBLIC
+    fasada
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    rt
+    )
+
+target_link_libraries(wwwserver LINK_PUBLIC
+    fasada
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_LIBRARIES}
@@ -62,12 +75,6 @@ target_link_libraries(treeedit  LINK_PUBLIC
     rt
     )
 
-target_link_libraries(wwwserver LINK_PUBLIC
-    ${Boost_SYSTEM_LIBRARY}
-    ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    ${Boost_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
-    rt
-    )
+
 
 

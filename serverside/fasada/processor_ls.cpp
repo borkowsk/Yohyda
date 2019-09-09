@@ -5,8 +5,6 @@
 namespace fasada
 {
 
-static processor_ls LS;//Istnieje conajmniej jedna taka zmienna. I wystarczy, chyba że ktoś chce robić aliasy
-
 processor_ls::processor_ls(const char* name):
     tree_processor(READER,name)
 {

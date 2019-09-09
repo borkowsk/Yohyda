@@ -1,12 +1,10 @@
 #include "tree_types.h"
 #include "processor_dfs.h"
-#include "PTREEWalker/ptree_foreach.hpp"
+#include "ptree_foreach.hpp"
 
 
 namespace fasada
 {
-
-static processor_dfs DFS;//Istnieje conajmniej jedna taka zmienna. I wystarczy, chyba że ktoś chce robić aliasy
 
 processor_dfs::processor_dfs(const char* name):
     tree_processor(READER,name)
@@ -17,17 +15,18 @@ processor_dfs::processor_dfs(const char* name):
 processor_dfs::~processor_dfs()
 {}
 
-void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& /*request*/)
+void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    foreach_node(top,"",always,
-    [&o](const ptree& t,std::string k)
+    bool defret=(request["return"]!="false");
+    foreach_node(top,"",
+    [&o,defret](const ptree& t,std::string k)
     {
         o+="[";
         o+=k;
         o+="] : '";
         o+=t.data();
         o+="'\n";
-        return false;//blokuje wywołanie "after"
+        return defret;//wynik nie blokuje, ale "before" jest never więc nie ma "after"
     }
     );
 }

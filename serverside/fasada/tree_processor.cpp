@@ -4,23 +4,37 @@
 
 #include "tree_consts.h"
 #include "tree_processor.h"
+#include <boost/lexical_cast.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
 
 namespace fasada
 {
-using processors_map=std::map<key_string,tree_processor*> ;
-using processor_pair=std::pair<key_string,tree_processor*>;
-static processors_map map_of_readers;
-static processors_map map_of_writers;
+//Dopiero w main jest pewność że te
+//wewnętrzne struktury static zostały zainicjalizowane.
+//A to słabe...
+tree_processor::processors_map tree_processor::map_of_readers;
+tree_processor::processors_map tree_processor::map_of_writers;
 
 tree_processor::tree_processor(Category cat,const char* name):
     procCategory(cat),procName(name)
 {
+    std::cerr<<"Registering "<<procName<<" processor ";
+    try
+    {
     if(procCategory==WRITER)
         map_of_writers[procName]=this;
     else if(procCategory==READER)
         map_of_readers[procName]=this;
-    else throw(tree_processor_exception("UNKNOWN CATEGORY OF PTREE PROCESSOR "+procName));
+    }
+    catch(...)
+    {
+        std::cerr <<"tree_processor:"<<
+            ": Unexpected exception, diagnostic information follows:\n" <<
+            boost::current_exception_diagnostic_information();
+    }
+    //else throw(tree_processor_exception("UNKNOWN CATEGORY OF PTREE PROCESSOR "+procName));
+    std::cerr<<"DONE"<<std::endl;
 }
 
 tree_processor::~tree_processor()

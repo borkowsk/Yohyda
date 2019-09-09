@@ -4,8 +4,6 @@
 namespace fasada
 {
 
-static processor_get GET;//Istnieje conajmniej jedna taka zmienna. I wystarczy, chyba że ktoś chce robić aliasy
-
 processor_get::processor_get(const char* name):
     tree_processor(READER,name)
 {
