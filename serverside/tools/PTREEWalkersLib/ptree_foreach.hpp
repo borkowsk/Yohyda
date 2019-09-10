@@ -11,6 +11,7 @@
 #include <iostream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/numeric/conversion/cast.hpp> /// Konwersja na void*
+#include <boost/lexical_cast.hpp>
 
 namespace fasada
 {
@@ -52,14 +53,17 @@ inline bool  print(const ptree& t,std::string k){ //Drukuj i zwracaj true
                                  std::cout<< t.data() <<" ; "<<std::endl;
                                  return true; }
 
-/// Funkcja testowa - drukowanie na stdout
-inline int print_all(ptree& pt); //Drukuje wszystko
+/// Numeracja nienazwanych "dzieci"
+inline void   insert_numbers(ptree& pt);//numeruje wszystkie nienazwane dzieci każdegowęzła
 
 /// OBSŁUGA "LINKU SYMBOLICZNEGO" DO RODZICA
-inline int insert_ups(ptree& pt);//wstawia do ptree symboliczne linki do rodziców
-inline int delete_ups(ptree& pt);//usuwa z ptree symboliczne linki do rodziców
+inline void   insert_ups(ptree& pt);//wstawia do ptree symboliczne linki do rodziców
+inline void   delete_ups(ptree& pt);//usuwa z ptree symboliczne linki do rodziców
 inline ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
                             //Odczytuje i konwertuje
+
+/// Funkcja użytkowa - drukowanie wszystkiego na stdout
+inline void print_all(const ptree& pt); //Drukuje wszystko
 
 //IMPLEMENTACJA:
 /// foreach_node(...) to ogólny algorytm robienia czegoś z elementami ptree
@@ -70,29 +74,6 @@ inline ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
 ///             potem schodzi rekurencyjnie, a po powrocie z rekurencji
 ///               jeśli "before" zwróciło "true" to
 ///                      wykonuje "after"
-
-void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/)
-{
-    std::string nkey;
-    bool do_after=false;
-
-    if (!key.empty())
-    {
-      nkey = key + ".";  // separator!!! TODO?
-    }
-
-    if(filter(tree,key))
-        do_after=before(tree,key);
-
-    auto end = tree.end();
-    for (auto it = tree.begin(); it != end; ++it)
-    {
-      foreach_node(it->second, nkey + it->first ,filter,before,after);
-    }
-
-    if(do_after)
-        after(tree,key);
-}
 
 void foreach_node(const ptree &tree, std::string key, predc& filter, predc& before/*=never*/, predc& after/*=never*/)
 {
@@ -117,6 +98,52 @@ void foreach_node(const ptree &tree, std::string key, predc& filter, predc& befo
         after(tree,key);
 }
 
+void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/)
+{
+    std::string nkey;
+    bool do_after=false;
+
+    if (!key.empty())
+    {
+      nkey = key + ".";  // separator!!! TODO?
+    }
+
+    if(filter(tree,key))
+        do_after=before(tree,key);
+
+    auto end = tree.end();
+    for (auto it = tree.begin(); it != end; ++it)
+    {
+      foreach_node(it->second, nkey + it->first ,filter,before,after);
+    }
+
+    if(do_after)
+        after(tree,key);
+}
+
+//Brak nazw węzłów pochodzącyz z tablic jest bardzo
+//niewygodny, gdy trzeba się do nich dostać pojedynczo.
+//Funkcja numeruje wszystkie nienazwane dzieci każdego węzła
+void insert_numbers(ptree& pt)
+{
+    fasada::foreach_node(pt,"",
+    [   ](ptree& t,std::string k)
+    {
+        unsigned id=1;//Trzeba nadać id węzłom o pustych nazwach?
+
+        while(1)
+        {
+            auto fp=t.find("");
+            if(fp==t.not_found()) break;
+            ptree::iterator it = t.to_iterator(fp);
+            auto newname=boost::lexical_cast< std::string >(id++);
+            t.insert(it, make_pair(newname, it->second));
+            t.erase(it);
+        }
+        return id>1?true:false;
+    },print
+    );
+}
 //Potrzebujemy prostej metody znajdowania rodzica wezla.
 //Niestety ptree tego nie przewiduje:
 // https://stackoverflow.com/questions/45366768/getting-boost-property-tree-parent-node
@@ -125,7 +152,7 @@ void foreach_node(const ptree &tree, std::string key, predc& filter, predc& befo
 //robi w strukturze katalogow filesystemu ("..")
 //Ale raczej to nie moze byc normalny wskaznik   do node bo sie drzewo "scyklizuje"(?)
 //
-int insert_ups(ptree& pt)
+void insert_ups(ptree& pt)
 //wstawia symboliczne linki do rodziców
 {
     std::stack<ptree*> pointers;//Jak sensownie zachować adresy rodzica? stack? TODO!!!
@@ -150,7 +177,7 @@ int insert_ups(ptree& pt)
 
 }
 
-int delete_ups(ptree& pt)
+void delete_ups(ptree& pt)
 //usuwa symboliczne linki do rodziców
 {
     foreach_node(pt,"//",always,always,
@@ -199,15 +226,14 @@ ptree* get_parent(ptree& pt)
     return nullptr;
 }
 
-int print_all(ptree& pt)
+void print_all(const ptree& pt)
 {
-    foreach_node(pt,"root",always,[](ptree& t,std::string k)
+    foreach_node(pt,"root",always,[](const ptree& t,std::string k)
     {
         std::cout<< k <<":\t";
         std::cout<< t.data() <<" ; "<<std::endl;
         return false;//blokuje wywołanie "after"
     });
-    return 1;
 }
 
 }//namespace "fasada"

@@ -39,11 +39,6 @@ namespace fasada
         std::string  procName;
         Category procCategory;
 
-    private://Processors maps
-        using  processors_map=std::map<key_string,tree_processor*> ;
-        static processors_map map_of_readers;
-        static processors_map map_of_writers;
-
     protected://deferred implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request)=0;

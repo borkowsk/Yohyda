@@ -201,21 +201,7 @@ int main(int argc, char* argv[])
         fasada::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
 
         pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
-
-        unsigned id=1;//Jak nadać id węzłom o pustych nazwach?
-        fasada::foreach_node(root,"",
-        [   ](const ptree& t,std::string k)
-        {
-            return true;
-        },
-        always,
-        [&id](ptree& t,std::string k)
-        {
-            std::cout<<k<<std::endl;
-            return true;
-        }
-        );
-
+        insert_numbers(root);
 
         ShmCharAllocator charallocator(MyMemPool.segm().get_segment_manager());
         //do{
@@ -244,6 +230,7 @@ int main(int argc, char* argv[])
        }while(NumberOfClients>0);
 
         MyMemPool.free_data("TreeServerEmp");
+        pt::write_json("output.json",root);
         std::cerr<<MyName<<": I'm finished."<<std::endl;
         return 0;
     }
