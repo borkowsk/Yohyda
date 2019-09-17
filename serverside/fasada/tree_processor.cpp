@@ -17,8 +17,6 @@ namespace fasada
 // Czyli "lazy singleton pattern"
 // https://stackoverflow.com/questions/6234791/how-to-wait-until-dynamic-initialization-of-static-variables-finishes
 
-//Type of processors maps - this type may change!
-using  processors_map=std::map<key_string,tree_processor*> ;
 
 static
 processors_map& map_of_readers()

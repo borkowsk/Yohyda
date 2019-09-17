@@ -7,8 +7,8 @@
 #  pragma once
 #endif
 
+#include "tree_types.h"
 #include <string>
-#include <string_view>
 #include <map>
 /*
  * This class split URL into following parts available by [] operator:
@@ -35,8 +35,6 @@
  */
 namespace fasada
 {
-using key_string=std::string;//string_view? https://stackoverflow.com/questions/50608392/using-const-char-as-key-for-map-unordered-map
-using val_string=std::string;
 
 class URLparser:public std::map<key_string,val_string>
 {

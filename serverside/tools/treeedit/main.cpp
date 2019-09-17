@@ -4,7 +4,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
-#include <string_view>
 
 using namespace fasada;
 

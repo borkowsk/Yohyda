@@ -5,7 +5,7 @@ project(facjata)
 set( SRCPATH "./")
 
 FIND_PACKAGE( Threads REQUIRED)
-FIND_PACKAGE( Boost 1.60 COMPONENTS system program_options regex REQUIRED )
+FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options regex REQUIRED )
 SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
@@ -16,14 +16,6 @@ include_directories(
                     "${SRCPATH}/tools/PTREEWalkersLib"
                      ${Boost_INCLUDE_DIR}
                     )
-
-add_library(fasada
-    "${SRCPATH}/fasada/tree_processor.cpp"
-    "${SRCPATH}/fasada/processor_get.cpp"
-    "${SRCPATH}/fasada/processor_ls.cpp"
-    "${SRCPATH}/fasada/processor_dfs.cpp"
-    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
-    )
 
 add_executable( treeserver
     "${SRCPATH}/treeserver1/main.cpp"
@@ -44,10 +36,19 @@ add_executable( wwwserver
     "${SRCPATH}/wwwserver1/server.cpp"
     "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
                 )
-       
-target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" )
-target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" )
-target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" )
+
+add_library(fasada
+    "${SRCPATH}/fasada/tree_processor.cpp"
+    "${SRCPATH}/fasada/processor_get.cpp"
+    "${SRCPATH}/fasada/processor_ls.cpp"
+    "${SRCPATH}/fasada/processor_dfs.cpp"
+    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
+    )
+
+target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
+target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
+target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
+target_compile_options( fasada     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )  
 
 target_link_libraries(treeserver LINK_PUBLIC
     fasada

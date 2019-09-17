@@ -9,6 +9,8 @@
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <boost/interprocess/containers/vector.hpp>
 #include <boost/interprocess/containers/string.hpp>
+#include <map>
+//#include <string_view> //string_view? https://stackoverflow.com/questions/50608392/using-const-char-as-key-for-map-unordered-map
 
 //Define an STL compatible allocator of ints that allocates from the managed_shared_memory.
 //This allocator will allow placing containers in the segment
@@ -19,11 +21,25 @@ namespace fasada
 {
     namespace ipc = boost::interprocess;
 
-    using ShmCharAllocator   = ipc::allocator<char, ipc::managed_shared_memory::segment_manager>    ;
+#if(0)
+    using ShmCharAllocator   = ipc::allocator<char, ipc::managed_shared_memory::segment_manager>;
     using ShmString          = ipc::basic_string<char, std::char_traits<char>,ShmCharAllocator>;
     using ShmStringAllocator = ipc::allocator<ShmString, ipc::managed_shared_memory::segment_manager>;
     using ShmVectorOfString  = ipc::vector<ShmString, ShmStringAllocator>;
-
+    using key_string=std::string;//string_view? https://stackoverflow.com/questions/50608392/using-const-char-as-key-for-map-unordered-map
+    using val_string=std::string;
+    using  processors_map=std::map<key_string,tree_processor*> ;    //Type of processors maps - this type may change!
+#else
+    typedef  ipc::allocator<char, ipc::managed_shared_memory::segment_manager>    	ShmCharAllocator;
+    typedef  ipc::basic_string<char, std::char_traits<char>,ShmCharAllocator> 		ShmString;
+    typedef  ipc::allocator<ShmString, ipc::managed_shared_memory::segment_manager> 	ShmStringAllocator;
+    typedef  ipc::vector<ShmString, ShmStringAllocator> 				ShmVectorOfString;
+    typedef  std::string 								key_string;
+    typedef  std::string								val_string;
+    class tree_processor;
+    typedef  std::map<key_string,tree_processor*> 					processors_map;    //Type of processors maps - this type may change!
+#define nullptr (NULL)
+#endif
 
     inline
     ShmString& operator += (ShmString& t,const std::string& s)

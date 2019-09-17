@@ -18,7 +18,9 @@ processor_ls::~processor_ls()
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool longformat=(request.find("long")!=request.end()?true:false);
+
     o+="ls:\n";
+
     for(auto p:top)
     {
         std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
@@ -28,6 +30,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         else
             o+=";\t";
     }
+
     o+="\nOK";
 }
 
