@@ -7,6 +7,9 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+// Modified for FASADA (c) 2019 by Wojciech Borkowski
+// (wborkowsk MAŁPA gmail KROPA com , wborkowski MAŁPA uw KROPA edu KROPA pl)
+//
 
 #include "connection.hpp"
 #include <utility>

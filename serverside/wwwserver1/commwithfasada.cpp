@@ -1,3 +1,5 @@
+// FASADA is a simple interface for communicating any user side application
+// thru WWW . Mostly based on boost examples.
 //
 // Copyright (c) 2019, Wojciech Borkowski
 // (wborkowsk MAŁPA gmail KROPA com , wborkowski MAŁPA uw KROPA edu KROPA pl)

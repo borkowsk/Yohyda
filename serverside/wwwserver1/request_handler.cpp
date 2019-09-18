@@ -7,6 +7,9 @@
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+// Modified for FASADA (c) 2019 by Wojciech Borkowski
+// (wborkowsk MAŁPA gmail KROPA com , wborkowski MAŁPA uw KROPA edu KROPA pl)
+//
 
 #include "request_handler.hpp"
 #include <fstream>
@@ -34,12 +37,14 @@ void request_handler::handle_request(const request& req, reply& rep)
   for(auto h:req.headers)
       std::cout<<h.name<<" : "<<h.value<<std::endl;
 
+  //COMMUNICATION WITH fasada IS ONLY IN THIS FUNCTION:
   extern bool communicate_with_fasada(const request& req, reply& rep);
+  //CALLED HERE:
   if (req.uri.find_first_of("@?&!")!=std::string::npos)
   {
       std::cout<<"Request: "<<req.uri<<" is for FACJATA "<<std::endl;
-      if(!communicate_with_fasada(req,rep))//when totally failed
-      {                           //return stock_reply
+      if(!communicate_with_fasada(req,rep)) //when totally failed
+      {                                     //return stock_reply
           std::cout<<"Request: "<<req.uri<<" not handled "<<std::endl;
           rep = reply::stock_reply(reply::not_found);
       }
