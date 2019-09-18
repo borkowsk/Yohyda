@@ -34,6 +34,7 @@ add_executable( wwwserver
     "${SRCPATH}/wwwserver1/request_handler.cpp"
     "${SRCPATH}/wwwserver1/request_parser.cpp"
     "${SRCPATH}/wwwserver1/server.cpp"
+    "${SRCPATH}/wwwserver1/commwithfasada.cpp"
     "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
                 )
 

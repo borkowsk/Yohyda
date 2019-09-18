@@ -11,12 +11,11 @@
 #include "request_handler.hpp"
 #include <fstream>
 #include <sstream>
+#include <iostream>
 #include <string>
 #include "mime_types.hpp"
 #include "reply.hpp"
 #include "request.hpp"
-
-#include "URLparser.hpp" //facies compatible URL parser
 
 namespace http {
 namespace server {
@@ -26,13 +25,33 @@ request_handler::request_handler(const std::string& doc_root)
 {
 }
 
+//192.168.1.102 for tests
 void request_handler::handle_request(const request& req, reply& rep)
 {
+  std::cout<<"Request: "<<req.uri<<std::endl;
+  std::cout<<"HTTP: "<<req.http_version_major<<"."<<req.http_version_minor<<std::endl;
+  std::cout<<"methed: "<<req.method<<std::endl;
+  for(auto h:req.headers)
+      std::cout<<h.name<<" : "<<h.value<<std::endl;
+
+  extern bool communicate_with_fasada(const request& req, reply& rep);
+  if (req.uri.find_first_of("@?&!")!=std::string::npos)
+  {
+      std::cout<<"Request: "<<req.uri<<" is for FACJATA "<<std::endl;
+      if(!communicate_with_fasada(req,rep))//when totally failed
+      {                           //return stock_reply
+          std::cout<<"Request: "<<req.uri<<" not handled "<<std::endl;
+          rep = reply::stock_reply(reply::not_found);
+      }
+      return;
+  }
+
   // Decode url to path.
   std::string request_path;
   if (!url_decode(req.uri, request_path))
   {
     rep = reply::stock_reply(reply::bad_request);
+    std::cout<<"Request: "<<req.uri<<" bad_request "<<std::endl;
     return;
   }
 
@@ -41,11 +60,12 @@ void request_handler::handle_request(const request& req, reply& rep)
       || request_path.find("..") != std::string::npos)
   {
     rep = reply::stock_reply(reply::bad_request);
+    std::cout<<"Request: "<<req.uri<<" bad_path "<<std::endl;
     return;
   }
 
   // If path ends in slash (i.e. is a directory) then add "index.html".
-  if (request_path[request_path.size() - 1] == '/')
+  if (request_path[request_path.size() - 1] == '/')      // If path ends in slash (i.e. is a directory) then add "index.html".
   {
     request_path += "index.html";
   }
@@ -54,7 +74,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   std::size_t last_slash_pos = request_path.find_last_of("/");
   std::size_t last_dot_pos = request_path.find_last_of(".");
   std::string extension;
-  if (last_dot_pos != std::string::npos && last_dot_pos > last_slash_pos)
+  if(last_dot_pos != std::string::npos && last_dot_pos > last_slash_pos)
   {
     extension = request_path.substr(last_dot_pos + 1);
   }
@@ -64,20 +84,28 @@ void request_handler::handle_request(const request& req, reply& rep)
   std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
   if (!is)
   {
-    rep = reply::stock_reply(reply::not_found);
-    return;
+      rep = reply::stock_reply(reply::not_found);
+      std::cout<<"Request: "<<req.uri<<" not_found "<<std::endl;
+      return;
+  }
+  else
+  {
+      // Fill out the reply to be sent to the client.
+      rep.status = reply::ok;
+      char buf[512];
+      while (is.read(buf, sizeof(buf)).gcount() > 0)
+          rep.content.append(buf, is.gcount());
   }
 
-  // Fill out the reply to be sent to the client.
-  rep.status = reply::ok;
-  char buf[512];
-  while (is.read(buf, sizeof(buf)).gcount() > 0)
-    rep.content.append(buf, is.gcount());
   rep.headers.resize(2);
   rep.headers[0].name = "Content-Length";
   rep.headers[0].value = std::to_string(rep.content.size());
   rep.headers[1].name = "Content-Type";
   rep.headers[1].value = mime_types::extension_to_type(extension);
+
+  std::cout<<"\nRequest: "<<req.uri<<" done."<<std::endl;
+  std::cout<<rep.headers[0].name<<" : "<<rep.headers[0].value<<std::endl;
+  std::cout<<rep.headers[1].name<<" : "<<rep.headers[1].value<<std::endl;
 }
 
 bool request_handler::url_decode(const std::string& in, std::string& out)
@@ -103,7 +131,7 @@ bool request_handler::url_decode(const std::string& in, std::string& out)
         }
       }
       else
-      {
+      {http://localhost:8000/ala?bla
         return false;
       }
     }
