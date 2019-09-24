@@ -140,22 +140,31 @@ void do_writer_request(const string& request,fasada::MemoryPool& MyPool)//May th
 
 void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada::MemoryPool& MyPool)//May throw exceptions
 {
+    int position;//Pomoocnicza pozycja
     switch(msgType)
     {
     case MemoryPool::ContentType::Control://There are no responses for control messages
-        if(request.find("HelloFromPID",0)==0)
+        if((position=request.find("HelloFrom",0))==0)
         {
-            int PIDpos=request.find_first_of(":");
-            if(PIDpos>0)
-                std::cerr<<MyName<<" registered client PID"<<request.c_str()+PIDpos<<std::endl;
-            NumberOfClients++;
+            int position=request.find("-",7);
+            if(position!=request.npos)
+            {
+                NumberOfClients++;
+                std::cout<<MyName<<" has registered client PID"<<request.c_str()+position<<std::endl;
+            }
         }
-        else if(request.find("ByeFromPID",0)==0)
+        else if(request.find("ByeFrom",0)==0)
         {
-            int PIDpos=request.find_first_of(":");
-            if(PIDpos>0)
-                std::cerr<<MyName<<" unregistered client PID"<<request.c_str()+PIDpos<<std::endl;
-            NumberOfClients--;
+            int position=request.find("-",7);
+            if(position!=request.npos)
+            {
+                NumberOfClients--;
+                std::cout<<MyName<<" has unregistered client PID"<<request.c_str()+position<<std::endl;
+            }
+        }
+        else
+        {
+            std::cerr<<MyName<<" has recivied invalid control request "<<request.c_str()+position<<std::endl;
         }
         break;
     case MemoryPool::ContentType::Write:

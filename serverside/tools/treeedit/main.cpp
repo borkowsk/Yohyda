@@ -197,14 +197,14 @@ int main(int argc, char* argv[])
             }
 
             //Send Hello to server
-            string Msg("HelloFromPID:");
-            Msg+=boost::lexical_cast<string>(getpid())+" ТRЕЕЕDIT";
+            string Msg("HelloFrom:");
+            Msg+=MyName;
             MyMemPool.send_request(Msg,MemoryPool::ContentType::Control);//Control message
 
             do_work(MyMemPool);//Real work to do
 
             //Send BYE to server
-            Msg="ByeFromPID:"+boost::lexical_cast<string>(getpid());
+            Msg="ByeFrom:"+MyName;
             MyMemPool.send_request(Msg,MemoryPool::ContentType::Control);//Control message
             std::cerr<<MyName<<": bye, bye!"<<std::endl;
             return 0;
