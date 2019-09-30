@@ -1,4 +1,5 @@
 #include "tree_types.h"
+#include "tree_consts.h"
 #include "processor_ls.h"
 #include <iostream>
 
@@ -19,7 +20,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 {
     bool longformat=(request.find("long")!=request.end()?true:false);
 
-    o+="ls:\n";
+    o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     for(auto p:top)
     {

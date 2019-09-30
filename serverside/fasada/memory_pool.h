@@ -91,7 +91,9 @@ public:
     ShmString* wait_for_data(const string& ReqContent,
                              int DelayMs=10,int Repeat=200)//Wait some time until particular respond will be ready
     {
-        if(is_server()) throw( interprocess_exception("Only client can wait for data prepared in server!") );
+        if(is_server())
+            throw( interprocess_exception("Only client can wait for data prepared in server!") );
+
         try{
             for(int i=0;i<Repeat;i++)
             {
@@ -123,7 +125,7 @@ public:
     }
 
     //server_only:
-    string receive(ContentType& Type)//Recive request on server side only
+    string receive(ContentType& Type)//Recive request from queue on server side only
     {
         if(!is_server()) throw( interprocess_exception("You cannot recive from server queue!"));
 

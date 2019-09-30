@@ -18,6 +18,7 @@ const unsigned    MEM_POOL_SIZE=0xffffff;
 
 ///Value of this const mark finish of all tree processors job.
 const char* const MEM_END="@T@h@e@E@n@d@";
+const char* const EXT_PRE="@E@X@T=";
 
 }//namespace "fasada"
 #endif // TREE_CONSTS_H

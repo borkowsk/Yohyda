@@ -9,6 +9,7 @@
 #include "reply.hpp"
 #include "tree_types.h"
 #include "memory_pool.h"
+#include "mime_types.hpp"
 #include <boost/lexical_cast.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
@@ -34,6 +35,7 @@ public:
 
         if(res.first==nullptr)
             throw interprocess_exception("A proper TREESERVER not found!");
+
         if(res.second!=1)
             throw interprocess_exception("Incompatible TREESERVER found!");//Nie spodziewa się tablicy!
 
@@ -45,10 +47,10 @@ public:
     ~FasadaKeepAndExit()
     {
         //Send BYE to server
+        std::cerr<<MyName<<": bye, bye!"<<std::endl;
         string Msg("ByeFrom:");
         Msg+=MyName;
         MyMemPool.send_request(Msg,MemoryPool::ContentType::Control);//Control message
-        std::cerr<<MyName<<": bye, bye!"<<std::endl;
     }
     const string& Name()
     {
@@ -68,12 +70,81 @@ static void do_when_first_time(fasada::MemoryPool& MyMemPool)
     FasadaConnection=std::shared_ptr<FasadaKeepAndExit>(new FasadaKeepAndExit(MyMemPool));
 }
 
-bool communicate_with_fasada(const request& req, reply& rep)//TMP IMPLEMENTATION
+static void read_answer(reply& repl,ShmString* resp,const string& uri)
+{
+    std::string  extension="txt";//Plain/text is default MIME type
+    string::size_type begpos=0;
+    string::size_type endpos=string::npos;
+
+    unsigned replays=0;
+    do
+    {
+      //endpos=resp->find(string_view(fasada::MEM_END),begpos);//C++17
+      endpos=resp->find(fasada::MEM_END,begpos,strlen(fasada::MEM_END));
+
+      if(endpos!=string::npos)
+      {
+          //std::cout<<"("<<endpos<<")"<<std::endl;
+          //std::cout<<"("<<resp->c_str()+endpos<<")"<<std::endl;
+          resp->erase(endpos);
+          replays=0;
+      }
+      else
+      {
+          replays++;
+      }
+
+      const char* lastpos=resp->c_str()+begpos;
+      std::cout<<lastpos;
+
+      if(replays!=0)//Jesli trzeba poczekac
+      {
+        begpos+=strlen(lastpos);//Przesuwamy o to co juz wydrukowane
+        //std::cout<<".";std::cout.flush();
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+      }
+
+    }while(endpos==string::npos && replays<20);
+
+    if(replays!=0)//Nie doczekal sie
+    {
+       std::cerr<<"\n"<<FasadaConnection->Name()<<" waiting "<<replays*200<<"ms for continuation"<<std::endl;
+       std::cerr<<"Shared memory for '"<<uri<<"' potentially remain available for reread"<<std::endl;
+       (*resp)+="\n\nAnswer incomplete! Reload the same request after some time!\n";
+    }
+
+    // Fill out the reply to be sent to the client.
+    repl.status = reply::ok;
+    repl.content.assign(resp->c_str(),resp->size());//Czy takie assign jest wrazliwe na koniec c-stringa?
+                                                    //Tak bezpieczniej? Wszystkie dane, nawet jak są w srodku znaki \0?
+
+    repl.headers.resize(2);
+    repl.headers[0].name = "Content-Length";
+    repl.headers[0].value = std::to_string(repl.content.size());
+    repl.headers[1].name = "Content-Type";
+    repl.headers[1].value = mime_types::extension_to_type(extension).c_str();
+
+    std::cout<<"\nRequest: "<<uri<<" done."<<std::endl;
+    std::cout<<repl.headers[0].name<<" : "<<repl.headers[0].value<<std::endl;
+    std::cout<<repl.headers[1].name<<" : "<<repl.headers[1].value<<std::endl;
+
+    //Mozna ewentualnie posprzatac
+    if(replays==0) //Bylo dokonczone, mozna usunac blok komunikacyjny
+        FasadaConnection->Pool().free_data(uri.c_str());//Tylko wtedy mozna usunac obszar gdy produkcja została zakończona
+}
+
+bool communicate_with_fasada(const request& curr_request, reply& curr_reply)
 {
     try
     {
         static bool firsttime=true;
-        static fasada::MemoryPool MyMemPool; //To jest klient! Konstruktor bez parametru
+        static fasada::MemoryPool MyMemPool; //To jest klient! Konstruktor bez parametru (NA RAZIE)
+
+        if(curr_request.uri=="/!!!!")
+        {
+            FasadaConnection=nullptr;//Dealokacja?
+            exit(-9999);//DEBUG exit od wwwserver
+        }
 
         if(firsttime)
         {
@@ -82,7 +153,30 @@ bool communicate_with_fasada(const request& req, reply& rep)//TMP IMPLEMENTATION
         }
 
         //Właściwa obsługa zapytania
-        //...
+        string req_uri="http://localhost:8000";//DEBUG
+        req_uri+=curr_request.uri.c_str();
+
+        if(1)//How to check this?
+            MyMemPool.send_request(req_uri,MemoryPool::ContentType::Read);
+        else
+            MyMemPool.send_request(req_uri,MemoryPool::ContentType::Write);
+
+        //if(verbose)
+            std::cerr<<FasadaConnection->Name()<<" waiting for response..."<<std::endl;
+
+        ShmString* response=MyMemPool.wait_for_data(req_uri);//Odebranie odpowiedzi z pamięci dzielonej
+
+        if(response==nullptr)
+        {
+            std::cout<<FasadaConnection->Name()<<": Response unavailable"<<std::endl;
+            return false;//TOTALLY FAILED
+        }
+        else
+        {
+            read_answer(curr_reply,response,req_uri);
+            return true; //COŚ ZOSTAŁO ODEBRANE - Z PUNKTU WIDZENIA SERWERA OK
+                         //bo ma co wysyłać, więc może kontynuować
+        }
     }
     catch(const interprocess_exception& exc)
     {
@@ -96,6 +190,7 @@ bool communicate_with_fasada(const request& req, reply& rep)//TMP IMPLEMENTATION
             boost::current_exception_diagnostic_information();
         return false;//TOTALLY FAILED
     }
+    return false;//SHOULD NEVER BE USED!
 }
 
 } // namespace server
