@@ -80,7 +80,7 @@ public:
     }
 
     //Use the request queue
-    enum ContentType { Control=0, Write=1, Read=2, Maxim=3 };
+    enum ContentType { Control=99, Write=98, Read=97 };
 
     void send_request(string Content, ContentType  Type)//Send a request on client side only
     {
@@ -134,7 +134,6 @@ public:
         string                     data;
         data.resize(fasada::MSG_MAX_LEN);
         request_queue.receive(&data[0],fasada::MSG_MAX_LEN,recvd_size,priority);        assert(recvd_size<fasada::MSG_MAX_LEN);
-                                                                                         assert(priority<ContentType::Maxim);
         Type=ContentType(priority);
         return data;
     }

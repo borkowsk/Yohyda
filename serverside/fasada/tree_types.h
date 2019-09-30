@@ -30,13 +30,13 @@ namespace fasada
     using val_string=std::string;
     using  processors_map=std::map<key_string,tree_processor*> ;    //Type of processors maps - this type may change!
 #else
-    typedef  ipc::allocator<char, ipc::managed_shared_memory::segment_manager>    	ShmCharAllocator;
+    typedef  ipc::allocator<char, ipc::managed_shared_memory::segment_manager>  	ShmCharAllocator;
     typedef  ipc::basic_string<char, std::char_traits<char>,ShmCharAllocator> 		ShmString;
     typedef  ipc::allocator<ShmString, ipc::managed_shared_memory::segment_manager> 	ShmStringAllocator;
     typedef  ipc::vector<ShmString, ShmStringAllocator> 				ShmVectorOfString;
     typedef  std::string 								key_string;
     typedef  std::string								val_string;
-    class tree_processor;
+    class    tree_processor;
     typedef  std::map<key_string,tree_processor*> 					processors_map;    //Type of processors maps - this type may change!
 #define nullptr (NULL)
 #endif

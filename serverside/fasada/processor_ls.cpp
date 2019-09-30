@@ -14,8 +14,10 @@ processor_ls::processor_ls(const char* name):
 
 processor_ls::~processor_ls()
 {}
+
 //TODO - problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
 //https://stackoverflow.com/questions/48407925/boostproperty-treeptree-accessing-arrays-first-complex-element
+//Do rozwiązania na poziomie serwera fasady za pomoca wstawienia kolejnych liczb
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool longformat=(request.find("long")!=request.end()?true:false);
@@ -24,7 +26,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 
     for(auto p:top)
     {
-        std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
+        //std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
         o+=std::string(p.first.data())+std::string(":")+std::string(p.second.data());
         if(longformat)
             o+=";\n";
@@ -32,7 +34,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             o+=";\t";
     }
 
-    o+="\nOK";
+    //o+="\nTheEnd";
 }
 
 

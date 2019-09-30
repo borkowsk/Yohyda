@@ -14,11 +14,12 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <iostream>
 #include <string>
+#include <cctype>
 
 using namespace fasada;
 
-namespace http {
-namespace server {
+namespace http { //TO DO KASACJI?
+namespace server { //DO ZAMIANY NA "fasada"?
 
 extern "C" //Te dwie funcje do eksportowania jako gole nazwy
 {
@@ -48,6 +49,7 @@ public:
         //Send Hello to server
         string Msg("HelloFrom:");
         Msg+=MyName.c_str();
+        std::cerr<<"Sending '"<<Msg<<"' to fasada"<<std::endl;
         MyMemPool.send_request(Msg,MemoryPool::ContentType::Control);//Control message
     }
     ~FasadaKeepAndExit()
@@ -68,22 +70,51 @@ public:
     }
 };
 
-
 static ipc::string host="localhost";
 static ipc::string port="8000";
 static std::shared_ptr<FasadaKeepAndExit> FasadaConnection;
 
-static void do_when_first_time(fasada::MemoryPool& MyMemPool)
+static fasada::MemoryPool& do_when_first_time() //DZIWNA KONSTRUKCJA, ALE TYMCZASOWA BO BĘDZIE WIĘCEJ KOLEJEK i PROGRAMÓW Z Fasadą
 {
     std::cout<<"Initialize connection with TREESERVER"<<std::endl;
-    FasadaConnection=std::shared_ptr<FasadaKeepAndExit>(new FasadaKeepAndExit(MyMemPool));
+    static fasada::MemoryPool MyHiddenPool; //To jest klient! Konstruktor bez parametru (NA RAZIE)
+    FasadaConnection=std::shared_ptr<FasadaKeepAndExit>(new FasadaKeepAndExit(MyHiddenPool));
+    return MyHiddenPool;
+}
+
+static bool findExt(const ShmString* resp,string& extension,string::size_type& extpos)
+{
+    extpos=resp->find(fasada::EXT_PRE,0);
+    //std::cout<<'{'<<extpos<<'}'<<std::endl;
+
+    if(extpos!=string::npos)
+    {
+        //std::cout<<'['<<extpos<<']';
+        extension.clear(); extension.reserve(12);
+        extpos+=strlen(fasada::EXT_PRE);
+
+        const char* ext=resp->c_str()+extpos;
+        while(!isblank(*ext) && !iscntrl(*ext))
+        {
+            //std::cout<<(*ext);
+            extension+=(*ext);
+            ext++;
+        }
+
+        extpos+=extension.size();
+        //std::cout<<std::endl;
+        return true;
+    }
+    else
+        return false;
 }
 
 static void read_answer(reply& repl,ShmString* resp,const string& uri)
 {
-    std::string  extension="txt";//Plain/text is default MIME type
-    string::size_type begpos=0;
+    string  extension="txt";//Plain/text is default MIME type
     string::size_type endpos=string::npos;
+    string::size_type extpos=0;
+    string::size_type begpos=0;
 
     unsigned replays=0;
     do
@@ -104,7 +135,7 @@ static void read_answer(reply& repl,ShmString* resp,const string& uri)
       }
 
       const char* lastpos=resp->c_str()+begpos;
-      std::cout<<lastpos;
+      //std::cout<<lastpos;//DEBUG
 
       if(replays!=0)//Jesli trzeba poczekac
       {
@@ -122,16 +153,24 @@ static void read_answer(reply& repl,ShmString* resp,const string& uri)
        (*resp)+="\n\nAnswer incomplete! Reload the same request after some time!\n";
     }
 
+    if( findExt(resp,extension,extpos) )
+    {
+        extpos++;//Tym razem znak separatora też
+        std::cout<<"("<<extpos<<") '"<<extension<<"'"<<std::endl;
+    }
+    else
+        extpos=0;
+
     // Fill out the reply to be sent to the client.
     repl.status = reply::ok;
-    repl.content.assign(resp->c_str(),resp->size());//Czy takie assign jest wrazliwe na koniec c-stringa?
+    repl.content.assign(resp->c_str()+extpos,resp->size()-extpos);//Czy takie assign jest wrazliwe na koniec c-stringa?
                                                     //Tak bezpieczniej? Wszystkie dane, nawet jak są w srodku znaki \0?
 
     repl.headers.resize(2);
     repl.headers[0].name = "Content-Length";
     repl.headers[0].value = std::to_string(repl.content.size());
     repl.headers[1].name = "Content-Type";
-    repl.headers[1].value = mime_types::extension_to_type(extension).c_str();
+    repl.headers[1].value = mime_types::extension_to_type(extension.c_str()).c_str();
 
     std::cout<<"\nRequest: "<<uri<<" done."<<std::endl;
     std::cout<<repl.headers[0].name<<" : "<<repl.headers[0].value<<std::endl;
@@ -148,19 +187,12 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply) // 
 {
     try
     {
-        static bool firsttime=true;
-        static fasada::MemoryPool MyMemPool; //To jest klient! Konstruktor bez parametru (NA RAZIE)
+        static fasada::MemoryPool& MyMemPool=do_when_first_time();
 
-        if(curr_request.uri=="/!!!!")
+        if(curr_request.uri=="/!!!!")//SPECIAL!!!
         {
             FasadaConnection=nullptr;//deallocation means close connection with treeserver!
             exit(-9999);//DEBUG exit of wwwserver
-        }
-
-        if(firsttime)
-        {
-            do_when_first_time(MyMemPool);
-            firsttime=false;
         }
 
         //Właściwa obsługa zapytania

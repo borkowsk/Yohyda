@@ -30,7 +30,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         o+="] : '";
         o+=t.data();
         o+="'\n";
-        return defret;//wynik nie blokuje, ale "before" jest never więc nie ma "after"
+        return defret;//wynik nie blokuje, ale "before" jest "never" więc nie ma "after"
     }
     );
 }
