@@ -23,12 +23,17 @@
 namespace http {
 namespace server {
 
+extern "C" //Fasada interface functions
+{
+    //void set_host_and_port(const char* iHost,const char* iPort);
+    bool communicate_with_fasada(const request& curr_request, reply& curr_reply);
+}
+
 request_handler::request_handler(const std::string& doc_root)
   : doc_root_(doc_root)
 {
 }
 
-//192.168.1.102 for tests
 void request_handler::handle_request(const request& req, reply& rep)
 {
   std::cout<<"Request: "<<req.uri<<std::endl;
@@ -38,8 +43,8 @@ void request_handler::handle_request(const request& req, reply& rep)
       std::cout<<h.name<<" : "<<h.value<<std::endl;
 
   //COMMUNICATION WITH fasada IS ONLY IN THIS FUNCTION:
-  extern bool communicate_with_fasada(const request& req, reply& rep);
-  //CALLED HERE:
+  //    bool communicate_with_fasada(const request& req, reply& rep);
+  //CALLED BELOW:
   if (req.uri.find_first_of("@?&!")!=std::string::npos)
   {
       std::cout<<"Request: "<<req.uri<<" is for FACJATA "<<std::endl;

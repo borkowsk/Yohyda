@@ -18,7 +18,8 @@ const unsigned    MEM_POOL_SIZE=0xffffff;
 
 ///Value of this const mark finish of all tree processors job.
 const char* const MEM_END="@T@h@e@E@n@d@";
-const char* const EXT_PRE="@E@X@T=";
+const char* const EXT_PRE="@E@X@T=";//See for MIME types:
+    //https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 
 }//namespace "fasada"
 #endif // TREE_CONSTS_H

@@ -16,6 +16,12 @@
 #include <boost/asio.hpp>
 #include "server.hpp"
 
+extern "C" //Fasada interface functions
+{   //Use localhost or something like 192.168.1.102 for tests
+    void set_host_and_port_for_fasada(const char* iHost,const char* iPort);
+    //bool communicate_with_fasada(const request& curr_request, reply& curr_reply);
+}
+
 int main(int argc, char* argv[])
 {
   try
@@ -33,6 +39,8 @@ int main(int argc, char* argv[])
 
     // Initialise the server.
     http::server::server s(argv[1], argv[2], argv[3]);
+    //COMMUNICATION WITH fasada ALSO NEEDS TO KNOW THIS PARAMETERS:
+    set_host_and_port_for_fasada(argv[1], argv[2]);
 
     // Run the server until stopped.
     s.run();

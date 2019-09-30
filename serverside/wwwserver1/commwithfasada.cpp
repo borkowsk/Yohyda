@@ -20,6 +20,12 @@ using namespace fasada;
 namespace http {
 namespace server {
 
+extern "C" //Te dwie funcje do eksportowania jako gole nazwy
+{
+    void set_host_and_port_for_fasada(const char* iHost,const char* iPort);
+    bool communicate_with_fasada(const request& curr_request, reply& curr_reply);
+}
+
 class FasadaKeepAndExit
 {
     string  MyName;
@@ -62,6 +68,9 @@ public:
     }
 };
 
+
+static ipc::string host="localhost";
+static ipc::string port="8000";
 static std::shared_ptr<FasadaKeepAndExit> FasadaConnection;
 
 static void do_when_first_time(fasada::MemoryPool& MyMemPool)
@@ -133,7 +142,9 @@ static void read_answer(reply& repl,ShmString* resp,const string& uri)
         FasadaConnection->Pool().free_data(uri.c_str());//Tylko wtedy mozna usunac obszar gdy produkcja została zakończona
 }
 
-bool communicate_with_fasada(const request& curr_request, reply& curr_reply)
+//Only these 2 functions are globally visible:
+
+bool communicate_with_fasada(const request& curr_request, reply& curr_reply) // extern "C"
 {
     try
     {
@@ -142,8 +153,8 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply)
 
         if(curr_request.uri=="/!!!!")
         {
-            FasadaConnection=nullptr;//Dealokacja?
-            exit(-9999);//DEBUG exit od wwwserver
+            FasadaConnection=nullptr;//deallocation means close connection with treeserver!
+            exit(-9999);//DEBUG exit of wwwserver
         }
 
         if(firsttime)
@@ -153,7 +164,7 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply)
         }
 
         //Właściwa obsługa zapytania
-        string req_uri="http://localhost:8000";//DEBUG
+        string req_uri="http://"+host+":"+port;//DEBUG
         req_uri+=curr_request.uri.c_str();
 
         if(1)//How to check this?
@@ -162,7 +173,7 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply)
             MyMemPool.send_request(req_uri,MemoryPool::ContentType::Write);
 
         //if(verbose)
-            std::cerr<<FasadaConnection->Name()<<" waiting for response..."<<std::endl;
+            std::cerr<<FasadaConnection->Name()<<" waiting for response from 'fasada'..."<<std::endl;
 
         ShmString* response=MyMemPool.wait_for_data(req_uri);//Odebranie odpowiedzi z pamięci dzielonej
 
@@ -191,6 +202,12 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply)
         return false;//TOTALLY FAILED
     }
     return false;//SHOULD NEVER BE USED!
+}
+
+void set_host_and_port_for_fasada(const char* iHost,const char* iPort)// extern "C"
+{
+    host=iHost;
+    port=iPort;
 }
 
 } // namespace server
