@@ -4,6 +4,8 @@
 // Copyright (c) 2019, Wojciech Borkowski
 // (wborkowsk MAŁPA gmail KROPA com , wborkowski MAŁPA uw KROPA edu KROPA pl)
 //
+// This version work correctly with txt & html input from fasada
+//
 #include "URLparser.hpp"
 #include "request.hpp"
 #include "reply.hpp"
