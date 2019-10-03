@@ -38,7 +38,7 @@ namespace fasada
     protected://Configuration
         std::string  procName;
         Category procCategory;
-
+        std::string  getHtmlHeaderDefaults();//Default set of html <HEAD> lines
     protected://deferred implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request)=0;

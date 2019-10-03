@@ -19,20 +19,37 @@ processor_dfs::~processor_dfs()
 void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool defret=(request["return"]!="false");
+    bool longformat=(request.find("long")!=request.end()?true:false);
+    bool html=request["html"]!="false";
 
-    o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
+    if(html)//TYPE HEADER AND HTML HEADER
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n<HTML>";
+        o+="\n<HEAD>"+getHtmlHeaderDefaults()
+                +"<TITLE>tree of '"+request["&path"]+"'</TITLE>"
+                +"</HEAD><BODY>"
+                +(longformat?"<UL>\n":"\n");
+    }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     foreach_node(top,"",
-    [&o,defret](const ptree& t,std::string k)
+    [&o,defret,html](const ptree& t,std::string k)
     {
         o+="[";
+        if(html) o+="<B>";
         o+=k;
+        if(html) o+="</B>";
         o+="] : '";
         o+=t.data();
-        o+="'\n";
+        o+="'";
+        if(html) o+="<BR>\n";
+        else o+="\n";
         return defret;//wynik nie blokuje, ale "before" jest "never" więc nie ma "after"
     }
     );
+
+    if(html) o+="</BODY></HTML>";
 }
 
 

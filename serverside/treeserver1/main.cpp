@@ -187,6 +187,7 @@ int main(int argc, char* argv[])
     fasada::processor_dfs DFS;//--//---
     fasada::processor_ls  LS; //--//---
     fasada::processor_ls  Def("default");//chyba że ktoś chce robić aliasy
+    fasada::processor_dfs Tree("tree");
 
     MyName+=boost::lexical_cast<string>(getpid());
     std::cerr<<"\n"<<MyName<<":"<<std::endl;

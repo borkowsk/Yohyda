@@ -19,13 +19,32 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 {
     std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();
+    bool html=request["html"]!="false";
+    if(html)//TYPE HEADER AND HTML HEADER
+    {
+         o+=ipc::string(EXT_PRE)+"htm\n<HTML>";
+         o+="<HEAD>"+getHtmlHeaderDefaults()+"<TITLE>'"+request["&path"]+"'</TITLE></HEAD><BODY><P>";
+    }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";
 
-    o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
-
-    if(request["verbose"]=="true")
-        o+="'"+request["&path"] + "' = '" + tmp + "' ["+boost::lexical_cast<std::string>(noc)+"]";
+    if(request["verbose"]=="true" || request["long"]=="true")
+    {
+        o+="'"+request["&path"]+ "' = '" + tmp + "'";
+        if(noc && html)
+        {
+           std::string fullpath=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
+           o+=" [ <a href=\""+fullpath+"?ls&long&html\">"
+            +boost::lexical_cast<std::string>(noc)
+            +"</a> ]";
+        }
+        else
+            o+=" ["+boost::lexical_cast<std::string>(noc)+"]";
+    }
     else
         o+=tmp;
+
+    if(html) o+="</P></BODY></HTML>";
 }
 
 

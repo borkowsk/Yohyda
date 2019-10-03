@@ -21,20 +21,48 @@ processor_ls::~processor_ls()
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool longformat=(request.find("long")!=request.end()?true:false);
+    bool html=request["html"]!="false";
 
-    o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
-
-    for(auto p:top)
+    if(html)//TYPE HEADER AND HTML HEADER
     {
-        //std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
-        o+=std::string(p.first.data())+std::string(":")+std::string(p.second.data());
-        if(longformat)
-            o+=";\n";
-        else
-            o+=";\t";
+        o+=ipc::string(EXT_PRE)+"htm\n<HTML>";
+        o+="\n<HEAD>"+getHtmlHeaderDefaults()
+                +"<TITLE>list of '"+request["&path"]+"'</TITLE>"
+                +"</HEAD><BODY>"
+                +(longformat?"<UL>\n":"\n");
     }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
-    //o+="\nTheEnd";
+    if(top.size()>0)
+        for(auto p:top)
+        {
+            //std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
+            if(html)
+            {
+                std::string fullpath=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"]+std::string(p.first.data());
+                o+=std::string(longformat?"<LI>":"")
+                        +" <a href=\""+fullpath+"/?"+request["&query"]+"\">"
+                        +std::string(p.first.data())
+                        +"</a>"
+                        +" <a href=\""+fullpath+"/?get&html\">:"
+                        +std::string(p.second.data())
+                        +"</a>"
+                        +" <a href=\""+fullpath+"/?dfs&html\">*</a>"
+                        ;
+            }
+            else
+                o+=std::string(p.first.data())+std::string(":")+std::string(p.second.data());
+
+            if(longformat)
+                o+=(html?"\n":";\n");
+            else
+                o+=(html?"&nbsp; ":";\t");
+        }
+    else
+        o+=" NO SUBNODES ";
+    if(longformat & html) o+="</UL>";
+    if(html) o+="</BODY></HTML>";
 }
 
 
