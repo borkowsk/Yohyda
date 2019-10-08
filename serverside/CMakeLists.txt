@@ -5,7 +5,7 @@ project(facjata)
 set( SRCPATH "./")
 
 FIND_PACKAGE( Threads REQUIRED)
-FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options regex REQUIRED )
+FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options regex locale REQUIRED )
 SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
@@ -55,6 +55,7 @@ target_link_libraries(treeserver LINK_PUBLIC
     fasada
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_LOCALE}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     rt

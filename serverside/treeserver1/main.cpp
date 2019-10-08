@@ -18,11 +18,12 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+#include <boost/locale.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 #include <iostream>
 
-//Procesory same się rejestrują
+//Procesory danych json w postaci zmiennych w main.
 #include "processor_ls.h"
-
 #include "processor_get.h"
 #include "processor_dfs.h"
 
@@ -30,7 +31,8 @@ using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
-const char debug_path[]="/data/wb/SCC/working_copies/facies/private/TimelineOfTheEarth/posts/posts.json";
+const char debug_path[]="/data/wb/SCC/working_copies/facies/private/pages/Memetyka/posts/posts_1.json";
+                      ///"/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
 
 // Create a root of the tree
 pt::ptree root;
@@ -180,6 +182,31 @@ void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada
     }
 }
 
+
+void recode_facebook_pl_to_utf8(pt::ptree& start)
+{
+/*
+    pt::ptree& child=start.get_child("1.data.1");
+    for(auto& c:child)
+    {
+        std::string latin1_string=boost::locale::conv::from_utf(c.second.data(),"Latin1");
+        //std::string utf8_string=boost::locale::conv::to_utf<char>(latin1_string,"Latin1");
+        std::cout<<c.first.data() <<":"<<latin1_string<<std::endl;
+        c.second.data()=latin1_string;
+    }
+*/
+    foreach_node(start,"root",always,
+        [](ptree& t,std::string k)
+        {
+            std::cout<< k <<":\t";
+            std::string latin1_string=boost::locale::conv::from_utf(t.data(),"Latin1");
+            t.data()=latin1_string;
+            std::cout<< t.data() <<" ; "<<std::endl;
+            return false;//blokuje wywołanie "after", które i tak jest "never"
+        }
+        );
+}
+
 int main(int argc, char* argv[])
 {
     //Dopiero w main jest pewność że wewnętrzne struktury static zostały zainicjalizowane. Ale to słabe...
@@ -212,6 +239,8 @@ int main(int argc, char* argv[])
 
         pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
         insert_numbers(root);
+        recode_facebook_pl_to_utf8(root);
+
 
         ShmCharAllocator charallocator(MyMemPool.segm().get_segment_manager());
         //do{
@@ -241,6 +270,7 @@ int main(int argc, char* argv[])
 
         MyMemPool.free_data("TreeServerEmp");
         pt::write_json("output.json",root);
+        //pt::write_xml("output.xml",root);// --> https://stackoverflow.com/questions/18875437/writing-more-complex-than-trivial-xml-with-boost-property-tree
         std::cerr<<MyName<<": I'm finished."<<std::endl;
         return 0;
     }
