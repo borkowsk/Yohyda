@@ -13,7 +13,7 @@
 #include "tree_processor.h"
 #include "URLparserLib/URLparser.hpp"
 #include <boost/lexical_cast.hpp>
-//#include <boost/interprocess/streams/vectorstream.hpp>//to jednak nie tak dziala jakbym chcial
+
 #include "ptree_foreach.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -21,6 +21,7 @@
 #include <boost/locale.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <iostream>
+#include <time.h>       /* time_t, struct tm, time, localtime */
 
 //Procesory danych json w postaci zmiennych w main.
 #include "processor_ls.h"
@@ -182,6 +183,44 @@ void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada
     }
 }
 
+void recode_timestamps(pt::ptree& start)
+{
+/*
+     pt::ptree& paren=start.get_child("1");
+     pt::ptree& child=start.get_child("1.timestamp");
+     time_t timestamp=boost::lexical_cast<time_t>(child.data());
+     struct tm * timeinfo;
+     timeinfo = localtime (&timestamp);
+     std::string timeString=asctime(timeinfo);//"Mon";//"Mon Oct  7 22-45-46 2019";//asctime(timeinfo);
+     for(char& c:timeString) if(c=='\n') c=';';
+     std::cout<<timestamp<<"="<<timeString<<std::endl;
+     paren.put("timestamp_asc",timeString.c_str());
+*/
+     foreach_node(start,"root",always,always,
+         [](ptree& t,std::string k)
+         {
+             if(k.find("timestamp",0)!=k.npos)
+             {
+                std::cout<<k<<":'"<<t.data()<<"'"<<std::endl;
+                try
+                {
+                    struct tm  *timeinfo;
+                    time_t timestamp=boost::lexical_cast<time_t>(t.data());
+                    std::string tmp=t.data();
+                    t.clear();
+                    t.put("unix",tmp);
+                    timeinfo = localtime (&timestamp);
+                    std::string timeString=asctime(timeinfo);
+                    for(char& c:timeString) if(c=='\n') c=';';
+                    t.put("asci",timeString);
+                }catch(...)
+                {/*JAK JAKIS ERROR TO NIE ROBI NIC*/}
+             }
+             return false;//nieistotne
+         }
+         );
+
+}
 
 void recode_facebook_pl_to_utf8(pt::ptree& start)
 {
@@ -198,10 +237,10 @@ void recode_facebook_pl_to_utf8(pt::ptree& start)
     foreach_node(start,"root",always,
         [](ptree& t,std::string k)
         {
-            std::cout<< k <<":\t";
+            //std::cout<< k <<":\t";
             std::string latin1_string=boost::locale::conv::from_utf(t.data(),"Latin1");
             t.data()=latin1_string;
-            std::cout<< t.data() <<" ; "<<std::endl;
+            //std::cout<< t.data() <<" ; "<<std::endl;
             return false;//blokuje wywołanie "after", które i tak jest "never"
         }
         );
@@ -239,6 +278,7 @@ int main(int argc, char* argv[])
 
         pt::read_json(debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
         insert_numbers(root);
+        recode_timestamps(root);
         recode_facebook_pl_to_utf8(root);
 
 
