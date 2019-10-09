@@ -18,7 +18,7 @@ include_directories(
                     )
 
 add_executable( treeserver
-    "${SRCPATH}/treeserver1/main.cpp"
+    "${SRCPATH}/treeserver1/treeserver1_main.cpp"
                 )
 
 add_executable( indexer
@@ -26,20 +26,19 @@ add_executable( indexer
                 )
 
 add_executable( treeedit
-    "${SRCPATH}/tools/treeedit/main.cpp"
+    "${SRCPATH}/tools/treeedit/treeedit_main.cpp"
                 )
 
 add_executable( wwwserver
     "${SRCPATH}/wwwserver1/connection.cpp"
     "${SRCPATH}/wwwserver1/connection_manager.cpp"
-    "${SRCPATH}/wwwserver1/main.cpp"
     "${SRCPATH}/wwwserver1/mime_types.cpp"
     "${SRCPATH}/wwwserver1/reply.cpp"
     "${SRCPATH}/wwwserver1/request_handler.cpp"
     "${SRCPATH}/wwwserver1/request_parser.cpp"
     "${SRCPATH}/wwwserver1/server.cpp"
     "${SRCPATH}/wwwserver1/commwithfasada.cpp"
-    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
+    "${SRCPATH}/wwwserver1/wwwserver1_main.cpp"
                 )
 
 add_library(fasada
@@ -62,7 +61,7 @@ target_link_libraries(treeserver LINK_PUBLIC
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_LOCALE}
     ${Boost_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}
+    ${CMAKE_THREAD_LIBS_INIT}#    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
     rt
     )
 
