@@ -5,7 +5,7 @@ project(facjata)
 set( SRCPATH "./")
 
 FIND_PACKAGE( Threads REQUIRED)
-FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options regex locale REQUIRED )
+FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options filesystem regex locale REQUIRED )
 SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
@@ -21,10 +21,14 @@ add_executable( treeserver
     "${SRCPATH}/treeserver1/main.cpp"
                 )
 
+add_executable( indexer
+    "${SRCPATH}/tools/indexer/indexer_main.cpp"
+                )
+
 add_executable( treeedit
     "${SRCPATH}/tools/treeedit/main.cpp"
                 )
-                    
+
 add_executable( wwwserver
     "${SRCPATH}/wwwserver1/connection.cpp"
     "${SRCPATH}/wwwserver1/connection_manager.cpp"
@@ -48,6 +52,7 @@ add_library(fasada
 
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
+target_compile_options( indexer    PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( fasada     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )  
 
@@ -78,6 +83,12 @@ target_link_libraries(treeedit  LINK_PUBLIC
     rt
     )
 
-
+target_link_libraries(indexer  LINK_PUBLIC
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    rt
+    )
 
 

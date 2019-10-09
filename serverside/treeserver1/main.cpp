@@ -209,8 +209,8 @@ void recode_timestamps(pt::ptree& start)
                     std::string tmp=t.data();
                     t.clear();
                     t.put("unix",tmp);
-                    timeinfo = localtime (&timestamp);
-                    std::string timeString=asctime(timeinfo);
+                    timeinfo = localtime (&timestamp);//http://www.cplusplus.com/reference/ctime/localtime/
+                    std::string timeString=asctime(timeinfo);//alt.: http://www.cplusplus.com/reference/ctime/strftime/ ?
                     for(char& c:timeString) if(c=='\n') c=';';
                     t.put("asci",timeString);
                 }catch(...)
