@@ -1,7 +1,9 @@
-//
-// directory indexer
+// This is a directory indexer for user data downloaded from Facebook.
+// (author: Wojciech Borkowski)
 // base on: https://stackoverflow.com/questions/20923456/boost-directory-iterator-example-how-to-list-directory-files-not-recursive
+// and: https://theboostcpplibraries.com/boost.propertytree
 //
+// Compilation:
 // g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp -lboost_system -lboost_filesystem && ./a.out .
 // 
 #include <boost/filesystem.hpp>
