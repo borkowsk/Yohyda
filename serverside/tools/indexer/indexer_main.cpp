@@ -6,18 +6,21 @@
 // 
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 
-using namespace boost::filesystem;
+namespace fs = boost::filesystem;
+namespace pt = boost::property_tree;
 
-void list_directory(const path& p)
+void list_directory(const fs::path& p,pt::ptree& curr)
 {
-    for(boost::filesystem::directory_entry& entry : boost::make_iterator_range( directory_iterator(p), {}))
+    for(fs::directory_entry& entry : boost::make_iterator_range( fs::directory_iterator(p), {}))
     {
         if(is_directory(entry))
         {
             std::cout <<"#"<< entry.path() << "/\n";
-            list_directory(entry.path());
+            list_directory(entry.path(),curr);
         }
         else
         if(is_symlink(entry))
@@ -26,7 +29,11 @@ void list_directory(const path& p)
         if(is_regular_file(entry))
         {
             if(entry.path().extension()==".json")
+            {
                 std::cout << entry << "  is a JSON!\n";
+                curr.put(pt::ptree::path_type{entry.path().c_str(), '/'},"!FacebookJson");
+                //pt::ptree& c=curr.add_child(entry.path().c_str(),"");
+            }
             //std::cout << entry << " is a "<<entry.path().extension()<<"\n";
         }
         else
@@ -40,12 +47,15 @@ void list_directory(const path& p)
 
 int main(int argc, char *argv[]) 
 {
-    path p(argc>1? argv[1] : ".");
+    pt::ptree top;
 
-    if(is_directory(p)) 
+    fs::path p(argc>1? argv[1] : ".");
+
+    if(fs::is_directory(p))
     {
         std::cout << p << " is a directory containing:\n";
-        list_directory(p);
+        list_directory(p,top);
+        pt::write_json("index.json",top);
         return 0;
     }
     else

@@ -32,7 +32,8 @@ using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
-const char debug_path[]="/data/wb/SCC/working_copies/facies/private/pages/Memetyka/posts/posts_1.json";
+const char debug_path[]="/data/wb/SCC/working_copies/facies/private/index.json";
+                      ///"/data/wb/SCC/working_copies/facies/private/pages/Memetyka/posts/posts_1.json";
                       ///"/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
 
 // Create a root of the tree
