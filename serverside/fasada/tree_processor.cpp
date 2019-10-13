@@ -35,17 +35,24 @@ processors_map& map_of_writers()
 tree_processor::tree_processor(Category cat,const char* name):
     procCategory(cat),procName(name)
 {
-    if(cat>READER)
+    if(cat>CONTROL)
       throw(tree_processor_exception("UNKNOWN CATEGORY OF PTREE PROCESSOR "+procName));
     
     std::cerr<<"Registering "<<procName<<" processor ";
 
     try
     {
-    if(procCategory==WRITER)
-        map_of_writers()[procName]=this;
-    else if(procCategory==READER)
-        map_of_readers()[procName]=this;
+        //WRITER could be also a READER - for preparing a FORM
+        if((procCategory & WRITER) !=0 )
+        {
+            map_of_writers()[procName]=this;
+            std::cout<<procName<<" registered as WRITER"<<std::endl;
+        }
+        if((procCategory & READER) !=0 )
+        {
+            map_of_readers()[procName]=this;
+            std::cout<<procName<<" registered as READER"<<std::endl;
+        }
     }
     catch(...)
     {
@@ -59,9 +66,9 @@ tree_processor::tree_processor(Category cat,const char* name):
 
 tree_processor::~tree_processor()
 {
-    if(procCategory==WRITER)
+    if(procCategory & WRITER !=0 )
         map_of_writers().erase(procName);
-    else if(procCategory==READER)
+    if(procCategory & READER !=0 )
         map_of_readers().erase(procName);
 }
 
@@ -86,7 +93,7 @@ tree_processor& tree_processor::getWriteProcessor(const char* name)//may throw
 //Do some work, call _implement_read, clean & return
 void tree_processor::read_tree(ShmString& o,const pt::ptree& top,URLparser& request)//may throw
 {
-    if(procCategory!=READER)
+    if(procCategory & READER == 0 )
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT A READER"));
 
     _implement_read(o,top,request);
@@ -96,7 +103,7 @@ void tree_processor::read_tree(ShmString& o,const pt::ptree& top,URLparser& requ
 //Do some work, call _implement_write, clean & return
 void tree_processor::write_tree(ShmString& o,pt::ptree& top,URLparser& request)//may throw
 {
-    if(procCategory!=WRITER)
+    if(procCategory & WRITER == 0 )
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS NOT A WRITER"));
 
     _implement_write(o,top,request);

@@ -33,7 +33,13 @@ namespace fasada
     class tree_processor
     {
     public: //SUBTYPES
-        enum Category {CONTROL=0,WRITER=1,READER=2};
+        enum Category {CONTROL=4,READER_WRITER=3,WRITER=2,READER=1};
+
+    //Category operator + (Category one,Category two) ???
+    //{ return Category(One+Two);}
+    //error: ‘fasada::tree_processor::Category fasada::tree_processor::operator+(fasada::tree_processor::Category, fasada::tree_processor::Category)’
+    //
+    // must take either zero or one argument
 
     protected://Configuration
         std::string  procName;

@@ -201,10 +201,10 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply) // 
         string req_uri="http://"+host+":"+port;//DEBUG
         req_uri+=curr_request.uri.c_str();
 
-        if(1)//How to check this?
-            MyMemPool.send_request(req_uri,MemoryPool::ContentType::Read);
-        else
+        if( req_uri.find("?!",0)!=req_uri.npos )//marker że "zapis" to ! przed nazwą
             MyMemPool.send_request(req_uri,MemoryPool::ContentType::Write);
+        else
+            MyMemPool.send_request(req_uri,MemoryPool::ContentType::Read);
 
         //if(verbose)
             std::cerr<<FasadaConnection->Name()<<" waiting for response from 'fasada'..."<<std::endl;
