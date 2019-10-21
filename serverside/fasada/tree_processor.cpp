@@ -110,10 +110,19 @@ void tree_processor::write_tree(ShmString& o,pt::ptree& top,URLparser& request)/
     o+=MEM_END;//"DONE" MARKER FOR PARAREL PROCESS
 }
 
-std::string  tree_processor::getHtmlHeaderDefaults()
-//Default set of html <HEAD> lines
+std::string  tree_processor::getHtmlHeaderDefaults(std::string& Title)
+//Default set of html <HEAD> lines finishing by <BODY>
 {
-    return "<meta charset=\"utf-8\">";
+    return "<HTML>\n<HEAD>\n"
+           "<TITLE>"+Title+"</TITLE>\n"
+            "<meta charset=\"utf-8\">\n"
+            "</HEAD>\n<BODY>\n";
+}
+
+std::string  tree_processor::getHtmlClosure()
+//Compatible set of tags for end of html document
+{
+    return "</BODY></HTML>";
 }
 
 }//namespace "fasada"

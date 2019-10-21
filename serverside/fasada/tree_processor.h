@@ -33,7 +33,7 @@ namespace fasada
     class tree_processor
     {
     public: //SUBTYPES
-        enum Category {CONTROL=4,READER_WRITER=3,WRITER=2,READER=1};
+        enum Category {CONTROL=4,WRITER_READER=3,WRITER=2,READER=1};
 
     //Category operator + (Category one,Category two) ???
     //{ return Category(One+Two);}
@@ -44,7 +44,8 @@ namespace fasada
     protected://Configuration
         std::string  procName;
         Category procCategory;
-        std::string  getHtmlHeaderDefaults();//Default set of html <HEAD> lines
+        std::string  getHtmlHeaderDefaults(std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
+        std::string  getHtmlClosure();//Compatible set of tags for end of html document
     protected://deferred implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request)=0;
