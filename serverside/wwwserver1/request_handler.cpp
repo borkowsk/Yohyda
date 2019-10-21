@@ -45,7 +45,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   //COMMUNICATION WITH fasada IS ONLY IN THIS FUNCTION:
   //    bool communicate_with_fasada(const request& req, reply& rep);
   //CALLED BELOW:
-  if (req.uri.find_first_of("@?&!")!=std::string::npos)
+  if (req.uri.find_first_of("@?!&")!=std::string::npos)
   {
       std::cout<<"Request: "<<req.uri<<" is for FACJATA "<<std::endl;
       if(!communicate_with_fasada(req,rep)) //when totally failed
@@ -141,7 +141,7 @@ bool request_handler::url_decode(const std::string& in, std::string& out)
         }
       }
       else
-      {http://localhost:8000/ala?bla
+      {
         return false;
       }
     }

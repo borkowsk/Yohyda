@@ -201,7 +201,7 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply) // 
         string req_uri="http://"+host+":"+port;//DEBUG
         req_uri+=curr_request.uri.c_str();
 
-        if( req_uri.find("?!",0)!=req_uri.npos )//marker że "zapis" to ! przed nazwą
+        if( req_uri.find("!",0)!=req_uri.npos )//marker że "zapis" to ! przed nazwą processora
             MyMemPool.send_request(req_uri,MemoryPool::ContentType::Write);
         else
             MyMemPool.send_request(req_uri,MemoryPool::ContentType::Read);

@@ -16,8 +16,8 @@ using boost::algorithm::is_any_of;
 using std::cout;
 using std::endl;
 using std::stringstream;
-//http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?reader&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
-//http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?writer&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
+//   http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik?reader&parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
+//   http://www.jakis-serwer.pl:8080/katalog1/katalog2/plik!writer?parametr1=wartosc1&parametr2=wartosc2#fragment_dokumentu
 //   \__/   \_________________/\___/\_____________________/ \___________________________________/ \________________/
 //     |             |           |             |                              |                            |
 //  schemat         host        port   ścieżka do pliku                   zapytanie                     fragment
@@ -62,13 +62,6 @@ namespace fasada
             (*this)["&path"]=path;
             (*this)["&query"]=query;
 
-            int pos1=path.rfind('/');
-            int pos2=path.rfind('.');
-            if(pos1<pos2)
-            {
-                (*this)["&extension"]=path.substr(pos2+1);
-            }
-
             if(parse_query)//Tak dokładne dzielenie może niekiedy nie być potrzebne
             {
                 split_vector_type SplitVec;
@@ -103,6 +96,21 @@ namespace fasada
                     //cout<< "&processor := default"<<endl;
                 }
             }
+
+            int pos0=path.rfind('!');
+            if(pos0!=path.npos)
+            {
+                (*this)["&processor"]=path.substr(pos0);
+                path=((*this)["&path"]=path.substr(0,pos0));
+            }
+
+            int pos1=path.rfind('/');
+            int pos2=path.rfind('.');
+            if(pos1<pos2)
+            {
+                (*this)["&extension"]=path.substr(pos2+1);
+            }
+
         }
     }
 }

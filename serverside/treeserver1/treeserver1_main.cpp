@@ -33,9 +33,9 @@ using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
-const char debug_path[]="/data/wb/SCC/working_copies/facies/private/index.json";
+const char debug_path[]=///"/data/wb/SCC/working_copies/facies/private/index.json";
                       ///"/data/wb/SCC/working_copies/facies/private/pages/Memetyka/posts/posts_1.json";
-                      ///"/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
+                      "/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
 
 // Create a root of the tree
 pt::ptree root;
@@ -50,7 +50,7 @@ inline URLparser split_request(const string& request)//May throw exceptions
     return URL;
 }
 
-void do_reader_request(const string& request,fasada::MemoryPool& MyPool)//May throw exceptions
+void _do_RorW_request(const string& request,fasada::MemoryPool& MyPool,bool isWriter)//May throw exceptions
 {
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = nullptr;
@@ -82,13 +82,26 @@ void do_reader_request(const string& request,fasada::MemoryPool& MyPool)//May th
         }
 
         try{
-            tree_processor& TheProcessor=tree_processor::getReadProcessor( URL["&processor"] );
-            val_string& path=URL["&path"];
-            //(*stringToShare)+="path:"+path+"\t";
-            //Pierszy slash ścieżki stanowi problem...
-            pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path.c_str()+1, '/'}) );
-            //(*stringToShare)+="==\n";
-            TheProcessor.read_tree((*stringToShare),branch,URL);
+            if(!isWriter)
+            {
+                tree_processor& TheProcessor=tree_processor::getReadProcessor( URL["&processor"] );
+                val_string& path=URL["&path"];
+                //(*stringToShare)+="path:"+path+"\t";
+                //Pierszy slash ścieżki stanowi problem...
+                pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path.c_str()+1, '/'}) );
+                //(*stringToShare)+="==\n";
+                TheProcessor.read_tree((*stringToShare),branch,URL);
+            }
+            else
+            {
+                if(URL["&processor"][0]=='!')
+                    URL["&processor"]=URL["&processor"].substr(1);
+                tree_processor& TheProcessor=tree_processor::getWriteProcessor( URL["&processor"] );
+                val_string& path=URL["&path"];
+                //Pierszy slash ścieżki stanowi problem...
+                pt::ptree& branch =( path=="/" ? root : root.get_child(pt::ptree::path_type{path.c_str()+1, '/'}) );
+                TheProcessor.write_tree((*stringToShare),branch,URL);
+            }
         }
         catch(const pt::ptree_error& exc)
         {
@@ -116,7 +129,20 @@ void do_reader_request(const string& request,fasada::MemoryPool& MyPool)//May th
     }
 }
 
+//W rzeczywistości różnica w obsłudze readera i writera jest minimalna - dopiero w momencie
+//próby wywołania odpowiedniego procesora, więc rozróznienie nie bedzie potrzebne
+//Zachowujemy tymczasowo
+void do_reader_request(const string& request,fasada::MemoryPool& MyPool)//May throw exceptions
+{
+    _do_RorW_request(request,MyPool,false);
+}
+
 void do_writer_request(const string& request,fasada::MemoryPool& MyPool)//May throw exceptions
+{
+    _do_RorW_request(request,MyPool,true);
+}
+
+void do_writer_request_debug(const string& request,fasada::MemoryPool& MyPool)//May throw exceptions
 {   //SUBJECT TO CHANGE! TODO
     ShmCharAllocator charallocator(MyPool->get_segment_manager());
     ShmString *stringToShare = MyPool->construct<ShmString>(request.c_str())(charallocator);

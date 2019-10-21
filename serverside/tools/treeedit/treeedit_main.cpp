@@ -107,7 +107,7 @@ void do_work(fasada::MemoryPool& MyPool)//Real work to do
                 if(verbose) std::cerr<<MyName<<" sending..."<<std::endl;
                 string req=Prefix+iline;
 
-                if( req.find("?!",0)!=req.npos )//marker że "zapis" to ! przed nazwą
+                if( req.find("!",0)!=req.npos )//marker że "zapis" to ! przed nazwą
                     MyPool.send_request(req,MemoryPool::ContentType::Write);
                 else
                     MyPool.send_request(req,MemoryPool::ContentType::Read);
