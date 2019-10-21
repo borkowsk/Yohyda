@@ -11,6 +11,7 @@ namespace fasada
 
 class processor_set : public tree_processor
 {
+    static std::string Form;//default HTML form for this processor
 public:
     processor_set(const char* name="set");
     ~processor_set();
