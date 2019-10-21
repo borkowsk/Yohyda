@@ -24,11 +24,8 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
-        o+=ipc::string(EXT_PRE)+"htm\n<HTML>";
-        o+="\n<HEAD>"+getHtmlHeaderDefaults()
-                +"<TITLE>tree of '"+request["&path"]+"'</TITLE>"
-                +"</HEAD><BODY>"
-                +(longformat?"<UL>\n":"\n");
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request["&path"])+(longformat?"<UL>\n":"\n");
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
@@ -49,7 +46,11 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     }
     );
 
-    if(html) o+="</BODY></HTML>";
+    if(html)
+    {
+        if(longformat) o+="</UL>\n";
+        o+=getHtmlClosure();
+    }
 }
 
 

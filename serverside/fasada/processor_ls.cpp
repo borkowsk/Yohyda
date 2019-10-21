@@ -25,11 +25,8 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
-        o+=ipc::string(EXT_PRE)+"htm\n<HTML>";
-        o+="\n<HEAD>"+getHtmlHeaderDefaults()
-                +"<TITLE>list of '"+request["&path"]+"'</TITLE>"
-                +"</HEAD><BODY>"
-                +(longformat?"<UL>\n":"\n");
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request["&path"])+(longformat?"<UL>\n":"\n");
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
@@ -45,7 +42,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +" <a href=\""+fullpath+"/?"+request["&query"]+"\">"
                         +std::string(p.first.data())
                         +"</a>"
-                        +" <a href=\""+fullpath+"/?get&html\">:"
+                        +" <a href=\""+fullpath+"/?get&html&long\">:"
                         +std::string(p.second.data())
                         +"</a>"
                         +" <a href=\""+fullpath+"/?dfs&html\">*</a>"
@@ -60,9 +57,20 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                 o+=(html?"&nbsp; ":";\t");
         }
     else
+    {
+        if(html)
+        {
+            std::string fullpath=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
+            o+=std::string(longformat?"<LI>":"")
+             + "[ <a href=\""+fullpath+"?set&html\">change!</a> ]"
+             + "[ <a href=\""+fullpath+"?add&html\">add!</a> ]";
+        }
+        else
         o+=" NO SUBNODES ";
+    }
+
     if(longformat & html) o+="</UL>";
-    if(html) o+="</BODY></HTML>";
+    if(html) o+=getHtmlClosure();
 }
 
 
