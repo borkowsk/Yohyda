@@ -32,6 +32,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     if(top.size()>0)
+    {
         for(auto p:top)
         {
             //std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
@@ -56,14 +57,22 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             else
                 o+=(html?"&nbsp; ":";\t");
         }
+
+        if(html)
+        {
+            std::string fullpath=request.getFullPath();
+            o+="<BR>[ <a href=\""+fullpath+"?add&html\">add!</a> ]";
+        }
+    }
     else
     {
         if(html)
         {
-            std::string fullpath=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
+            std::string fullpath=request.getFullPath();
             o+=std::string(longformat?"<LI>":"")
-             + "[ <a href=\""+fullpath+"?set&html\">change!</a> ]"
-             + "[ <a href=\""+fullpath+"?add&html\">add!</a> ]";
+             + "'" + request["&path"] + "' ";
+             if(top.size()==0) o+="[ <a href=\""+fullpath+"?set&html\">change!</a> ]";
+             if(top.data()=="") o+="[ <a href=\""+fullpath+"?add&html\">add!</a> ]";
         }
         else
         o+=" NO SUBNODES ";
