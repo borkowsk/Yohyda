@@ -23,13 +23,6 @@
 #include <iostream>
 #include <time.h>       /* time_t, struct tm, time, localtime */
 
-//Procesory danych json w postaci zmiennych w main.
-#include "processor_ls.h"
-#include "processor_get.h"
-#include "processor_set.h"
-#include "processor_add.h"
-#include "processor_dfs.h"
-
 using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
@@ -255,18 +248,6 @@ void recode_facebook_pl_to_utf8(pt::ptree& start)
         );
 }
 
-void register_processors()
-{
-    static fasada::processor_get GET;//Istnieje conajmniej jedna taka zmienna.
-    static fasada::processor_set SET;//--//---
-    static fasada::processor_add ADD;//--//---
-    static fasada::processor_dfs DFS;//--//---
-    static fasada::processor_ls  LS; //--//---
-    static fasada::processor_ls  Def("default");//chyba że ktoś chce robić aliasy
-    static fasada::processor_dfs Tree("tree");
-    std::cout<<"All data processors registered."<<std::endl;
-}
-
 int main(int argc, char* argv[])
 {
     MyName+=boost::lexical_cast<string>(getpid());
@@ -307,13 +288,14 @@ int main(int argc, char* argv[])
         ShmString *stringToShare = MyMemPool->construct<ShmString>("TreeServerEmp")(charallocator);
         *stringToShare=
                 (
-                    string("FASADA treeserver version 0.009; PID:")
+                    string("FASADA treeserver version 0.01; PID:")
                         +boost::lexical_cast<string>(getpid())
                     ).c_str();
 
         //Dopiero tu jest pewność że wewnętrzne struktury static zostały zainicjalizowane.
         //No i że w ogóle warto ladować procesory danych
         register_processors();
+        std::cout<<"All data processors registered."<<std::endl;
 
         //receive & process the request!
         do{
