@@ -27,6 +27,7 @@
 #include "processor_ls.h"
 #include "processor_get.h"
 #include "processor_set.h"
+#include "processor_add.h"
 #include "processor_dfs.h"
 
 using namespace fasada;
@@ -258,6 +259,7 @@ void register_processors()
 {
     static fasada::processor_get GET;//Istnieje conajmniej jedna taka zmienna.
     static fasada::processor_set SET;//--//---
+    static fasada::processor_add ADD;//--//---
     static fasada::processor_dfs DFS;//--//---
     static fasada::processor_ls  LS; //--//---
     static fasada::processor_ls  Def("default");//chyba że ktoś chce robić aliasy

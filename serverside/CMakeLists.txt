@@ -45,6 +45,7 @@ add_library(fasada
     "${SRCPATH}/fasada/tree_processor.cpp"
     "${SRCPATH}/fasada/processor_get.cpp"
     "${SRCPATH}/fasada/processor_set.cpp"
+    "${SRCPATH}/fasada/processor_add.cpp"
     "${SRCPATH}/fasada/processor_ls.cpp"
     "${SRCPATH}/fasada/processor_dfs.cpp"
     "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
