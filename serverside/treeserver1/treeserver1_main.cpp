@@ -173,7 +173,7 @@ void do_writer_request_debug(const string& request,fasada::MemoryPool& MyPool)//
 
 void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada::MemoryPool& MyPool)//May throw exceptions
 {
-    int position;//Pomoocnicza pozycja
+    int position;//Pomocnicza pozycja
     switch(msgType)
     {
     case MemoryPool::ContentType::Control://There are no responses for control messages
