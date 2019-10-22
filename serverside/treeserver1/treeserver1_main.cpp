@@ -290,11 +290,17 @@ int main(int argc, char* argv[])
         std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
         fasada::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
 
-        pt::read_json((argc > 1 && argv[1][0]!='-') ? argv[1] : debug_path, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
-        //Dokonuje modyfikacji przy założeniu że jest to plik ściągnięty z Facebooka
-        insert_numbers(root);
-        recode_timestamps(root);
-        recode_facebook_pl_to_utf8(root);
+        std::string filename=(argc > 1 && argv[1][0]!='-') ? argv[1] : debug_path;
+        std::cerr<<"Loading file "<<filename<<"..."<<std::endl;
+        pt::read_json(filename, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
+        //Dokonuje modyfikacji przy założeniu że jest to plik json ściągnięty z Facebooka
+        if( filename.substr(filename.rfind('.')) == ".json")
+        {
+            std::cerr<<"inserting numbers..."<<std::endl; insert_numbers(root);
+            std::cerr<<"recoding timestamps..."<<std::endl; recode_timestamps(root);
+            std::cerr<<"recoding facebook pl codes to utf8..."<<std::endl; recode_facebook_pl_to_utf8(root);
+        }
+        std::cerr<<"LOADED SUCCESFULLY!"<<std::endl;
 
         ShmCharAllocator charallocator(MyMemPool.segm().get_segment_manager());
         //do{

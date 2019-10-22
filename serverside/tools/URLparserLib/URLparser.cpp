@@ -36,6 +36,33 @@ using std::stringstream;
 //http://cppcms.com/wikipp/en/page/ref_cppcms_url_parser ? też inna biblioteka: http://cppcms.com/wikipp/en/page/main
 namespace fasada
 {
+static
+    val_string urlDecode(val_string str)
+    {
+        val_string ret;
+        char ch;
+        int i, ii, len = str.length();
+
+        for (i=0; i < len; i++)
+        {
+            if(str[i] != '%')
+            {
+                if(str[i] == '+')
+                    ret += ' ';
+                else
+                    ret += str[i];
+            }
+            else
+            {
+                sscanf(str.substr(i + 1, 2).c_str(), "%x", &ii);
+                ch = static_cast<char>(ii);
+                ret += ch;
+                i = i + 2;
+            }
+        }
+        return ret;
+    }
+
     val_string  URLparser::getFullPath()//Zwraca i jednoczesnie dopisuje "fullpath" do słownika
     {
         val_string pom=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
@@ -69,7 +96,7 @@ namespace fasada
             (*this)["&path"]=path;
             (*this)["&query"]=query;
 
-            if(parse_query)//Tak dokładne dzielenie może niekiedy nie być potrzebne
+            if(parse_query)//Dzielenie query na składniki i dekodowanie może niekiedy nie być potrzebne
             {
                 split_vector_type SplitVec;
                 split( SplitVec, query , is_any_of("&") );// , token_compress_on );
@@ -80,7 +107,7 @@ namespace fasada
                     int pos=s.find_first_of(":=");
                     if(pos>0)
                     {
-                        (*this)[s.substr(0,pos)]=s.substr(pos+1);
+                        (*this)[s.substr(0,pos)]=urlDecode(s.substr(pos+1));
                         //cout<< s.substr(0,pos) <<" = "<<(*this)[s.substr(0,pos)]<<endl;
                     }
                     else
@@ -104,7 +131,7 @@ namespace fasada
                 }
             }
 
-            int pos0=path.rfind('!');//Special situation offten used by fasada libraries
+            int pos0=path.rfind('!');//Special situation often used by fasada libraries
             if(pos0!=path.npos)
             {
                 (*this)["&processor"]=path.substr(pos0);
