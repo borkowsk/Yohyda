@@ -39,16 +39,19 @@ namespace fasada
 class URLparser:public std::map<key_string,val_string>
 {
 protected://Configuration & redundancy
-    bool parse_query;
+    bool parse_query;//is this name OK?
     val_string bakURL;
 
 public://Construction, destruction etc.
     URLparser(bool pq=false):parse_query(pq){}
-    URLparser(const char* URL,bool pq=true):parse_query(pq){Parse(URL);}
+    URLparser(const char* URL,bool pq=true):parse_query(pq){ doParsing(URL); }
    ~URLparser(){}
 
+    const val_string& getOriURL(){ return bakURL;}
+    val_string  getFullPath();//Zwraca i jednoczesnie dopisuje "fullpath" do słownika
+
 protected://Implementation
-    void Parse(const val_string& URL);//May throw on errors!
+    void doParsing(const val_string& URL);//May throw on errors!
 };
 
 }//namespace "fasada"

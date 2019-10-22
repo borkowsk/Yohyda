@@ -36,7 +36,14 @@ using std::stringstream;
 //http://cppcms.com/wikipp/en/page/ref_cppcms_url_parser ? też inna biblioteka: http://cppcms.com/wikipp/en/page/main
 namespace fasada
 {
-    void URLparser::Parse(const val_string& URL)
+    val_string  URLparser::getFullPath()//Zwraca i jednoczesnie dopisuje "fullpath" do słownika
+    {
+        val_string pom=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
+        (*this)["fullpath"]=pom;
+        return pom;
+    }
+
+    void URLparser::doParsing(const val_string& URL)
     //May throw on errors!
     {
         using split_vector_type=vector< string >;
@@ -97,7 +104,7 @@ namespace fasada
                 }
             }
 
-            int pos0=path.rfind('!');
+            int pos0=path.rfind('!');//Special situation offten used by fasada libraries
             if(pos0!=path.npos)
             {
                 (*this)["&processor"]=path.substr(pos0);
