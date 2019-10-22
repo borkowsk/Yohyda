@@ -12,6 +12,7 @@ std::string processor_set::Form=
         "<form action=\"$fullpath!$proc\">"
         "Value of $path :<br>"
         "<input type=\"text\" name=\"value\" value=\"$value\"><br>"
+        "<input type=\"submit\" value=\"Submit\">"
         "</form>";
 
 processor_set::processor_set(const char* name):
@@ -25,23 +26,29 @@ processor_set::~processor_set()
 void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 //Implement_read WRITER'a powinno przygotować FORM jeśli jest to format "html"
 {
+    std::string fullpath=request.getFullPath();
+            //request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
     std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();//czy ma elementy składowe?
     bool html=request["html"]!="false";
-    std::string fullpath=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
          o+=ipc::string(EXT_PRE)+"htm\n";
-         o+=getHtmlHeaderDefaults(fullpath)+"\n<P> ";
-         //Podmienić ścieżkę i wartość domyślną
-         std::string ReadyForm=Form;
-         boost::replace_all(ReadyForm,"$proc",procName);
-         boost::replace_all(ReadyForm,"$fullpath",fullpath);
-         boost::replace_all(ReadyForm,"$path",request["&path"]);
-         boost::replace_all(ReadyForm,"$value",tmp);
-         o+=ReadyForm;
-         o+="</P>"+getHtmlClosure();
+         o+=getHtmlHeaderDefaults(fullpath)+"\n";
+         if(noc==0)
+         {
+             //Podmienić ścieżkę i wartość domyślną
+             std::string ReadyForm=Form;
+             boost::replace_all(ReadyForm,"$proc",procName);
+             boost::replace_all(ReadyForm,"$fullpath",fullpath);
+             boost::replace_all(ReadyForm,"$path",request["&path"]);
+             boost::replace_all(ReadyForm,"$value",tmp);
+             o+=ReadyForm;
+         }
+         else
+             o+="<H2>WARNING!</H2><P>Only leaf type nodes could be modified by '"+procName+"'</P>";
+         o+=getHtmlClosure();
     }
     else
     {
