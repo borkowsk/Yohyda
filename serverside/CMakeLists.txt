@@ -10,11 +10,9 @@ SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
                     "${SRCPATH}"
-                    "${SRCPATH}/http/"
                     "${SRCPATH}/fasada/"
                     "${SRCPATH}/facebookspec/"
                     "${SRCPATH}/tools/"
-                    "${SRCPATH}/tools/PTREEWalkersLib"
                      ${Boost_INCLUDE_DIR}
                     )
 
@@ -50,7 +48,7 @@ add_library(fasada
     "${SRCPATH}/fasada/processor_ls.cpp"
     "${SRCPATH}/fasada/processor_dfs.cpp"
     "${SRCPATH}/fasada/register_processors.cpp"
-    "${SRCPATH}/http/URLparser.cpp"
+    "${SRCPATH}/fasada/http/URLparser.cpp"
     )
 
 add_library(facebookspec

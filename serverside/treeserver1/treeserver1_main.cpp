@@ -11,10 +11,10 @@
 ///
 #include "memory_pool.h"
 #include "tree_processor.h"
-#include "URLparser.hpp"
+#include "http/URLparser.hpp"
 #include <boost/lexical_cast.hpp>
 
-#include "ptree_foreach.hpp"
+#include "tree/ptree_foreach.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>

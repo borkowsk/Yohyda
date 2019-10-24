@@ -1,7 +1,7 @@
 #include "tree_types.h"
 #include "tree_consts.h"
 #include "processor_dfs.h"
-#include "ptree_foreach.hpp"
+#include "tree/ptree_foreach.hpp"
 
 
 namespace fasada
