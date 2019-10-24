@@ -134,15 +134,34 @@ std::string tree_processor::HTMLHeader=
         "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n"
         "</HEAD>\n<BODY>\n";
 
+std::string tree_processor::HTMLAction=
+        "<A HREF=\""
+        "$action_href"
+        "\" class=\"fasada_action\">"
+        "$link_content"
+        "</A>"
+        ;
+
+std::string tree_processor::HTMLBack=
+        "BACK";/// "RETURN","WRÓĆ" or "<---";
+
 std::string tree_processor::HTMLFooter=
         "\n</BODY></HTML>\n";
 
-std::string  tree_processor::getHtmlHeaderDefaults(std::string& Title)
+std::string  tree_processor::getHtmlHeaderDefaults(const std::string& Title)
 //Default set of html <HEAD> lines finishing by <BODY>
 {
     std::string ReadyHeader=HTMLHeader;
     boost::replace_all(ReadyHeader,"$page_title",Title);
     return ReadyHeader;
+}
+
+std::string  tree_processor::getActionLink(const std::string& Href,const std::string& Content)
+{
+    std::string ReadyLink=HTMLAction;
+    boost::replace_all(ReadyLink,"$action_href",Href);
+    boost::replace_all(ReadyLink,"$link_content",Content);
+    return ReadyLink;
 }
 
 std::string  tree_processor::getHtmlClosure()

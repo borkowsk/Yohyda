@@ -33,20 +33,23 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 
     if(top.size()>0)
     {
+        std::string parentpath=request.getFullPath();
+        if( *(--parentpath.end())!='/' )
+            parentpath+="/";
+
         for(auto p:top)
         {
-            //std::cerr<<p.first.data()<<":"<<p.second.data()<<std::endl;
             if(html)
             {
-                std::string fullpath=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"]+std::string(p.first.data());
+                std::string fullpath=parentpath+std::string(p.first.data());
                 o+=std::string(longformat?"<LI>":"")
-                        +" <a href=\""+fullpath+"/?"+request["&query"]+"\">"
+                        +" <A href=\""+fullpath+"?"+request["&query"]+"\"><B>"
                         +std::string(p.first.data())
-                        +"</a>"
-                        +" <a href=\""+fullpath+"/?get&html&long\">:"
+                        +"</B></A>"
+                        +" <A href=\""+fullpath+"?get&html&long\">:<I>"
                         +std::string(p.second.data())
-                        +"</a>"
-                        +" <a href=\""+fullpath+"/?dfs&html\">*</a>"
+                        +"</I></A> "
+                        +getActionLink(fullpath+"?dfs&html","*")
                         ;
             }
             else
@@ -61,7 +64,8 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         if(html)
         {
             std::string fullpath=request.getFullPath();
-            o+="<BR>[ <a href=\""+fullpath+"?add&html\">add!</a> ]";
+            o+="\n<BR>"+getActionLink(fullpath+"?add&html","ADD!")+" ";
+            o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
     }
     else
@@ -69,10 +73,9 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         if(html)
         {
             std::string fullpath=request.getFullPath();
-            o+=std::string(longformat?"<LI>":"")
-             + "'" + request["&path"] + "' ";
-             if(top.size()==0) o+="[ <a href=\""+fullpath+"?set&html\">change!</a> ]";
-             if(top.data()=="") o+="[ <a href=\""+fullpath+"?add&html\">add!</a> ]";
+            o+=std::string(longformat?"<LI>":"") + "'" + request["&path"] + "' ";
+            if(top.size()==0 ) o+=getActionLink(fullpath+"?set&html","change!");
+            if(top.data()=="") o+=" "+getActionLink(fullpath+"?add&html","add!");
         }
         else
         o+=" NO SUBNODES ";

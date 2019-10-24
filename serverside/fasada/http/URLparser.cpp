@@ -70,6 +70,16 @@ static
         return pom;
     }
 
+    val_string  URLparser::getParentPath()//Zwraca i jednoczesnie dopisuje "parentpath" do słownika
+    {
+        val_string pom=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
+        int pos=pom.rfind('/');
+        if(pos!=pom.npos)
+            pom=pom.substr(0,pos);
+        (*this)["parentpath"]=pom;
+        return pom;
+    }
+
     void URLparser::doParsing(const val_string& URL)
     //May throw on errors!
     {
@@ -131,15 +141,22 @@ static
                 }
             }
 
-            int pos0=path.rfind('!');//Special situation often used by fasada libraries
+            int pos0=path.rfind('!');//Used by fasada libraries for write actions
             if(pos0!=path.npos)
             {
                 (*this)["&processor"]=path.substr(pos0);
                 path=((*this)["&path"]=path.substr(0,pos0));
             }
 
-            int pos1=path.rfind('/');
-            int pos2=path.rfind('.');
+            int pos1=path.rfind('/');//Removing last slash
+            if(path.size()>1 && pos1!=path.npos
+            && pos1==path.size()-1 )//but not the first!
+            {
+                path=(*this)["&path"]=path.substr(0,pos1);
+                std::cerr<<"!!! "<<(*this)["&path"]<<" truncated!"<<std::endl;
+            }
+
+            int pos2=path.rfind('.');//Detect extension
             if(pos1<pos2)
             {
                 (*this)["&extension"]=path.substr(pos2+1);

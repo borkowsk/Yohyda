@@ -36,11 +36,11 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         o+="[";
         if(html) o+="<B>";
         o+=k;
-        if(html) o+="</B>";
-        o+="] : '";
+        if(html) o+="</B>] : <I>'";
+        else o+="] : '";
         o+=t.data();
         o+="'";
-        if(html) o+="<BR>\n";
+        if(html) o+="</I><BR>\n";
         else o+="\n";
         return defret;//wynik nie blokuje, ale "before" jest "never" więc nie ma "after"
     }

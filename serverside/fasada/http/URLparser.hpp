@@ -49,6 +49,7 @@ public://Construction, destruction etc.
 
     const val_string& getOriURL(){ return bakURL;}
     val_string  getFullPath();//Zwraca i jednoczesnie dopisuje "fullpath" do słownika
+    val_string  getParentPath();//Zwraca i jednoczesnie dopisuje "parentpath" do słownika
 
 protected://Implementation
     void doParsing(const val_string& URL);//May throw on errors!

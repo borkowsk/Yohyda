@@ -33,8 +33,11 @@ namespace fasada
     class tree_processor
     {
     protected:
-        static std::string HTMLHeader;
-        static std::string HTMLFooter;
+        static std::string HTMLHeader;//Full HEAD of HTML page
+        static std::string HTMLFooter;//Compatible footer of HTML page
+        static std::string HTMLAction;//HTML contruction for action link
+        static std::string HTMLBack;  //"BACK","RETURN","WRÓĆ" of "<---"
+
     public: //SUBTYPES
         enum Category {CONTROL=4,WRITER_READER=3,WRITER=2,READER=1};
 
@@ -47,8 +50,10 @@ namespace fasada
     protected://Configuration
         std::string  procName;
         Category procCategory;
-        std::string  getHtmlHeaderDefaults(std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
+        std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
         std::string  getHtmlClosure();//Compatible set of tags for end of html document
+        std::string  getActionLink(const std::string& Href,const std::string& Content);
+
     protected://deferred implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request)=0;

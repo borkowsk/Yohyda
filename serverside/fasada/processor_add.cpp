@@ -64,6 +64,8 @@ void processor_add::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 void processor_add::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
+    std::string fullpath;
+
     if(top.data()!="")//Jeśli ma wartość własną to jest liściem
         throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT ADD CHILD INTO LEAF NODE!"));
 
@@ -71,27 +73,28 @@ void processor_add::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     if(name=="")
         throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT ADD CHILD WITHOUT NAME!"));
 
-    //top.add_child(name,pt::ptree{request["value"]});//May duplicate names!
-    top.put(name,request["value"]);//Not duplicate names.
-
     bool html=request["html"]!="false";
 
     if(html)
     {
-        std::string fullpath=request.getFullPath();
+        fullpath=request.getFullPath();
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(fullpath)+"\n";
+        o+=getHtmlHeaderDefaults(fullpath)+"\n<P>";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
 
-    o+="DONE '"+name+"'='"+top.get_child(name).data()+"'";
+    //top.add_child(name,pt::ptree{request["value"]});//May duplicate node names!
+    top.put(name,request["value"]);//Not duplicate names.
 
     if(html)
+    {
+       o+="DONE <B>'"+name+"'</B>=<I>'"+top.get_child(name).data()+"'</I>";
+       o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack);
+       o+="</P>";
        o+=getHtmlClosure();
+    }
+    else o+="DONE '"+name+"'='"+top.get_child(name).data()+"'";
 }
 
 }//namespace "fasada"
-
-
-

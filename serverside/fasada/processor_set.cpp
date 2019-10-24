@@ -63,7 +63,9 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
+    std::string fullpath;
     unsigned    noc=top.size();//czy ma elementy składowe?
+
     if(noc!=0)
     {
         //o+="Only leaf type nodes can be modified by "+procName+"\n";
@@ -74,18 +76,23 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
 
     if(html)
     {
-        std::string fullpath=request.getFullPath();
+        fullpath=request.getFullPath();
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(fullpath)+"\n";
+        o+=getHtmlHeaderDefaults(fullpath)+"\n<P>";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
 
     top.data()=request["value"];
-    o+="DONE '"+top.data()+"'";
 
     if(html)
+    {
+       o+="DONE <I>'"+top.data()+"'</I>";
+       o+="\n"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+       o+="</P>";
        o+=getHtmlClosure();
+    }
+    else o+="DONE '"+top.data()+"'";
 }
 
 }//namespace "fasada"
