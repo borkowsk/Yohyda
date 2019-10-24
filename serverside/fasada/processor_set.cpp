@@ -9,10 +9,10 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_set::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
-        "Value of $path :<br>"
-        "<input type=\"text\" name=\"value\" value=\"$value\" size=\"$value_size\"><br>"
-        "<input type=\"submit\" value=\"Submit\">"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "Value of $path :<br>\n"
+        "<input type=\"text\" name=\"value\" value=\"$value\" size=\"$size_of_value\"><br>\n"
+        "<input type=\"submit\" value=\"Submit\">\n"
         "</form>";
 
 processor_set::processor_set(const char* name):
@@ -38,15 +38,15 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          o+=getHtmlHeaderDefaults(fullpath)+"\n";
          if(noc==0)
          {
-             //Podmienić procesor, ścieżki, wartość domyślną i ewentualnie inne zmienne
+             //Podmienić procesor, ścieżki, wartość domyślną i ewentualputnie inne zmienne
              std::string ReadyForm=Form;
              boost::replace_all(ReadyForm,"$proc",procName);///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
              boost::replace_all(ReadyForm,"$fullpath",fullpath);
              boost::replace_all(ReadyForm,"$path",request["&path"]);
-             boost::replace_all(ReadyForm,"$value",tmp);
              unsigned value_size=tmp.size();
              if(value_size<1) value_size=12;
-             boost::replace_all(ReadyForm,"$value_size", boost::lexical_cast<std::string>(value_size) );
+             boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
+             boost::replace_all(ReadyForm,"$value",tmp);
              o+=ReadyForm;
          }
          else
@@ -69,9 +69,23 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
         //o+="Only leaf type nodes can be modified by "+procName+"\n";
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT CHANGE VALUE OF NOT-LEAF NODE!"));
     }
-    o+=ipc::string(EXT_PRE)+"txt\n";
+
+    bool html=request["html"]!="false";
+
+    if(html)
+    {
+        std::string fullpath=request.getFullPath();
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(fullpath)+"\n";
+    }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";
+
     top.data()=request["value"];
-    o+="'"+top.data()+"'";
+    o+="DONE '"+top.data()+"'";
+
+    if(html)
+       o+=getHtmlClosure();
 }
 
 }//namespace "fasada"

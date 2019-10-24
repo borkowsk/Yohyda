@@ -9,11 +9,11 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_add::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "Node with name "
-        "<input type=\"text\" name=\"name\" size=\"12\"><br>"
-        "and value"
-        "<input type=\"text\" name=\"value\" size=\"80\"><br>"
+        "<input type=\"text\" name=\"name\" size=\"12\"><br>\n"
+        "and value "
+        "<input type=\"text\" name=\"value\" size=\"80\"><br>\n"
         "will be added to '$path' <br>"
         "<input type=\"submit\" value=\"Submit\">"
         "</form>";
@@ -65,15 +65,30 @@ void processor_add::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
     if(top.data()!="")//Jeśli ma wartość własną to jest liściem
-    {
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT ADD NODE INTO LEAF NODE!"));
-    }
+        throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT ADD CHILD INTO LEAF NODE!"));
 
-    top.add_child(request["name"],pt::ptree{request["value"]});
-    o+=ipc::string(EXT_PRE)+"txt\n";
-    o+="DONE";
-//    top.data()=request["value"];
-//    o+="'"+top.data()+"'";
+    std::string name=request["name"];
+    if(name=="")
+        throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT ADD CHILD WITHOUT NAME!"));
+
+    //top.add_child(name,pt::ptree{request["value"]});//May duplicate names!
+    top.put(name,request["value"]);//Not duplicate names.
+
+    bool html=request["html"]!="false";
+
+    if(html)
+    {
+        std::string fullpath=request.getFullPath();
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(fullpath)+"\n";
+    }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";
+
+    o+="DONE '"+name+"'='"+top.get_child(name).data()+"'";
+
+    if(html)
+       o+=getHtmlClosure();
 }
 
 }//namespace "fasada"

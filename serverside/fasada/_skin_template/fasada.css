@@ -1,18 +1,26 @@
 body {
-  background-color: lightblue;
+        background-color: lightblue;
 }
 
 h1 {
-  color: navy;
-  margin-left: 20px;
+        color: navy;
+        margin-left: 20px;
+}
+
+a {
+        text-decoration: none;
 }
 
 a:link {
-    color: rgb(0,128,0); }
+        color: rgb(0,128,0); }
 a:visited {
-    color: rgb(100,200,0); }
+        color: rgb(100,200,0); }
 
 form {
-  background-color: yellow;   
-  padding:10px;    
+        background-color: yellow;   
+        padding:10px;    
+}
+
+form.fasada_form {
+        color: navy;
 }

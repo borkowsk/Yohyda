@@ -95,8 +95,16 @@ void tree_processor::read_tree(ShmString& o,const pt::ptree& top,URLparser& requ
 {
     if(procCategory & READER == 0 )
         throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' IS NOT A READER"));
-
-    _implement_read(o,top,request);
+    try{
+        _implement_read(o,top,request);
+    }
+    catch(...)
+    {
+        std::cerr <<procName<<
+            ": Unexpected exception, diagnostic information follows:\n" <<
+            boost::current_exception_diagnostic_information();
+        o+="\n EXCEPTION OCCURED:"+boost::current_exception_diagnostic_information();
+    }
     o+=MEM_END;//"DONE" MARKER FOR PARAREL PROCESS
 }
 
@@ -106,7 +114,16 @@ void tree_processor::write_tree(ShmString& o,pt::ptree& top,URLparser& request)/
     if(procCategory & WRITER == 0 )
         throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' IS NOT A WRITER"));
 
-    _implement_write(o,top,request);
+    try{
+        _implement_write(o,top,request);
+    }
+    catch(...)
+    {
+        std::cerr <<procName<<
+            ": Unexpected exception, diagnostic information follows:\n" <<
+            boost::current_exception_diagnostic_information();
+        o+="\n EXCEPTION OCCURED:"+boost::current_exception_diagnostic_information();
+    }
     o+=MEM_END;//"DONE" MARKER FOR PARAREL PROCESS
 }
 
