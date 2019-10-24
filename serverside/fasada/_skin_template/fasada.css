@@ -11,8 +11,15 @@ a {
         text-decoration: none;
 }
 
+a.fasada_action {
+        background-color: white; 
+        font-weight: bold;
+        font-size: 13pt;
+}
+
 a:link {
         color: rgb(0,128,0); }
+
 a:visited {
         color: rgb(100,200,0); }
 
@@ -21,6 +28,19 @@ form {
         padding:10px;    
 }
 
+input[type=submit] {
+        font-weight: bold;
+        font-size: 13pt;
+        padding:5px 15px; 
+        background:white; 
+        border:0 none;
+        cursor:pointer;
+        border-radius: 5px; 
+}
+
 form.fasada_form {
+        background-color: orange; 
         color: navy;
 }
+
+
