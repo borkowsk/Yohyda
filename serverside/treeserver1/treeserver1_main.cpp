@@ -11,7 +11,7 @@
 ///
 #include "memory_pool.h"
 #include "tree_processor.h"
-#include "URLparserLib/URLparser.hpp"
+#include "URLparser.hpp"
 #include <boost/lexical_cast.hpp>
 
 #include "ptree_foreach.hpp"

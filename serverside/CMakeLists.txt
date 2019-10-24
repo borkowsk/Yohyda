@@ -10,9 +10,10 @@ SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
                     "${SRCPATH}"
-                    "${SRCPATH}/tools/"
+                    "${SRCPATH}/http/"
                     "${SRCPATH}/fasada/"
-                    "${SRCPATH}/tools/URLparserLib"
+                    "${SRCPATH}/facebookspec/"
+                    "${SRCPATH}/tools/"
                     "${SRCPATH}/tools/PTREEWalkersLib"
                      ${Boost_INCLUDE_DIR}
                     )
@@ -49,22 +50,28 @@ add_library(fasada
     "${SRCPATH}/fasada/processor_ls.cpp"
     "${SRCPATH}/fasada/processor_dfs.cpp"
     "${SRCPATH}/fasada/register_processors.cpp"
-    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
+    "${SRCPATH}/http/URLparser.cpp"
+    )
+
+add_library(facebookspec
+    "${SRCPATH}/facebookspec/facebookspec.cpp"
     )
 
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( indexer    PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
-target_compile_options( fasada     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )  
+target_compile_options( fasada     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
+target_compile_options( facebookspec     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 
 target_link_libraries(treeserver LINK_PUBLIC
     fasada
+    facebookspec
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_LOCALE}
     ${Boost_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT}#    "${SRCPATH}/tools/URLparserLib/URLparser.cpp"
+    ${CMAKE_THREAD_LIBS_INIT}
     rt
     )
 
