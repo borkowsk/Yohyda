@@ -1,0 +1,18 @@
+body {
+  background-color: lightblue;
+}
+
+h1 {
+  color: navy;
+  margin-left: 20px;
+}
+
+a:link {
+    color: rgb(0,128,0); }
+a:visited {
+    color: rgb(100,200,0); }
+
+form {
+  background-color: yellow;   
+  padding:10px;    
+}

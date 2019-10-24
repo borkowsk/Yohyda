@@ -9,9 +9,9 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_set::Form=
-        "<form action=\"$fullpath!$proc\">"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
         "Value of $path :<br>"
-        "<input type=\"text\" name=\"value\" value=\"$value\"><br>"
+        "<input type=\"text\" name=\"value\" value=\"$value\" size=\"$value_size\"><br>"
         "<input type=\"submit\" value=\"Submit\">"
         "</form>";
 
@@ -38,12 +38,15 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          o+=getHtmlHeaderDefaults(fullpath)+"\n";
          if(noc==0)
          {
-             //Podmienić ścieżkę i wartość domyślną
+             //Podmienić procesor, ścieżki, wartość domyślną i ewentualnie inne zmienne
              std::string ReadyForm=Form;
-             boost::replace_all(ReadyForm,"$proc",procName);
+             boost::replace_all(ReadyForm,"$proc",procName);///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
              boost::replace_all(ReadyForm,"$fullpath",fullpath);
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              boost::replace_all(ReadyForm,"$value",tmp);
+             unsigned value_size=tmp.size();
+             if(value_size<1) value_size=12;
+             boost::replace_all(ReadyForm,"$value_size", boost::lexical_cast<std::string>(value_size) );
              o+=ReadyForm;
          }
          else
@@ -72,5 +75,3 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
 }
 
 }//namespace "fasada"
-
-

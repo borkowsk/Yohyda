@@ -6,6 +6,7 @@
 #include "tree_processor.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/exception/diagnostic_information.hpp>
+#include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <iostream>
 
 namespace fasada
@@ -16,7 +17,6 @@ namespace fasada
 // https://www.bfilipek.com/2018/02/static-vars-static-lib.html
 // Czyli "lazy singleton pattern"
 // https://stackoverflow.com/questions/6234791/how-to-wait-until-dynamic-initialization-of-static-variables-finishes
-
 
 static
 processors_map& map_of_readers()
@@ -77,7 +77,7 @@ tree_processor& tree_processor::getReadProcessor (const char* name)//may throw
     std::cout<<name<<std::endl;
     tree_processor* tmp=map_of_readers()[name];
     if(tmp==nullptr)
-        throw(tree_processor_exception(std::string("PTREE PROCESSOR ")+name+" NOT FOUND!"));
+        throw(tree_processor_exception(std::string("PTREE PROCESSOR '")+name+"' NOT FOUND!"));
     return *tmp;
 }
 
@@ -86,7 +86,7 @@ tree_processor& tree_processor::getWriteProcessor(const char* name)//may throw
 {
     tree_processor* tmp=map_of_writers()[name];
     if(tmp==nullptr)
-        throw(tree_processor_exception(std::string("PTREE PROCESSOR ")+name+" NOT FOUND!"));
+        throw(tree_processor_exception(std::string("PTREE PROCESSOR '")+name+"' NOT FOUND!"));
     return *tmp;
 }
 
@@ -94,7 +94,7 @@ tree_processor& tree_processor::getWriteProcessor(const char* name)//may throw
 void tree_processor::read_tree(ShmString& o,const pt::ptree& top,URLparser& request)//may throw
 {
     if(procCategory & READER == 0 )
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT A READER"));
+        throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' IS NOT A READER"));
 
     _implement_read(o,top,request);
     o+=MEM_END;//"DONE" MARKER FOR PARAREL PROCESS
@@ -104,25 +104,34 @@ void tree_processor::read_tree(ShmString& o,const pt::ptree& top,URLparser& requ
 void tree_processor::write_tree(ShmString& o,pt::ptree& top,URLparser& request)//may throw
 {
     if(procCategory & WRITER == 0 )
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS NOT A WRITER"));
+        throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' IS NOT A WRITER"));
 
     _implement_write(o,top,request);
     o+=MEM_END;//"DONE" MARKER FOR PARAREL PROCESS
 }
 
+std::string tree_processor::HTMLHeader=
+        "<HTML>\n<HEAD>\n"
+        "<TITLE>$page_title</TITLE>\n"
+        "<meta charset=\"utf-8\">\n"
+        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n"
+        "</HEAD>\n<BODY>\n";
+
+std::string tree_processor::HTMLFooter=
+        "\n</BODY></HTML>\n";
+
 std::string  tree_processor::getHtmlHeaderDefaults(std::string& Title)
 //Default set of html <HEAD> lines finishing by <BODY>
 {
-    return "<HTML>\n<HEAD>\n"
-           "<TITLE>"+Title+"</TITLE>\n"
-            "<meta charset=\"utf-8\">\n"
-            "</HEAD>\n<BODY>\n";
+    std::string ReadyHeader=HTMLHeader;
+    boost::replace_all(ReadyHeader,"$page_title",Title);
+    return ReadyHeader;
 }
 
 std::string  tree_processor::getHtmlClosure()
 //Compatible set of tags for end of html document
 {
-    return "</BODY></HTML>";
+    return HTMLFooter;
 }
 
 }//namespace "fasada"

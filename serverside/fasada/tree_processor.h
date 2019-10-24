@@ -32,6 +32,9 @@ namespace fasada
     /// ...
     class tree_processor
     {
+    protected:
+        static std::string HTMLHeader;
+        static std::string HTMLFooter;
     public: //SUBTYPES
         enum Category {CONTROL=4,WRITER_READER=3,WRITER=2,READER=1};
 
