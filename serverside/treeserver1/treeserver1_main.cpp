@@ -12,9 +12,9 @@
 #include "memory_pool.h"
 #include "tree_processor.h"
 #include "http/URLparser.hpp"
-#include <boost/lexical_cast.hpp>
-
 #include "tree/ptree_foreach.hpp"
+
+#include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
@@ -294,7 +294,7 @@ int main(int argc, char* argv[])
 
         //Dopiero tu jest pewność że wewnętrzne struktury static zostały zainicjalizowane.
         //No i że w ogóle warto ladować procesory danych
-        register_processors();
+        fasada::init();//more general than register_processors();
         std::cout<<"All data processors registered."<<std::endl;
 
         //receive & process the request!

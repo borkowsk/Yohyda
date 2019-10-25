@@ -22,6 +22,8 @@ using namespace boost::interprocess;
 namespace fasada
 {
 
+void init(); //INITIALIZE THE FASADA LIBRARY
+
 class MemoryPool
 {
     bool I_am_tree_server; //Wazne przy destrukcji
