@@ -12,15 +12,14 @@ h1 {
         margin-left: 20px;
 }
 
+b.fasada_path {
+        font-family: Courier;
+}
+
 a {
         text-decoration: none;
 }
 
-a.fasada_action {
-        background-color: white; 
-        font-weight: bold;
-        font-size: 13pt;
-}
 
 a:link {
         color: rgb(0,128,0); }
@@ -28,24 +27,50 @@ a:link {
 a:visited {
         color: rgb(100,200,0); }
 
+a.fasada_action {
+        background-color: white; 
+        padding:1px 4px;  
+        font-weight: bold;
+        font-size: 13pt;
+        font-family: monospace;
+        border-radius: 8px; 
+}
+
 form {
-        background-color: yellow;   
+        background-color: orange;   
         padding:10px;    
+}
+
+input[type=text] {
+        font-size: 10pt;
+        padding:4px 10px; 
+        background:white; 
+        border:1 none;
+        font-family: Arial;
+        border-radius: 10px; 
 }
 
 input[type=submit] {
         font-weight: bold;
         font-size: 13pt;
-        padding:5px 15px; 
-        background:white; 
-        border:0 none;
+        padding:4px 13px; 
+        background: yellow; 
+        color: navy;
+        border:2 none;
         cursor:pointer;
-        border-radius: 5px; 
+        font-family: monospace;
+        border-radius: 10px; 
 }
 
 form.fasada_form {
-        background-color: orange; 
+        padding:15px;  
+        background-color: lightgreen; 
         color: navy;
+        font-size:   12pt;
+        font-variant: small-caps;
+        cursor:help;
+        font-family: monospace;
+        border-radius: 10px; 
 }
 
 
