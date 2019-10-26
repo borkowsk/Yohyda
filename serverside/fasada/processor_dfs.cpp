@@ -34,7 +34,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     [&o,defret,html](const ptree& t,std::string k)
     {
         o+="[";
-        if(html) o+="<B>";
+        if(html) o+="<B class=fasada_path>";
         o+=k;
         if(html) o+="</B>] : <I>'";
         else o+="] : '";

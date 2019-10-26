@@ -32,7 +32,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     {
         if(html)
         {
-           o+="<B>'"+request["&path"]+ "'</B> = <I>'" + tmp + "'</I>";
+           o+="<B class=fasada_path>'"+request["&path"]+ "'</B> = <I>'" + tmp + "'</I>";
            std::string fullpath=request.getFullPath();
            if(noc>0)
            {

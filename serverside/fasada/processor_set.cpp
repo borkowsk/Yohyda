@@ -10,9 +10,10 @@ namespace fasada
 //default HTML form for this processor
 std::string processor_set::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-        "Value of $path :<br>\n"
+        "VALUE: "
         "<input type=\"text\" name=\"value\" value=\"$value\" size=\"$size_of_value\"><br>\n"
-        "<input type=\"submit\" value=\"Submit\">\n"
+        "FOR <B class=fasada_path>'$path'</B><BR>\n"
+        "<input type=\"submit\" value=\"OK\">\n"
         "</form>";
 
 processor_set::processor_set(const char* name):
@@ -44,7 +45,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
              boost::replace_all(ReadyForm,"$fullpath",fullpath);
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              unsigned value_size=tmp.size();
-             if(value_size<1) value_size=12;
+             if(value_size<1) value_size=UINT_DEFAULT_LEN_OF_NAME;
              boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
              boost::replace_all(ReadyForm,"$value",tmp);
              o+=ReadyForm;

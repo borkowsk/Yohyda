@@ -21,5 +21,9 @@ const char* const MEM_END="@T@h@e@E@n@d@";
 const char* const EXT_PRE="@E@X@T=";//See for MIME types:
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
 
+///Some values for html output
+#define STR_DEFAULT_LEN_OF_NAME "14"
+const unsigned UINT_DEFAULT_LEN_OF_NAME=14;
+
 }//namespace "fasada"
 #endif // TREE_CONSTS_H

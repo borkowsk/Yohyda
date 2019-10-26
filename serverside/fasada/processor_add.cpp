@@ -10,12 +10,12 @@ namespace fasada
 //default HTML form for this processor
 std::string processor_add::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-        "Node with name "
-        "<input type=\"text\" name=\"name\" size=\"12\"><br>\n"
-        "and value "
+        "NAME:&nbsp; "
+        "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
+        "VALUE: "
         "<input type=\"text\" name=\"value\" size=\"80\"><br>\n"
-        "will be added to '$path' <br>"
-        "<input type=\"submit\" value=\"Submit\">"
+        "will be ADDed to <B class=fasada_path>'$path'</B> <br>"
+        "<input type=\"submit\" value=\"OK\">"
         "</form>";
 
 processor_add::processor_add(const char* name):
@@ -30,7 +30,6 @@ void processor_add::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 //Implement_read WRITER'a powinno przygotować FORM jeśli jest to format "html"
 {
     std::string fullpath=request.getFullPath();
-            //request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
     std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();//czy ma elementy składowe?
     bool html=request["html"]!="false";
@@ -89,7 +88,7 @@ void processor_add::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
 
     if(html)
     {
-       o+="DONE <B>'"+name+"'</B>=<I>'"+top.get_child(name).data()+"'</I>";
+       o+="DONE <B class=fasada_path>'"+name+"'</B>=<I>'"+top.get_child(name).data()+"'</I>";
        o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack);
        o+="</P>";
        o+=getHtmlClosure();
