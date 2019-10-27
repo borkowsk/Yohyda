@@ -9,7 +9,7 @@
 namespace fasada
 {
 
-class processor_ren : public tree_processor
+class processor_ren : public tree_processor //READER&WRITER
 {
     static std::string Form;//default HTML form for this processor
 public:
