@@ -15,9 +15,14 @@ processor_ls::processor_ls(const char* name):
 processor_ls::~processor_ls()
 {}
 
-//TODO - problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
+void processor_ls::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
+{
+    throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
+}
+
+//Problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
 //https://stackoverflow.com/questions/48407925/boostproperty-treeptree-accessing-arrays-first-complex-element
-//Do rozwiązania na poziomie serwera fasady za pomoca wstawienia kolejnych liczb
+//Rozwiązany na poziomie serwera fasady za pomoca wstawienia kolejnych liczb po wczytaniu
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool longformat=(request.find("long")!=request.end()?true:false);
@@ -43,12 +48,12 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             {
                 std::string fullpath=parentpath+std::string(p.first.data());
                 o+=std::string(longformat?"<LI>":"")
-                        +" <A href=\""+fullpath+"?"+request["&query"]+"\"><B class=fasada_path>"
+                        +" <A href=\""+fullpath+"?"+request["&query"]+"\"><B class=fasada_path>'"
                         +std::string(p.first.data())
-                        +"</B></A>"
-                        +" <A href=\""+fullpath+"?get&html&long\">:<I>"
+                        +"'</B></A>"
+                        +" <A href=\""+fullpath+"?get&html&long\"> : <I>'"
                         +std::string(p.second.data())
-                        +"</I></A> "
+                        +"'</I></A> "
                         +getActionLink(fullpath+"?dfs&html","*")
                         ;
             }
@@ -75,7 +80,9 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         if(html)
         {
             std::string fullpath=request.getFullPath();
-            o+=std::string(longformat?"<LI>":"") + "'" + request["&path"] + "' ";
+            o+=std::string(longformat?"<LI>":"")
+                    + "<B class=fasada_path>'" + request["&path"] + "'</B> : "
+                    + "<I>'"+top.data()+"'</I> ";
             if(top.size()==0 ) o+=getActionLink(fullpath+"?set&html","change!");
             if(top.data()=="") o+=" "+getActionLink(fullpath+"?add&html","add!");
         }
@@ -88,9 +95,6 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 }
 
 
-void processor_ls::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
-{
-    throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
-}
+
 
 }//namespace "fasada"

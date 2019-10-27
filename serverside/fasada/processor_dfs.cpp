@@ -2,19 +2,23 @@
 #include "tree_consts.h"
 #include "processor_dfs.h"
 #include "tree/ptree_foreach.hpp"
-
+#include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+#include <algorithm>
 
 namespace fasada
 {
 
 processor_dfs::processor_dfs(const char* name):
     tree_processor(READER,name)
-{
-
-}
+{}
 
 processor_dfs::~processor_dfs()
 {}
+
+void processor_dfs::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
+{
+    throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
+}
 
 void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
@@ -31,12 +35,14 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     foreach_node(top,"",
-    [&o,defret,html](const ptree& t,std::string k)
+    [&o,defret,html,&request](const ptree& t,std::string k)
     {
         o+="[";
-        if(html) o+="<B class=fasada_path>";
-        o+=k;
-        if(html) o+="</B>] : <I>'";
+        std::string pathk=k;
+        std::replace( pathk.begin(), pathk.end(),'.','/');
+        if(html) o+="<B class=fasada_path><A HREF=\""+request.getFullPath()+"/"+pathk+"?ls&html&long\">";
+        o+=pathk;
+        if(html) o+="</A></B>] : <I>'";
         else o+="] : '";
         o+=t.data();
         o+="'";
@@ -51,12 +57,6 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         if(longformat) o+="</UL>\n";
         o+=getHtmlClosure();
     }
-}
-
-
-void processor_dfs::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
-{
-    throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
 }
 
 }//namespace "fasada"
