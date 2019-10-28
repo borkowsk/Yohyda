@@ -40,8 +40,9 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
            }
            else
            {
-               o+=" "+getActionLink(fullpath+"?set&html","change!")
-                 +" "+getActionLink(fullpath+"?add&html","add!");
+               if(writing_enabled())
+                    o+=" "+getActionLink(fullpath+"?set&html","SET!")
+                      +" "+getActionLink(fullpath+"?add&html","ADD!");
            }
         }
         else

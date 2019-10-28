@@ -295,7 +295,7 @@ int main(int argc, char* argv[])
 
         //Dopiero tu jest pewność że wewnętrzne struktury static zostały zainicjalizowane.
         //No i że w ogóle warto ladować procesory danych
-        fasada::init(false);//more general than register_processors();
+        fasada::init(true);//starting fasada functionality with
         std::cout<<"All data processors registered."<<std::endl;
 
         //receive & process the request!

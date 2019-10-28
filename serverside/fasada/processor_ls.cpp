@@ -67,11 +67,15 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 
         if(html)
         {
-            std::string fullpath=request.getFullPath();
-            o+="\n<BR>"+getActionLink(fullpath+"?add&html","ADD!");
-            o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!");
-            o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!");
-            o+=+"&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+            o+="\n<BR>";
+            if(writing_enabled())
+            {
+                std::string fullpath=request.getFullPath();
+                o+=getActionLink(fullpath+"?add&html","ADD!");
+                o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!");
+                o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!")+"&nbsp;&nbsp;";
+            }
+            o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
     }
     else
@@ -82,8 +86,11 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             o+=std::string(longformat?"<LI>":"")
                     + "<B class=fasada_path>'" + request["&path"] + "'</B> : "
                     + "<I>'"+top.data()+"'</I> ";
-            if(top.size()==0 ) o+=getActionLink(fullpath+"?set&html","change!");
-            if(top.data()=="") o+=" "+getActionLink(fullpath+"?add&html","add!");
+            if(writing_enabled())
+            {
+                if(top.size()==0 ) o+=getActionLink(fullpath+"?set&html","SET!");
+                if(top.data()=="") o+=" "+getActionLink(fullpath+"?add&html","ADD!");
+            }
         }
         else
         o+=" NO SUBNODES ";
