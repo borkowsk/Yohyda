@@ -11,8 +11,30 @@
 
 namespace fasada
 {
+
+std::string tree_processor::HTMLHeader=
+        "<HTML>\n<HEAD>\n"
+        "<TITLE>$page_title</TITLE>\n"
+        "<meta charset=\"utf-8\">\n"
+        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n"
+        "</HEAD>\n<BODY>\n";
+
+std::string tree_processor::HTMLAction=
+        "<A HREF=\""
+        "$action_href"
+        "\" class=\"fasada_action\">"
+        "$link_content"
+        "</A>"
+        ;
+
+std::string tree_processor::HTMLBack=
+        "BACK";/// "RETURN","WRÓĆ" or "<---";
+
+std::string tree_processor::HTMLFooter=
+        "\n</BODY></HTML>\n";
+
 // W C++ dopiero w main jest pewność że wewnętrzne struktury static
-// z innych źródeł i z bibliotek zostały zainicjalizowane. To słabe...
+// z innych źródeł i z bibliotek zostały zainicjalizowane. To słabe, ale tak jest w C++
 // Robimy sztuczkę...
 // https://www.bfilipek.com/2018/02/static-vars-static-lib.html
 // Czyli "lazy singleton pattern"
@@ -37,7 +59,7 @@ tree_processor::tree_processor(Category cat,const char* name):
 {
     if(cat>CONTROL)
       throw(tree_processor_exception("UNKNOWN CATEGORY OF PTREE PROCESSOR "+procName));
-    
+
     std::cerr<<"Registering "<<procName<<" processor ";
 
     try
@@ -126,27 +148,6 @@ void tree_processor::write_tree(ShmString& o,pt::ptree& top,URLparser& request)/
     }
     o+=MEM_END;//"DONE" MARKER FOR PARAREL PROCESS
 }
-
-std::string tree_processor::HTMLHeader=
-        "<HTML>\n<HEAD>\n"
-        "<TITLE>$page_title</TITLE>\n"
-        "<meta charset=\"utf-8\">\n"
-        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n"
-        "</HEAD>\n<BODY>\n";
-
-std::string tree_processor::HTMLAction=
-        "<A HREF=\""
-        "$action_href"
-        "\" class=\"fasada_action\">"
-        "$link_content"
-        "</A>"
-        ;
-
-std::string tree_processor::HTMLBack=
-        "BACK";/// "RETURN","WRÓĆ" or "<---";
-
-std::string tree_processor::HTMLFooter=
-        "\n</BODY></HTML>\n";
 
 std::string  tree_processor::getHtmlHeaderDefaults(const std::string& Title)
 //Default set of html <HEAD> lines finishing by <BODY>

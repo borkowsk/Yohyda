@@ -12,7 +12,10 @@ namespace fasada
 
 class processor_find : public tree_processor //Category READER!
 {
-    public:
+protected:
+    static std::string Form;//default HTML form for this processor
+
+public:
         processor_find(const char* name="find");
        ~processor_find();
     protected://implementation

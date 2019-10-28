@@ -24,6 +24,9 @@ const char* const EXT_PRE="@E@X@T=";//See for MIME types:
 ///Some values for html output
 #define STR_DEFAULT_LEN_OF_NAME "14"
 const unsigned UINT_DEFAULT_LEN_OF_NAME=14;
+#define STR_DEFAULT_LEN_OF_SUBPATH "24"
+const unsigned UINT_DEFAULT_LEN_OF_SUBPATH=24;
+#define STR_DEFAULT_FILTER "*"
 
 }//namespace "fasada"
 #endif // TREE_CONSTS_H
