@@ -53,6 +53,7 @@ add_library(fasada
     "${SRCPATH}/fasada/processor_find.cpp"
     "${SRCPATH}/fasada/register_processors.cpp"
     "${SRCPATH}/fasada/http/URLparser.cpp"
+    "${SRCPATH}/fasada/tree/tree.cpp"
     )
 
 add_library(facebookspec
