@@ -9,6 +9,7 @@
 /// Treeserver, which loads the json file in a ptree and serve it's content
 ///
 ///
+#include "fasada.hpp"
 #include "memory_pool.h"
 #include "tree_processor.h"
 #include "http/URLparser.hpp"
@@ -294,7 +295,7 @@ int main(int argc, char* argv[])
 
         //Dopiero tu jest pewność że wewnętrzne struktury static zostały zainicjalizowane.
         //No i że w ogóle warto ladować procesory danych
-        fasada::init();//more general than register_processors();
+        fasada::init(false);//more general than register_processors();
         std::cout<<"All data processors registered."<<std::endl;
 
         //receive & process the request!

@@ -7,9 +7,7 @@
 #  pragma once
 #endif
 
-#include "tree_types.h"
-#include "tree_consts.h"
-
+#include "fasada.hpp"
 #include <boost/interprocess/ipc/message_queue.hpp>
 #include <boost/interprocess/exceptions.hpp>
 #include <chrono>
@@ -21,8 +19,6 @@ using namespace boost::interprocess;
 
 namespace fasada
 {
-
-void init(); //INITIALIZE THE FASADA LIBRARY
 
 class MemoryPool
 {

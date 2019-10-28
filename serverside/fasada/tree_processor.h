@@ -82,8 +82,5 @@ namespace fasada
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw
 };
 
-    void register_processors(); //Function for registering default set of tree_processors
-                                //located in fasada.a/lib/so
-
 }//namespace "fasada"
 #endif // TREE_PROCESSOR_H
