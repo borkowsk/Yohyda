@@ -75,6 +75,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                 o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!");
                 o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!")+"&nbsp;&nbsp;";
             }
+            o+=getActionLink(request.getFullPath()+"?find&html","FIND")+"&nbsp;&nbsp;";
             o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
     }

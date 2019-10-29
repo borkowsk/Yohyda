@@ -10,7 +10,9 @@ namespace fasada
 
 processor_find::processor_find(const char* name):
     tree_processor(WRITER_READER,name)
-{}
+{
+
+}
 
 processor_find::~processor_find()
 {}
@@ -35,19 +37,19 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     unsigned    noc=top.size();//czy ma jakieś elementy składowe?
     std::string fullpath=request.getFullPath();
 
-    if(noc<2)
+    if(noc<1)
     {
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+" HAS NOTHING TO DO WITH NODE "+request["&path"]));
     }
 
     if(request["ready"]=="true")//<FORM> is filled completelly
     {
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+": COMPLETE FORM SHOULD BE PROCESSED WITH WRITING ENABLED."));
+        _implement_substring_find(o,top,request);
     }
     else
     {
         if(!html)
-            throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS CANNOT PREPARE FORM OTHER THAN HTML!"));
+            throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT PREPARE FORM OTHER THAN HTML!"));
 
         o+=ipc::string(EXT_PRE)+"htm\n";
         o+=getHtmlHeaderDefaults(fullpath)+"\n";
@@ -114,6 +116,90 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     }
 }
 
+void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
+{
+    bool defret=(request["return"]!="false");
+    bool longformat=(request.find("long")!=request.end()?true:false);
+    bool html=request["html"]!="false";
+    std::string fullpath=request.getFullPath();
+    if( *(--fullpath.end())!='/' )
+        fullpath+="/";
+    std::string  subpath=request["subpath"];
+    std::string    field=request["field"];
+    std::string    value=request["value"];
+    bool all_spaths=(subpath=="*");
+    bool all_fields=(field=="*");
+    bool all_values=(value=="*");
+
+    if(html)//TYPE HEADER AND HTML HEADER
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request["&path"])+(longformat?"<UL>\n":"\n");
+    }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
+
+    auto subpath_lambda= [subpath](const ptree& t,std::string k)
+                                {
+                                    auto found=k.find(subpath,0);
+                                    return ( found != k.npos );
+                                };
+
+    auto field_lambda= [field](const ptree& t,std::string k)
+                                {
+                                    auto lslas=k.rfind('/');
+                                    if(lslas==k.npos)
+                                        return false;
+                                    auto found=k.find(field,lslas);
+                                    //std::cerr<<k<<" "<<lslas<<" "<<found<<std::endl;
+                                    return ( found != k.npos );
+                                };
+
+    auto value_lambda= [value](const ptree& t,std::string k)
+                                {
+                                    auto found=t.data().find(value,0);
+                                    return ( found != std::string::npos );
+                                };
+
+    auto print_lambda=[&o,defret,html,&request,fullpath](const ptree& t,std::string k)
+                                {
+                                    o+="[";
+                                    std::string pathk=k;
+                                    if(html) o+="<B class=fasada_path><A HREF=\""
+                                            +fullpath
+                                            +pathk+"?ls&html&long\">";
+                                    o+=pathk;
+                                    if(html) o+="</A></B>] : <I>'";
+                                    else o+="] : '";
+                                    o+=t.data();
+                                    o+="'";
+                                    if(html) o+="</I><BR>\n";
+                                    else o+="\n";
+                                    return defret;
+                                };
+
+    auto and_lambda=[all_fields,field_lambda,all_values,value_lambda,print_lambda](const ptree& t,std::string k)
+    {
+        return (all_fields || field_lambda(t,k)) && (all_values || value_lambda(t,k)) && print_lambda(t,k);
+    };
+
+//  It would be easier, but compiler don't cooperate ;-) :-/
+//      "error: operands to ?: have different types" ?????????
+//  auto real_lambda=( all_spaths ? always_lambda : subpath_lambda );
+
+    if(all_spaths)
+        foreach_node( top,"",always, and_lambda, never, "/" );
+    else
+        foreach_node( top,"",subpath_lambda, and_lambda, never, "/" );
+
+    if(html)
+    {
+        if(longformat) o+="</UL>\n";
+        o+=getHtmlClosure();
+    }
+}
+
+
 void processor_find::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 {
     if(request["ready"]!="true")//<FORM> is NOT filled completelly
@@ -122,7 +208,7 @@ void processor_find::_implement_write(ShmString& o,pt::ptree& top,URLparser& req
     }
     else
     {
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS REALLY NOT IMPLEMENTED!"));
+        _implement_substring_find(o,top,request);
     }
 }
 
