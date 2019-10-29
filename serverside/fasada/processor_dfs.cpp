@@ -24,6 +24,9 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     bool defret=(request["return"]!="false");
     bool longformat=(request.find("long")!=request.end()?true:false);
     bool html=request["html"]!="false";
+    auto fullpath=request.getFullPath();
+    if( *(--fullpath.end())!='/' )
+        fullpath+="/";
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
@@ -34,21 +37,20 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     foreach_node(top,"",
-    [&o,defret,html,&request](const ptree& t,std::string k)
-    {
-        o+="[";
-        std::string pathk=k;
-        std::replace( pathk.begin(), pathk.end(),'.','/');
-        if(html) o+="<B class=fasada_path><A HREF=\""+request.getFullPath()+"/"+pathk+"?ls&html&long\">";
-        o+=pathk;
-        if(html) o+="</A></B>] : <I>'";
-        else o+="] : '";
-        o+=t.data();
-        o+="'";
-        if(html) o+="</I><BR>\n";
-        else o+="\n";
-        return defret;//wynik nie blokuje, ale "before" jest "never" więc nie ma "after"
-    }
+    [&o,defret,html,&request,fullpath](const ptree& t,std::string k)
+        {
+            o+="[";
+            std::string pathk=k;
+            if(html) o+="<B class=fasada_path><A HREF=\""+fullpath+pathk+"?ls&html&long\">";
+            o+=pathk;
+            if(html) o+="</A></B>] : <I>'";
+            else o+="] : '";
+            o+=t.data();
+            o+="'";
+            if(html) o+="</I><BR>\n";
+            else o+="\n";
+            return defret;//wynik nie blokuje, ale "before" jest "never" więc nie ma "after"
+        },never,never,"/"
     );
 
     if(html)
