@@ -48,7 +48,9 @@ void foreach_node(const ptree &tree,//Korzen drzewa w wersji const!
                     std::string key,//Sciezka do węzła - niekonieczna niby, ale zwykle przydatna
                     predc& filter,   //Predykat wykonywany zawsze
                     predc& before=never,//Predykat wykonywany gdy pierwszy zwróci true - przed iteracją dzieci
-                    predc& after=never);//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
+                    predc& after=never,//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
+                    std::string separator="." //Separator składowych klucza
+            );
 
 /// Tu są możliwe zmiany w drzewie, ale...
 /// UWAGA NA MODYFIKACJE!!!
@@ -61,7 +63,9 @@ void foreach_node(ptree &tree,      //Korzen drzewa
                     std::string key,//Sciezka do węzła - niekonieczna niby ale zwykle przydatna
                     pred& filter,   //Predykat wykonywany zawsze
                     pred& before=never,//Predykat wykonywany gdy pierwszy zwróci true - przed iteracją dzieci
-                    pred& after=never);//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
+                    pred& after=never,//Predykat wykonywany gdy poprzedni zwróci true - po iteracji dzieci
+                    std::string separator="." //Separator składowych klucza
+            );
 
 /// Numeracja nienazwanych "dzieci"
 /// Funkcja nadaje kolejne(?) numery wszystkim nienazwanym 
@@ -76,20 +80,23 @@ inline ptree* get_parent(ptree& pt);//daje rodzica danego wezla ptree
                                     //Odczytuje i konwertuje
 
 /// Funkcja użytkowa - drukowanie wszystkiego na strumień
-inline void print_all_to(const ptree& pt,std::ostream& out=std::cout); //Drukuje wszystko
+inline void print_all_to(const ptree& pt,
+                         std::ostream& out=std::cout,
+                         std::string Separator="." //Separator składowych klucza
+            ); //Drukuje wszystko
 
 //IMPLEMENTACJA:
 //=====================
 // foreach_node(...) to ogólny algorytm robienia czegoś z drzewami ptree
 // (Dobry do lambd, ale jeszcze nie jako template)
-void foreach_node(const ptree &tree, std::string key, predc& filter, predc& before/*=never*/, predc& after/*=never*/)
+void foreach_node(const ptree &tree, std::string key, predc& filter, predc& before/*=never*/, predc& after/*=never*/,std::string separator)
 {
     std::string nkey;
     bool do_after=false;
-
+    //std::cerr<<separator;
     if (!key.empty())
     {
-        nkey = key + ".";  // separator!!! TODO?
+        nkey = key + separator; // Selected separator
     }
 
     if(filter(tree,key))// FILTR ZAWSZE
@@ -98,7 +105,7 @@ void foreach_node(const ptree &tree, std::string key, predc& filter, predc& befo
     auto end = tree.end();// REKURENCJA TEŻ ZAWSZE
     for (auto it = tree.begin(); it != end; ++it)
     {
-        foreach_node(it->second, nkey + it->first ,filter,before,after);
+        foreach_node(it->second, nkey + it->first ,filter,before,after,separator);
     }
 
     if(do_after)// Jak before zwróciło "true"
@@ -106,14 +113,14 @@ void foreach_node(const ptree &tree, std::string key, predc& filter, predc& befo
 }
 
 // Wersja foreach_node z możliwością modyfikacji
-void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/)
+void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=never*/, pred& after/*=never*/,std::string separator)
 {
     std::string nkey;
     bool do_after=false;
-
+    //std::cerr<<separator;
     if (!key.empty())
     {
-        nkey = key + ".";
+        nkey = key + separator; // Selected separator
     }
 
     if(filter(tree,key))
@@ -122,7 +129,7 @@ void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=nev
     auto end = tree.end();
     for (auto it = tree.begin(); it != end; ++it)
     {
-        foreach_node(it->second, nkey + it->first ,filter,before,after);
+        foreach_node(it->second, nkey + it->first ,filter,before,after,separator);
     }
 
     if(do_after)
@@ -208,9 +215,8 @@ ptree* get_parent(ptree& pt)
     if(uplink)
     {
         std::string sptr=uplink->data();
-        //void* vptr=(void*)boost::numeric_cast<unsigned long>(sptr);//TTTTo sie sypie przy kompilacji :-/
         /* Convert the provided value to a decimal long long */
-        unsigned long long result;         
+        unsigned long long result;
                                                                 static_assert(sizeof(result)>=sizeof(ptree*),
                                                                 "Nie spelnione:sizeof(result)>sizeof(ptree*)");
         char *eptr;
@@ -239,16 +245,17 @@ ptree* get_parent(ptree& pt)
     return nullptr;
 }
 
-void print_all_to(const ptree& pt,std::ostream& out/*=std::cout*/)
+void print_all_to(const ptree& pt,std::ostream& out/*=std::cout*/,std::string Separator/*="."*/)
 // drukuje wszystko na zadany strumień
 {
     foreach_node(pt,"root",always,
-        [&out](const ptree& t,std::string k)
-        {
-            out<< k <<":\t";
-            out<< t.data() <<" ; "<<std::endl;
-            return false;//blokuje wywołanie "after", które i tak jest "never"
-        }
+            [&out](const ptree& t,std::string k)
+            {
+                out<< k <<":\t";
+                out<< t.data() <<" ; "<<std::endl;
+                return false;//blokuje wywołanie "after", które i tak jest "never"
+            },
+            never,Separator
         );
 }
 
