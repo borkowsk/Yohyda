@@ -5,22 +5,30 @@
 
 body {
         background-color: lightblue;
+        color: rgb(100,100,120);
+        font-size: 11pt;
 }
 
 h1 {
-        color: navy;
+        color: darkgray;
         margin-left: 20px;
 }
 
 b.fasada_path {
         font-family: Courier;
+        font-variant: normal;
         font-weight: bold;
+}
+
+i.fasada_val {
+       font-family:  Arial; 
+       font-variant: normal;
+       font-style: oblique;
 }
 
 a {
         text-decoration: none;
 }
-
 
 a:link {
         color: rgb(0,128,0); 
@@ -32,23 +40,23 @@ a:visited {
 
 a.fasada_action {
         background-color: white; 
-        padding:1px 4px;  
+        padding: 1px 4px;  
         font-weight: bold;
-        font-size: 13pt;
+        font-size: 12pt;
         font-family: monospace;
         border-radius: 8px; 
 }
 
 form {
         background-color: orange;   
-        padding:10px;    
+        padding: 10px;    
 }
 
 input[type=text] {
         font-size: 10pt;
-        padding:4px 10px; 
-        background:white; 
-        border:1 none;
+        padding: 4px 10px; 
+        background: white; 
+        border: 1 none;
         font-family: Arial;
         border-radius: 10px; 
 }
@@ -56,7 +64,7 @@ input[type=text] {
 input[type=submit] {
         font-weight: bold;
         font-size: 13pt;
-        padding:4px 13px; 
+        padding: 4px 13px; 
         background: yellow; 
         color: navy;
         border:2 none;
@@ -69,7 +77,7 @@ form.fasada_form {
         padding:15px;  
         background-color: lightgreen; 
         color: navy;
-        font-size:   12pt;
+        font-size:   11pt;
         font-variant: small-caps;
         cursor:help;
         font-family: monospace;

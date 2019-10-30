@@ -31,7 +31,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     {
         if(html)
         {
-           o+="<B class=fasada_path>'"+request["&path"]+ "'</B> = <I>'" + tmp + "'</I>";
+           o+="<B class=fasada_path>'"+request["&path"]+ "'</B> = <I class=\"fasada_val\">'" + tmp + "'</I>";
            std::string fullpath=request.getFullPath();
            if(noc>0)
            {
@@ -44,6 +44,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
                     o+=" "+getActionLink(fullpath+"?set&html","SET!")
                       +" "+getActionLink(fullpath+"?add&html","ADD!");
            }
+           o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
         else
         {

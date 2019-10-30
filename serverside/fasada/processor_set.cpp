@@ -87,7 +87,7 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
 
     if(html)
     {
-       o+="DONE <I>'"+top.data()+"'</I>";
+       o+="DONE <I class=\"fasada_val\">'"+top.data()+"'</I>";
        o+="\n"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
        o+="</P>";
        o+=getHtmlClosure();

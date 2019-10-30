@@ -3,6 +3,7 @@
 #include "tree/ptree_foreach.hpp"
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <algorithm>
+#include <string>
 
 namespace fasada
 {
@@ -37,15 +38,22 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     foreach_node(top,"",
-    [&o,defret,html,&request,fullpath](const ptree& t,std::string k)
+    [&o,defret,longformat,html,&request,fullpath](const ptree& t,std::string k)
         {
-            o+="[";
+            o+=(longformat && html ? "<LI>":"");
             std::string pathk=k;
             if(html) o+="<B class=fasada_path><A HREF=\""+fullpath+pathk+"?ls&html&long\">";
             o+=pathk;
-            if(html) o+="</A></B>] : <I>'";
-            else o+="] : '";
-            o+=t.data();
+            if(html) o+="</A></B> : <I class=\"fasada_val\">'";
+            else o+=" : '";
+            if(longformat)
+                o+=t.data();
+            else
+            {
+                auto sub=t.data().substr(0,40);
+                if(sub.size()==40) sub+="...";
+                o+=sub;
+            }
             o+="'";
             if(html) o+="</I><BR>\n";
             else o+="\n";
@@ -56,6 +64,11 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     if(html)
     {
         if(longformat) o+="</UL>\n";
+        o+="<BR>\n";
+        o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html","LSS")+"&nbsp;&nbsp;";
+        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         o+=getHtmlClosure();
     }
 }

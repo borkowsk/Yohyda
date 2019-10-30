@@ -28,7 +28,7 @@ std::string tree_processor::HTMLAction=
         ;
 
 std::string tree_processor::HTMLBack=
-        "BACK";/// "RETURN","WRÓĆ" or "<---";
+        "UP";/// "RETURN","WRÓĆ" or "<--|";
 
 std::string tree_processor::HTMLFooter=
         "\n</BODY></HTML>\n";

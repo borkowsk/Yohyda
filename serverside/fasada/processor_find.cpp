@@ -20,15 +20,17 @@ processor_find::~processor_find()
 //default HTML form for this processor
 std::string processor_find::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-        "<input name=\"ready\"   type=\"hidden\"             value=\"$is_ready\" >\n"
+        "<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
         "\n<BR>SUBPATH:     "
-        "<input name=\"subpath\" type=\"$input_of_subpath\" size=\"$size_of_subpath\" value=\"$subpath\">"
+        "<input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"
         "\n<BR>FIELD NAME:  "
         "<input name=\"field\"   type=\"$input_of_field\"   size=\"$size_of_field\"   value=\"$field\">"
         "\n<BR>FIELD VALUE: "
         "<input name=\"value\"   type=\"$input_of_value\"   size=\"$size_of_value\"   value=\"$value\">"
-        "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B><BR>\n"
-        "<input type=\"submit\" value=\"OK\">\n"
+        "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B> "
+        "<input type=\"submit\" value=\"OK\">"
+        "\n<BR><a class=\"fasada_action\" href=\"$fullpath?ls&html&long\">LSL</A>&nbsp;&nbsp;\n"
+        "\n<a class=\"fasada_action\" href=\"$fullpath?dfs&html&long\">TREE</A>&nbsp;&nbsp;\n"
         "</form>";
 
 void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
@@ -76,7 +78,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
         else
         {
             boost::replace_all(ReadyForm,"$input_of_subpath","hidden");
-            std::string replacer=(request["subpath"]+"\"><I>"+request["subpath"]+"</I>");
+            std::string replacer=(request["subpath"]+"\"><I class=\"fasada_val\">"+request["subpath"]+"</I>");
             boost::replace_all(ReadyForm,"$subpath\">",replacer);
             boost::replace_all(ReadyForm,"$size_of_subpath","1");
         }
@@ -91,7 +93,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
         else
         {
             boost::replace_all(ReadyForm,"$input_of_field","hidden");
-            std::string replacer=(request["field"]+"\"><I>"+request["field"]+"</I>");
+            std::string replacer=(request["field"]+"\"><I class=\"fasada_val\">"+request["field"]+"</I>");
             boost::replace_all(ReadyForm,"$field\">",replacer);
             boost::replace_all(ReadyForm,"$size_of_field","1");
         }
@@ -106,7 +108,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
         else
         {
             boost::replace_all(ReadyForm,"$input_of_value","hidden");
-            std::string replacer=(request["value"]+"\"><I>"+request["value"]+"</I>");
+            std::string replacer=(request["value"]+"\"><I class=\"fasada_val\">"+request["value"]+"</I>");
             boost::replace_all(ReadyForm,"$value\">",replacer);
             boost::replace_all(ReadyForm,"$size_of_value","1");
         }
@@ -119,7 +121,6 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool defret=(request["return"]!="false");
-    bool longformat=(request.find("long")!=request.end()?true:false);
     bool html=request["html"]!="false";
     std::string fullpath=request.getFullPath();
     if( *(--fullpath.end())!='/' )
@@ -134,7 +135,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"])+(longformat?"<UL>\n":"\n");
+        o+=getHtmlHeaderDefaults(request["&path"])+"<UL>\n";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
@@ -163,17 +164,17 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
 
     auto print_lambda=[&o,defret,html,&request,fullpath](const ptree& t,std::string k)
                                 {
-                                    o+="[";
+                                    o+=(html?"<LI>":"* ");
                                     std::string pathk=k;
                                     if(html) o+="<B class=fasada_path><A HREF=\""
                                             +fullpath
                                             +pathk+"?ls&html&long\">";
                                     o+=pathk;
-                                    if(html) o+="</A></B>] : <I>'";
-                                    else o+="] : '";
+                                    if(html) o+="</A></B> : <I class=\"fasada_val\">'";
+                                    else o+=" : '";
                                     o+=t.data();
                                     o+="'";
-                                    if(html) o+="</I><BR>\n";
+                                    if(html) o+="</I>\n";
                                     else o+="\n";
                                     return defret;
                                 };
@@ -194,7 +195,13 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
 
     if(html)
     {
-        if(longformat) o+="</UL>\n";
+        o+="</UL>";
+        o+="<BR>\n";
+        o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?dfs&html&long","TREE")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html","LSS")+"&nbsp;&nbsp;";
+        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         o+=getHtmlClosure();
     }
 }

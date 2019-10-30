@@ -19,28 +19,55 @@ void processor_ls::_implement_write(ShmString& o,pt::ptree& top,URLparser& reque
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
 }
 
+void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
+{
+    std::string fullpath=request.getFullPath();
+    if(writing_enabled())
+    {
+        o+=getActionLink(fullpath+"?add&html","ADD!");
+        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!");
+        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!")+"&nbsp;&nbsp;";
+    }
+    o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
+    if(longformat)
+    {
+        o+=getActionLink(fullpath+"?dfs&html&long","TREE")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html","LSS")+"&nbsp;&nbsp;";
+    }
+    else
+    {
+        o+=getActionLink(fullpath+"?dfs&html","TREE")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
+    }
+    o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack);
+}
+
 //Problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
 //https://stackoverflow.com/questions/48407925/boostproperty-treeptree-accessing-arrays-first-complex-element
 //Rozwiązany na poziomie serwera fasady za pomoca wstawienia kolejnych liczb po wczytaniu
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    bool longformat=(request.find("long")!=request.end()?true:false);
+    unsigned counter=0;
     bool html=request["html"]!="false";
+    longformat=(request.find("long")!=request.end()?true:false);//longformat jest prywatne
+
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"])+(longformat?"<UL>\n":"\n");
+        o+=getHtmlHeaderDefaults(request["&path"]);
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     if(top.size()>0)
     {
+        _implement_action_panel(o,request);
+        o+="<BR><BR>\n";
         std::string parentpath=request.getFullPath();
         if( *(--parentpath.end())!='/' )
             parentpath+="/";
-
+        o+=(longformat?"\n<UL>\n":"\n");
         for(auto p:top)
         {
             if(html)
@@ -50,14 +77,15 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +" <A href=\""+fullpath+"?"+request["&query"]+"\"><B class=fasada_path>'"
                         +std::string(p.first.data())
                         +"'</B></A>"
-                        +" <A href=\""+fullpath+"?get&html&long\"> : <I>'"
+                        +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                         +std::string(p.second.data())
                         +"'</I></A> "
                         +getActionLink(fullpath+"?dfs&html","*")
                         ;
+                counter++;
             }
             else
-                o+=std::string(p.first.data())+std::string(":")+std::string(p.second.data());
+                o+=std::string(p.first.data())+std::string(" : ")+std::string(p.second.data());
 
             if(longformat)
                 o+=(html?"\n":";\n");
@@ -65,18 +93,12 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                 o+=(html?"&nbsp; ":";\t");
         }
 
-        if(html)
+        if(longformat & html) o+="</UL>";
+
+        if(html && counter>10)
         {
-            o+="\n<BR>";
-            if(writing_enabled())
-            {
-                std::string fullpath=request.getFullPath();
-                o+=getActionLink(fullpath+"?add&html","ADD!");
-                o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!");
-                o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!")+"&nbsp;&nbsp;";
-            }
-            o+=getActionLink(request.getFullPath()+"?find&html","FIND")+"&nbsp;&nbsp;";
-            o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+            o+="<BR><BR>\n";
+            _implement_action_panel(o,request);
         }
     }
     else
@@ -86,18 +108,17 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             std::string fullpath=request.getFullPath();
             o+=std::string(longformat?"<LI>":"")
                     + "<B class=fasada_path>'" + request["&path"] + "'</B> : "
-                    + "<I>'"+top.data()+"'</I> ";
+                    + "<I class=\"fasada_val\">'"+top.data()+"'</I> ";
             if(writing_enabled())
             {
                 if(top.size()==0 ) o+=getActionLink(fullpath+"?set&html","SET!");
-                if(top.data()=="") o+=" "+getActionLink(fullpath+"?add&html","ADD!");
+                if(top.data()=="") o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?add&html","ADD!");
             }
+            o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
         else
         o+=" NO SUBNODES ";
     }
-
-    if(longformat & html) o+="</UL>";
     if(html) o+=getHtmlClosure();
 }
 

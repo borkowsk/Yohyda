@@ -36,7 +36,7 @@ namespace fasada
         static std::string HTMLHeader;//Full HEAD of HTML page
         static std::string HTMLFooter;//Compatible footer of HTML page
         static std::string HTMLAction;//HTML contruction for action link
-        static std::string HTMLBack;  //"BACK","RETURN","WRÓĆ" of "<---"
+        static std::string HTMLBack;  //"UP","RETURN","WRÓĆ" of "<---"
 
     public: //SUBTYPES
         enum Category {CONTROL=4,WRITER_READER=3,WRITER=2,READER=1};
