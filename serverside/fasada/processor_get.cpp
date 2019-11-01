@@ -41,8 +41,13 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
            else
            {
                if(writing_enabled())
-                    o+=" "+getActionLink(fullpath+"?set&html","SET!")
-                      +" "+getActionLink(fullpath+"?add&html","ADD!");
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?set&html","SET!");
+               if(writing_enabled() && top.data()=="" )
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?add&html","ADD!");
+               if(writing_enabled() && top.data().at(0)=='!')
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+top.data(),"RUN!");
+               else  if(top.data().at(0)=='?')
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+top.data(),"RUN");
            }
            o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }

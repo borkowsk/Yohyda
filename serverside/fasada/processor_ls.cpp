@@ -1,5 +1,6 @@
 #include "fasada.hpp"
 #include "processor_ls.h"
+#include <boost/lexical_cast.hpp>
 #include <iostream>
 
 namespace fasada
@@ -79,9 +80,19 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +"'</B></A>"
                         +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                         +std::string(p.second.data())
-                        +"'</I></A> "
-                        +getActionLink(fullpath+"?dfs&html","*")
-                        ;
+                        +"'</I></A> ";
+
+                //Czy to liść czy węzeł?
+                std::string data=p.second.data();
+                if(data=="")
+                        o+=getActionLink(fullpath+"?dfs&html","*");
+                else
+                if(writing_enabled() && data.at(0)=='!')
+                    o+=getActionLink(fullpath+data,"RUN!");
+                else
+                if(data.at(0)=='?')
+                    o+=getActionLink(fullpath+data,"RUN");
+
                 counter++;
             }
             else
@@ -93,11 +104,14 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                 o+=(html?"&nbsp; ":";\t");
         }
 
-        if(longformat & html) o+="</UL>";
+        if(longformat & html) o+="</UL>\n";
+            else o+="\n";
+
+        o+=boost::lexical_cast<val_string>(counter);
 
         if(html && counter>10)
         {
-            o+="<BR><BR>\n";
+            o+="<BR>\n";
             _implement_action_panel(o,request);
         }
     }

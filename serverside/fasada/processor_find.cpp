@@ -120,6 +120,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
 
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
 {
+    unsigned counter=0;
     bool defret=(request["return"]!="false");
     bool html=request["html"]!="false";
     std::string fullpath=request.getFullPath();
@@ -162,8 +163,9 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                     return ( found != std::string::npos );
                                 };
 
-    auto print_lambda=[&o,defret,html,&request,fullpath](const ptree& t,std::string k)
+    auto print_lambda=[&o,defret,html,&request,fullpath,&counter](const ptree& t,std::string k)
                                 {
+                                    counter++;
                                     o+=(html?"<LI>":"* ");
                                     std::string pathk=k;
                                     if(html) o+="<B class=fasada_path><A HREF=\""
@@ -196,7 +198,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     if(html)
     {
         o+="</UL>";
-        o+="<BR>\n";
+        o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
         o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
         o+=getActionLink(fullpath+"?dfs&html&long","TREE")+"&nbsp;&nbsp;";
         o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
