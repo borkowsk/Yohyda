@@ -58,6 +58,7 @@ add_library(fasada
 
 add_library(facebookspec
     "${SRCPATH}/facebookspec/facebookspec.cpp"
+    "${SRCPATH}/facebookspec/processor_facebookjson.cpp"
     )
 
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
