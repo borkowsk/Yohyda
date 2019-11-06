@@ -21,6 +21,7 @@ void processor_ls::_implement_write(ShmString& o,pt::ptree& top,URLparser& reque
 }
 
 void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
+//Górny i dolny panel akcji dotyczących całej listy
 {
     std::string fullpath=request.getFullPath();
     if(writing_enabled())
@@ -43,6 +44,30 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
     o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack);
 }
 
+void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath)
+//Panel akcji dotyczących danego węzła
+{
+    if(data=="")    //Czy to liść czy (potencjalny) węzeł?
+    {
+        o+="&nbsp;"+getActionLink(fullpath+"?dfs&html","&forall;");
+        o+="&nbsp;"+getActionLink(fullpath+"?add&html","+");
+        o+="&nbsp;"+getActionLink(fullpath+"?set&html","=");
+    }
+    else
+    if(writing_enabled() && data.at(0)=='!')
+    {
+        o+="&nbsp;"+getActionLink(fullpath+data,"RUN!");
+    }
+    else
+    if(data.at(0)=='?')
+    {
+        o+="&nbsp;"+getActionLink(fullpath+data,"run");
+    }
+    else
+    if(writing_enabled())
+        o+="&nbsp;"+getActionLink(fullpath+"?set&html","=");
+}
+
 //Problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
 //https://stackoverflow.com/questions/48407925/boostproperty-treeptree-accessing-arrays-first-complex-element
 //Rozwiązany na poziomie serwera fasady za pomoca wstawienia kolejnych liczb po wczytaniu
@@ -63,12 +88,12 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 
     if(top.size()>0)
     {
-        _implement_action_panel(o,request);
+        if(html) _implement_action_panel(o,request);
         o+="<BR><BR>\n";
         std::string parentpath=request.getFullPath();
         if( *(--parentpath.end())!='/' )
             parentpath+="/";
-        o+=(longformat?"\n<UL>\n":"\n");
+        o+=(longformat & html?"\n<UL>\n":"\n");
         for(auto p:top)
         {
             if(html)
@@ -81,22 +106,12 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                         +std::string(p.second.data())
                         +"'</I></A> ";
-
-                //Czy to liść czy węzeł?
-                std::string data=p.second.data();
-                if(data=="")
-                        o+=getActionLink(fullpath+"?dfs&html","*");
-                else
-                if(writing_enabled() && data.at(0)=='!')
-                    o+=getActionLink(fullpath+data,"RUN!");
-                else
-                if(data.at(0)=='?')
-                    o+=getActionLink(fullpath+data,"RUN");
-
-                counter++;
+                _implement_node_panel(o,p.second.data(),fullpath);
             }
             else
                 o+=std::string(p.first.data())+std::string(" : ")+std::string(p.second.data());
+
+            counter++;
 
             if(longformat)
                 o+=(html?"\n":";\n");
@@ -123,11 +138,8 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             o+=std::string(longformat?"<LI>":"")
                     + "<B class=fasada_path>'" + request["&path"] + "'</B> : "
                     + "<I class=\"fasada_val\">'"+top.data()+"'</I> ";
-            if(writing_enabled())
-            {
-                if(top.size()==0 ) o+=getActionLink(fullpath+"?set&html","SET!");
-                if(top.data()=="") o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?add&html","ADD!");
-            }
+
+            _implement_node_panel(o,top.data(),fullpath);
             o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
         else
