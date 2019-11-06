@@ -6,9 +6,9 @@
 //And docs:
 //      https://www.boost.org/doc/libs/1_71_0/doc/html/boost/interprocess/message_queue_t.html
 //
-/// Treeserver, which loads the json file in a ptree and serve it's content
-///
-///
+// Treeserver, which loads the json file in a ptree and serve it's content
+
+#include "facebookspec.h"
 #include "fasada.hpp"
 #include "memory_pool.h"
 #include "tree_processor.h"
@@ -19,7 +19,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
-#include <boost/locale.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <iostream>
 #include <time.h>       /* time_t, struct tm, time, localtime */
@@ -28,9 +27,9 @@ using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
-const char debug_path[]=///"/data/wb/SCC/working_copies/facies/private/index.json";
+const char debug_path[]="/data/wb/SCC/working_copies/facies/private/index.json";
                       ///"/data/wb/SCC/working_copies/facies/private/pages/Memetyka/posts/posts_1.json";
-                      "/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
+                      ///"/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
 
 // Create a root of the tree
 pt::ptree root;
@@ -208,47 +207,6 @@ void do_local_processing(string& request, MemoryPool::ContentType msgType,fasada
     }
 }
 
-void recode_timestamps(pt::ptree& start)
-{
-     foreach_node(start,"root",always,always,
-         [](ptree& t,std::string k)
-         {
-             if(k.find("timestamp",0)!=k.npos)
-             {
-                std::cout<<k<<":'"<<t.data()<<"'"<<std::endl;
-                try
-                {
-                    struct tm  *timeinfo;
-                    time_t timestamp=boost::lexical_cast<time_t>(t.data());
-                    std::string tmp=t.data();
-                    t.clear();
-                    t.put("unix",tmp);
-                    timeinfo = localtime (&timestamp);//http://www.cplusplus.com/reference/ctime/localtime/
-                    std::string timeString=asctime(timeinfo);//alt.: http://www.cplusplus.com/reference/ctime/strftime/ ?
-                    for(char& c:timeString) if(c=='\n') c=';';
-                    t.put("asci",timeString);
-                }catch(...)
-                {/*JAK JAKIS ERROR TO NIE ROBI NIC*/}
-             }
-             return false;//nieistotne
-         }
-         );
-}
-
-void recode_facebook_pl_to_utf8(pt::ptree& start)
-{
-    foreach_node(start,"root",always,
-        [](ptree& t,std::string k)
-        {
-            //std::cout<< k <<":\t";
-            std::string latin1_string=boost::locale::conv::from_utf(t.data(),"Latin1");
-            t.data()=latin1_string;
-            //std::cout<< t.data() <<" ; "<<std::endl;
-            return false;//blokuje wywołanie "after", które i tak jest "never"
-        }
-        );
-}
-
 int main(int argc, char* argv[])
 {
     MyName+=boost::lexical_cast<string>(getpid());
@@ -278,9 +236,7 @@ int main(int argc, char* argv[])
         //Dokonuje modyfikacji przy założeniu że jest to plik json ściągnięty z Facebooka
         if( filename.substr(filename.rfind('.')) == ".json")
         {
-            std::cerr<<"inserting numbers..."<<std::endl; insert_numbers(root);
-            std::cerr<<"recoding timestamps..."<<std::endl; recode_timestamps(root);
-            std::cerr<<"recoding facebook pl codes to utf8..."<<std::endl; recode_facebook_pl_to_utf8(root);
+            facebook::call_recoders(root,true/*PL*/);
         }
         std::cerr<<"LOADED SUCCESFULLY!"<<std::endl;
 
@@ -294,8 +250,9 @@ int main(int argc, char* argv[])
                     ).c_str();
 
         //Dopiero tu jest pewność że wewnętrzne struktury static zostały zainicjalizowane.
-        //No i że w ogóle warto ladować procesory danych
+        //No i że w ogóle warto ładować procesory danych
         fasada::init(true);//starting fasada functionality with
+        facebook::register_processors();
         std::cout<<"All data processors registered."<<std::endl;
 
         //receive & process the request!
