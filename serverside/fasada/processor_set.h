@@ -16,7 +16,7 @@ protected:
 
 public:
     processor_set(const char* name="set");
-    ~processor_set();
+   ~processor_set();
  protected://implementation
  virtual
      void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
