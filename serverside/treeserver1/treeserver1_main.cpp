@@ -27,9 +27,12 @@ using namespace fasada;
 
 string MyName("TREESERVER-");//Process name
 
-const char debug_path[]="/data/wb/SCC/working_copies/facies/private/index.json";
+string debug_path="/data/wb/SCC/working_copies/facies/private/index.json";
                       ///"/data/wb/SCC/working_copies/facies/private/pages/Memetyka/posts/posts_1.json";
                       ///"/data/wb/SCC/working_copies/facies/private1/TimelineOfTheEarth/posts/posts_x.json";
+
+std::string private_dir="/data/wb/SCC/working_copies/facies/private/";
+std::string public_dir="/data/wb/SCC/working_copies/facies/public/";
 
 // Create a root of the tree
 pt::ptree root;
@@ -38,9 +41,12 @@ pt::ptree root;
 unsigned NumberOfClients=0;
 
 inline URLparser split_request(const string& request)//May throw exceptions
-{
+{                                                    //TODO - move reseult?
     URLparser URL(request.c_str());
-    //... Test or add some extra work
+    //some extra work
+    URL["&public_directory"]=public_dir;
+    if(URL["&domain"]=="localhost")//only localhost serwer has ability to see private directory of fasada
+        URL["&private_directory"]=private_dir;
     return URL;
 }
 
@@ -230,7 +236,7 @@ int main(int argc, char* argv[])
         std::cerr<<"Making communication pool & request queue"<<std::endl;//To jest serwer odpowiedzialny za ten obszar pamięci
         fasada::MemoryPool MyMemPool(MemoryPool::IsServer::True);                  assert(MyMemPool.is_server());
 
-        std::string filename=(argc > 1 && argv[1][0]!='-') ? argv[1] : debug_path;
+        std::string filename=(argc > 1 && argv[1][0]!='-') ? argv[1] : debug_path.c_str();
         std::cerr<<"Loading file "<<filename<<"..."<<std::endl;
         pt::read_json(filename, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
         //Dokonuje modyfikacji przy założeniu że jest to plik json ściągnięty z Facebooka
