@@ -15,14 +15,14 @@
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-void list_directory(const fs::path& p,pt::ptree& curr)
+void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
 {
     for(fs::directory_entry& entry : boost::make_iterator_range( fs::directory_iterator(p), {}))
     {
         if(is_directory(entry))
         {
             std::cout <<"#"<< entry.path() << "/\n";
-            list_directory(entry.path(),curr);
+            list_directory(entry.path(),curr,plen);
         }
         else
         if(is_symlink(entry))
@@ -32,9 +32,10 @@ void list_directory(const fs::path& p,pt::ptree& curr)
         {
             if(entry.path().extension()==".json")
             {
-                std::cout << entry << "  is a JSON!\n";
-                curr.put(pt::ptree::path_type{entry.path().c_str(), '/'},"!FacebookJson");
-                //pt::ptree& c=curr.add_child(entry.path().c_str(),"");
+                const char* lpath=(entry.path().c_str());
+                lpath+=plen+1;
+                std::cout <<"'"<< lpath <<"' is a JSON!\n";
+                curr.put(pt::ptree::path_type{lpath, '/'},"!FacebookJson");
             }
             //std::cout << entry << " is a "<<entry.path().extension()<<"\n";
         }
@@ -42,7 +43,7 @@ void list_directory(const fs::path& p,pt::ptree& curr)
         if(is_other(entry))
             std::cout <<"#"<< entry << "?\n";
         else
-            std::cout <<"#"<< entry << "???\n";
+            ;//std::cout <<"#"<< entry << "???\n";
     }
 }
 
@@ -52,17 +53,19 @@ int main(int argc, char *argv[])
     pt::ptree top;
 
     fs::path p(argc>1? argv[1] : ".");
+    unsigned plen=p.string().length();
+    std::cout<<"Path is "<<p<<"["<<plen<<"]"<<std::endl;
 
     if(fs::is_directory(p))
     {
         std::cout << p << " is a directory containing:\n";
-        list_directory(p,top);
+        list_directory(p,top,plen);
         pt::write_json("index.json",top);
         return 0;
     }
     else
     {
-        std::cout << p << " is not a directory.\n";
+        std::cerr<< p << " is not a directory.\n";
         return 1;
     }
 }
