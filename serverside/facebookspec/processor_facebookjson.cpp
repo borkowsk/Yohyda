@@ -1,4 +1,11 @@
+#include "facebookspec.h"
 #include "processor_facebookjson.h"
+#include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/exception/diagnostic_information.hpp>
+
+namespace pt = boost::property_tree;
 
 namespace facebook
 {
@@ -27,7 +34,8 @@ void processor_facebookJson::_implement_read(ShmString& o,const pt::ptree& top,U
 void processor_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
-    std::string fullpath;
+    std::string discPath=request["&private_directory"]+request["&path"];
+    boost::replace_all(discPath,"//","/");
     unsigned    noc=top.size();//czy ma elementy składowe?
 
     if(noc!=0)
@@ -37,7 +45,14 @@ void processor_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLpar
     }
 
     //....
-
+    o+="LOADING:";
+    o+=discPath;
+    o+="\n";
+    pt::read_json(discPath, top);
+    call_recoders(top,true/*PL*/);
+    //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
+    top.data()="";
+    o+="DONE";
 }
 
 }//namespace Facebook

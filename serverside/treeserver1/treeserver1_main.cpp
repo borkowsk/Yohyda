@@ -279,7 +279,7 @@ int main(int argc, char* argv[])
        }while(NumberOfClients>0);
 
         MyMemPool.free_data("TreeServerEmp");
-        pt::write_json("output.json",root);
+        pt::write_json("output.fac",root);
         //pt::write_xml("output.xml",root);// --> https://stackoverflow.com/questions/18875437/writing-more-complex-than-trivial-xml-with-boost-property-tree
         std::cerr<<MyName<<": I'm finished."<<std::endl;
         return 0;
