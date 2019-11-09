@@ -23,6 +23,8 @@ using namespace fasada;
 namespace http { //TO DO KASACJI?
 namespace server { //DO ZAMIANY NA "fasada"?
 
+const unsigned MILLISECONDS_BW=100;
+
 extern "C" //Te dwie funcje do eksportowania jako gole nazwy
 {
     void set_host_and_port_for_fasada(const char* iHost,const char* iPort);
@@ -143,14 +145,14 @@ static void read_answer(reply& repl,ShmString* resp,const string& uri)
       {
         begpos+=strlen(lastpos);//Przesuwamy o to co juz wydrukowane
         //std::cout<<".";std::cout.flush();
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+        std::this_thread::sleep_for(std::chrono::milliseconds(MILLISECONDS_BW));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
       }
 
     }while(endpos==string::npos && replays<20);
 
     if(replays!=0)//Nie doczekal sie
     {
-       std::cerr<<"\n"<<FasadaConnection->Name()<<" waiting "<<replays*200<<"ms for continuation"<<std::endl;
+       std::cerr<<"\n"<<FasadaConnection->Name()<<" waiting "<<replays*MILLISECONDS_BW<<"ms for continuation"<<std::endl;
        std::cerr<<"Shared memory for '"<<uri<<"' potentially remain available for reread"<<std::endl;
        (*resp)+="\n\nAnswer incomplete! Reload the same request after some time!\n";
     }

@@ -14,7 +14,7 @@ const unsigned    MSGQ_SIZE=1000;
 
 ///Defaults of IPC shared memory
 const char* const MEM_POOL_NAME="FasadaDefMemoryPool";
-const unsigned    MEM_POOL_SIZE=0xffffff;
+const unsigned    MEM_POOL_SIZE=0xfffffff;
 
 ///Value of this const mark finish of all tree processors job.
 const char* const MEM_END="@T@h@e@E@n@d@";
