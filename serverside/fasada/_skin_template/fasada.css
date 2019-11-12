@@ -47,6 +47,15 @@ a.fasada_action {
         border-radius: 8px; 
 }
 
+a.fasada_view {
+        background-color: yellow; 
+        padding: 1px 4px;  
+        font-weight: bold;
+        font-size: 12pt;
+        font-family: monospace;
+        border-radius: 8px; 
+}
+
 form {
         background-color: orange;   
         padding: 10px;    

@@ -22,7 +22,10 @@ std::string tree_processor::HTMLHeader=
 std::string tree_processor::HTMLAction=
         "<A HREF=\""
         "$action_href"
-        "\" class=\"fasada_action\">"
+        "\" class=\"fasada_action\""
+        " title=\""
+        "$action_href"
+        "\">"
         "$link_content"
         "</A>"
         ;
@@ -165,10 +168,57 @@ std::string  tree_processor::getActionLink(const std::string& Href,const std::st
     return ReadyLink;
 }
 
+std::string  tree_processor::getSeeLink(const std::string& data,URLparser& request,const std::string& Content)
+{
+    std::string out="";
+    if(request["&debug"]=="true")
+    {
+        out+="\n<pre>";
+        out+="\ndata: "+data+"\nprivate_directory: "+request["&private_directory"]+"\npath: "+request["&path"];
+        std::string link="file://"+request["&private_directory"]+request["&path"]+"/"+data;
+        out+="\n<a href=\""+link+"\" > "+Content+" "+link+"</a>";
+
+        link="http://"+request["&domain"]+":"+request["&port"];
+        if(data.at(0)=='/')
+            link+=data;
+        else
+            link+=request["&path"]+"/"+data;
+        out+="\n<a href=\""+link+"\" > "+Content+" "+link+"</a>";
+        out+="</pre>\n";
+    }
+    else
+    {
+        std::string link="http://"+request["&domain"]+":"+request["&port"];
+        if(data.at(0)=='/')
+            link+=data;
+        else
+            link+=request["&path"]+"/"+data;
+        out+="<a class=\"fasada_view\" href=\""+link+"\" title=\""+link+"\">"+Content+"</a>";
+    }
+    return out;
+}
+
 std::string  tree_processor::getHtmlClosure()
 //Compatible set of tags for end of html document
 {
     return HTMLFooter;
+}
+
+
+bool tree_processor::is_link(std::string str)
+{
+    return str.find("http:",0)==0 || str.find("https:",0)==0
+            || str.find("ftp:",0)==0 || str.find("ftps:",0)==0;
+}
+
+bool tree_processor::is_local_file(std::string str)
+{
+    auto len=str.length();
+    return str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
+            || str.rfind(".gif",len-4)==len-4 || str.rfind(".png",len-4)==len-4
+            || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
+            || str.rfind(".mp4",len-4)==len-4
+            ;
 }
 
 }//namespace "fasada"

@@ -24,7 +24,7 @@ class processor_ls : public tree_processor //Category READER!
     virtual
         void _implement_action_panel(ShmString& o,URLparser& request);
     virtual
-        void _implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath);
+        void _implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request);
 };
 
 }//namespace "fasada"

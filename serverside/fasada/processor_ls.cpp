@@ -1,6 +1,7 @@
 #include "fasada.hpp"
 #include "processor_ls.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <iostream>
 
 namespace fasada
@@ -44,14 +45,13 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
     o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack);
 }
 
-void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath)
+void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)
 //Panel akcji dotyczących danego węzła
 {
     if(data=="")    //Czy to liść czy (potencjalny) węzeł?
     {
         o+="&nbsp;"+getActionLink(fullpath+"?dfs&html","&forall;");
         o+="&nbsp;"+getActionLink(fullpath+"?add&html","+");
-        o+="&nbsp;"+getActionLink(fullpath+"?set&html","=");
     }
     else
     if(writing_enabled() && data.at(0)=='!')
@@ -64,6 +64,16 @@ void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,co
         o+="&nbsp;"+getActionLink(fullpath+data,"run");
     }
     else
+    if(is_link(data))
+    {
+        o+="&nbsp;"+getActionLink(data,"follow");
+    }
+    else
+    if(is_local_file(data))
+    {
+        o+="&nbsp;"+getSeeLink(data,request,"see");
+    }
+
     if(writing_enabled())
         o+="&nbsp;"+getActionLink(fullpath+"?set&html","=");
 }
@@ -106,7 +116,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                         +std::string(p.second.data())
                         +"'</I></A> ";
-                _implement_node_panel(o,p.second.data(),fullpath);
+                _implement_node_panel(o,p.second.data(),fullpath,request);
             }
             else
                 o+=std::string(p.first.data())+std::string(" : ")+std::string(p.second.data());
@@ -139,7 +149,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                     + "<B class=fasada_path>'" + request["&path"] + "'</B> : "
                     + "<I class=\"fasada_val\">'"+top.data()+"'</I> ";
 
-            _implement_node_panel(o,top.data(),fullpath);
+            _implement_node_panel(o,top.data(),fullpath,request);
             o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
         }
         else
@@ -148,6 +158,19 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
     if(html) o+=getHtmlClosure();
 }
 
+//<LI>
+//<A href="http://localhost:8000/TimelineOfTheEarth/photos_and_videos/album/27.json/photos/1/uri?ls&html&long">
+//<B class=fasada_path>'uri'</B></A>
+//<A href="http://localhost:8000/TimelineOfTheEarth/photos_and_videos/album/27.json/photos/1/uri?get&html&long"> :
+//<I class="fasada_val">'photos_and_videos/Permianmammallikereptiles_hdLt_Gppqg/534246_556509764412644_1704957149_n_556509764412644.jpg'</I></A>
+//&nbsp;
+//<A HREF="./photos_and_videos/Permianmammallikereptiles_hdLt_Gppqg/534246_556509764412644_1704957149_n_556509764412644.jpg"
+//
+//   http://localhost:8000/TimelineOfTheEarth/photos_and_videos/Permianmammallikereptiles_hdLt_Gppqg/
+//
+//class="fasada_action">
+//see</A>&nbsp;
+//<A HREF="http://localhost:8000/TimelineOfTheEarth/photos_and_videos/album/27.json/photos/1/uri?set&html" class="fasada_action">=</A>
 
 
 

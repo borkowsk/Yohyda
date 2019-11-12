@@ -53,6 +53,7 @@ namespace fasada
         std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
         std::string  getHtmlClosure();//Compatible set of tags for end of html document
         std::string  getActionLink(const std::string& Href,const std::string& Content);
+        std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
 
     protected://deferred implementation
     virtual
@@ -80,6 +81,13 @@ namespace fasada
         void read_tree(ShmString& o,const pt::ptree& top,URLparser& request);//may throw
         //Does some work, calls _implement_read, cleans, adds MEM_END & returns
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw
+
+    public: //Tools for childrens
+      static
+        bool is_link(std::string str);
+
+      static
+        bool is_local_file(std::string str);
 };
 
 }//namespace "fasada"
