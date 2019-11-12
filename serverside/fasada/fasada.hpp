@@ -16,6 +16,7 @@ void init(bool WithWriting); //INITIALIZE THE FASADA LIBRARY
 void register_processors(bool WithWriters); //Function for registering default set of tree_processors
                             //located in fasada.a/lib/so
 bool writing_enabled();
+
 }//namespace "fasada"
 
 #endif // FASADA_HPP
