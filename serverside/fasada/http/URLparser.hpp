@@ -47,6 +47,9 @@ public://Construction, destruction etc.
     URLparser(const char* URL,bool pq=true):parse_query(pq){ doParsing(URL); }
    ~URLparser(){}
 
+static
+    const char* URLpattern;//Regex pattern for URL used in this class
+
     const val_string& getOriURL(){ return bakURL;} //Oryginalne "brzmienie" URLa
     val_string  getFullPath();   //Zwraca i jednoczesnie dopisuje "fullpath" do słownika
     val_string  getParentPath(); //Zwraca i jednoczesnie dopisuje "parentpath" do słownika

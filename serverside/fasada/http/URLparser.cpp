@@ -80,11 +80,15 @@ static
         return pom;
     }
 
+    //Regex pattern for URL used in this class
+    const char* URLparser::URLpattern=
+            "(http|https|ftp|ftps)://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)";
+
     void URLparser::doParsing(const val_string& URL)
     //May throw on errors!
     {
         using split_vector_type=vector< string >;
-        boost::regex ex("(http|https|ftp|ftps)://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)");
+        boost::regex ex(URLpattern);
         boost::cmatch what;
 
         bakURL=URL;
