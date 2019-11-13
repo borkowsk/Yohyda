@@ -27,22 +27,23 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
     std::string fullpath=request.getFullPath();
     if(writing_enabled())
     {
-        o+=getActionLink(fullpath+"?add&html","ADD!");
-        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!");
-        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?add&html","ADD!","?add&html");
+        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!","Rename subnode");
+        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!","Delete subnode")+"&nbsp;&nbsp;";
     }
-    o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
+    o+=getActionLink(fullpath+"?find&html","FIND","Find")+"&nbsp;&nbsp;";
     if(longformat)
     {
-        o+=getActionLink(fullpath+"?dfs&html&long","TREE")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html","LSS")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?dfs&html&long","TREE","Print as tree")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html","LSS","List as short")+"&nbsp;&nbsp;";
     }
     else
     {
-        o+=getActionLink(fullpath+"?dfs&html","TREE")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?dfs&html","TREE","Print as tree")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long")+"&nbsp;&nbsp;";
     }
-    o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack);
+    o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp;";
+    o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls","TOP","Top of the tree");
 }
 
 void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)
@@ -50,32 +51,32 @@ void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,co
 {
     if(data=="")    //Czy to liść czy (potencjalny) węzeł?
     {
-        o+="&nbsp;"+getActionLink(fullpath+"?dfs&html","&forall;");
-        o+="&nbsp;"+getActionLink(fullpath+"?add&html","+");
+        o+="&nbsp;"+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
+        o+="&nbsp;"+getActionLink(fullpath+"?add&html","+","Add!");
     }
     else
     if(writing_enabled() && data.at(0)=='!')
     {
-        o+="&nbsp;"+getActionLink(fullpath+data,"RUN!");
+        o+="&nbsp;"+getActionLink(fullpath+data,"RUN!","Run link read/write");
     }
     else
     if(data.at(0)=='?')
     {
-        o+="&nbsp;"+getActionLink(fullpath+data,"run");
+        o+="&nbsp;"+getActionLink(fullpath+data,"run","Run link as read only");
     }
     else
-    if(is_link(data))
+    if(isLink(data))
     {
-        o+="&nbsp;"+getActionLink(data,"follow");
+        o+="&nbsp;"+getActionLink(data,"follow","Follow link");
     }
     else
-    if(is_local_file(data))
+    if(isLocalFile(data))
     {
         o+="&nbsp;"+getSeeLink(data,request,"see");
     }
 
     if(writing_enabled())
-        o+="&nbsp;"+getActionLink(fullpath+"?set&html","=");
+        o+="&nbsp;"+getActionLink(fullpath+"?set&html","=","Set value");
 }
 
 //Problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
@@ -136,7 +137,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
 
         if(html && counter>10)
         {
-            o+="<BR>\n";
+            o+="<BR><BR>\n";
             _implement_action_panel(o,request);
         }
     }
@@ -147,10 +148,12 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             std::string fullpath=request.getFullPath();
             o+=std::string(longformat?"<LI>":"")
                     + "<B class=fasada_path>'" + request["&path"] + "'</B> : "
-                    + "<I class=\"fasada_val\">'"+top.data()+"'</I> ";
-
+                   // + "<I class=\"fasada_val\">'"+top.data()+"'</I> ";
+                    +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
+                    +top.data()
+                    +"'</I></A> ";
             _implement_node_panel(o,top.data(),fullpath,request);
-            o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+            o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }
         else
         o+=" NO SUBNODES ";

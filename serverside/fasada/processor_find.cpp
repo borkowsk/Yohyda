@@ -122,10 +122,11 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
 {
     unsigned counter=0;
     bool defret=(request["return"]!="false");
-    bool html=request["html"]!="false";
+    bool   html=(request["html"]!="false");
     std::string fullpath=request.getFullPath();
     if( *(--fullpath.end())!='/' )
         fullpath+="/";
+
     std::string  subpath=request["subpath"];
     std::string    field=request["field"];
     std::string    value=request["value"];
@@ -169,21 +170,26 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                     o+=(html?"<LI>":"* ");
                                     std::string pathk=k;
                                     if(html) o+="<B class=fasada_path><A HREF=\""
-                                            +fullpath
-                                            +pathk+"?ls&html&long\">";
+                                            +fullpath+pathk+"?ls&html&long\">";
                                     o+=pathk;
-                                    if(html) o+="</A></B> : <I class=\"fasada_val\">'";
-                                    else o+=" : '";
+                                    if(html)
+                                        o+="</A></B> : <I class=\"fasada_val\">' <A HREF=\""
+                                         +fullpath+pathk+"?get&html&long\">'";
+                                        else o+="' : '";
                                     o+=t.data();
                                     o+="'";
-                                    if(html) o+="</I>\n";
-                                    else o+="\n";
+                                    if(html) o+="</A></I>\n";
+                                        else o+="\n";
                                     return defret;
                                 };
 
     auto and_lambda=[all_fields,field_lambda,all_values,value_lambda,print_lambda](const ptree& t,std::string k)
     {
-        return (all_fields || field_lambda(t,k)) && (all_values || value_lambda(t,k)) && print_lambda(t,k);
+        return (all_fields || field_lambda(t,k))
+                &&
+               (all_values || value_lambda(t,k))
+                &&
+                print_lambda(t,k);
     };
 
 //  It would be easier, but compiler don't cooperate ;-) :-/
@@ -199,11 +205,11 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     {
         o+="</UL>";
         o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
-        o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?dfs&html&long","TREE")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html","LSS")+"&nbsp;&nbsp;";
-        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+        o+=getActionLink(fullpath+"?find&html","FIND","Find subnodes")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?dfs&html&long","TREE","View tree in long format")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL","Lista as long")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html","LSS","Lista as short")+"&nbsp;&nbsp; ";
+        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         o+=getHtmlClosure();
     }
 }

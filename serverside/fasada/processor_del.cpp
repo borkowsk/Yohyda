@@ -87,7 +87,7 @@ void processor_del::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     if(html)
     {
        o+="DONE <B class=fasada_path>'"+request["&path"]+"/"+name+"'</B> deleted<BR>\n";
-       o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack);
+       o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
        o+=getHtmlClosure();
     }

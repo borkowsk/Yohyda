@@ -50,7 +50,14 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
             if(html) o+="</A></B> : <I class=\"fasada_val\">'";
             else o+=" : '";
             if(longformat)
+            {
+                if(html)
+                    o+="<A HREF=\""+fullpath+pathk+"?get&html&long\">";
                 o+=t.data();
+                if(html)
+                    o+="</A>\n";
+                else o+="\n";
+            }
             else
             {
                 auto sub=t.data().substr(0,40);
@@ -68,10 +75,13 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     {
         if(longformat) o+="</UL>\n";
         o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
-        o+=getActionLink(fullpath+"?find&html","FIND")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html","LSS")+"&nbsp;&nbsp;";
-        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+        o+=getActionLink(fullpath+"?dfs&html"+(longformat?"":"&long"),"TREE",
+                        (longformat?"View tree in short format":"View tree in long format"))
+                        +"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?find&html","FIND","Find nodes")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL","List long")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html","LSS","List short")+"&nbsp;&nbsp; ";
+        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         o+=getHtmlClosure();
     }
 }

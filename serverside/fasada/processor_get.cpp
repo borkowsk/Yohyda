@@ -16,8 +16,8 @@ processor_get::~processor_get()
 
 void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();
+    bool longer=request["long"]=="true";
     bool html=request["html"]!="false";
     if(html)//TYPE HEADER AND HTML HEADER
     {
@@ -27,33 +27,41 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
 
-    if(request["verbose"]=="true" || request["long"]=="true")
+    std::string tmp=top.get_value<std::string>();
+    if(longer)
+    {
+        tmp=asHtml(tmp);//Preprocess links and other markers into HTML tags.
+    }
+
+    if(request["verbose"]=="true" || longer)
     {
         if(html)
         {
-           o+="<B class=fasada_path>'"+request["&path"]+ "'</B> = <I class=\"fasada_val\">'" + tmp + "'</I>";
+           o+="<B class=fasada_path>'"+request["&path"]+ "'</B> :\n<BR>"
+            +"<I class=\"fasada_val\">'" + tmp + "'</I>";
+
            std::string fullpath=request.getFullPath();
            if(noc>0)
            {
                o+=" ["+getActionLink(fullpath+"?ls&long&html",
-                    boost::lexical_cast<std::string>(noc) )+"]";
+                    boost::lexical_cast<std::string>(noc),"list subnodes" )+"]";
            }
            else
            {
                if(writing_enabled())
-                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?set&html","SET!");
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?set&html","SET!","?set&html");
                if(writing_enabled() && top.data()=="" )
-                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?add&html","ADD!");
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+"?add&html","ADD!","?add&html");
                if(writing_enabled() && top.data().at(0)=='!')
-                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+top.data(),"RUN!");
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+top.data(),"RUN!","Run link read/write ");
                else  if(top.data().at(0)=='?')
-                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+top.data(),"RUN");
+                   o+="&nbsp;&nbsp;"+getActionLink(fullpath+top.data(),"RUN","Run link read only ");
            }
-           o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+           o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }
         else
         {
-            o+="'"+request["&path"]+ "' = '" + tmp + "'";
+            o+="'"+request["&path"]+ "' : '" + tmp + "'";
             o+=" ["+boost::lexical_cast<std::string>(noc)+"]";
         }
     }

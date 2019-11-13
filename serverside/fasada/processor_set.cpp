@@ -10,7 +10,7 @@ namespace fasada
 std::string processor_set::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "VALUE: "
-        "<input type=\"text\" name=\"value\" value=\"$value\" size=\"$size_of_value\"><br>\n"
+        "<input type=\"text\" size=\"$size_of_value\" name=\"value\" value=\"$value\" ><br>\n"
         "FOR <B class=fasada_path>'$path'</B><BR>\n"
         "<input type=\"submit\" value=\"OK\">\n"
         "</form>";
@@ -45,6 +45,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              unsigned value_size=tmp.size();
              if(value_size<1) value_size=UINT_DEFAULT_LEN_OF_NAME;
+             if(value_size>132) value_size=132; //TODO TextAreA
              boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
              boost::replace_all(ReadyForm,"$value",tmp);
              o+=ReadyForm;
@@ -88,7 +89,7 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     if(html)
     {
        o+="DONE <I class=\"fasada_val\">'"+top.data()+"'</I>";
-       o+="\n"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack);
+       o+="\n"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
        o+=getHtmlClosure();
     }

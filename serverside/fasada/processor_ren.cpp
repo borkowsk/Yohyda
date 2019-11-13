@@ -104,7 +104,7 @@ void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     if(html)
     {
        o+="DONE <B class=fasada_path>'"+old_name+"'</B>--><B>'"+new_name+"'</B>";
-       o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack);
+       o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
        o+=getHtmlClosure();
     }
