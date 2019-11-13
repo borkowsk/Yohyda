@@ -50,10 +50,6 @@ namespace fasada
     protected://Configuration
         std::string  procName;
         Category procCategory;
-        std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
-        std::string  getHtmlClosure();//Compatible set of tags for end of html document
-        std::string  getActionLink(const std::string& Href,const std::string& Content);
-        std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
 
     protected://deferred implementation
     virtual
@@ -78,16 +74,21 @@ namespace fasada
 
     public://Interface
         //Does some work, calls _implement_read, cleans, adds MEM_END & returns
-        void read_tree(ShmString& o,const pt::ptree& top,URLparser& request);//may throw
+        void read_tree(ShmString& o,const pt::ptree& top,URLparser& request);//may throw TODO readFromTree?
         //Does some work, calls _implement_read, cleans, adds MEM_END & returns
-        void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw
+        void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw TODO writeToTree?
 
-    public: //Tools for childrens
-      static
-        bool is_link(std::string str);
-
-      static
-        bool is_local_file(std::string str);
+    protected: //Tools for childrens
+        std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
+        std::string  getHtmlClosure();//Compatible set of tags for end of html document
+        std::string  getActionLink(const std::string& Href,const std::string& Content,const std::string& Title="");
+        std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
+    static
+        std::string asHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags.
+    static
+        bool isLink(std::string str);//Checks for whole str looks like URL
+    static
+        bool isLocalFile(std::string str);//Checks for whole str looks like filename
 };
 
 }//namespace "fasada"

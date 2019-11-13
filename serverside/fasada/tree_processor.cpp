@@ -8,6 +8,8 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <iostream>
+#include <string>
+#include <regex>
 
 namespace fasada
 {
@@ -24,7 +26,7 @@ std::string tree_processor::HTMLAction=
         "$action_href"
         "\" class=\"fasada_action\""
         " title=\""
-        "$action_href"
+        "$title_href"
         "\">"
         "$link_content"
         "</A>"
@@ -106,7 +108,6 @@ tree_processor& tree_processor::getReadProcessor (const char* name)//may throw
     return *tmp;
 }
 
-
 tree_processor& tree_processor::getWriteProcessor(const char* name)//may throw
 {
     tree_processor* tmp=map_of_writers()[name];
@@ -160,10 +161,11 @@ std::string  tree_processor::getHtmlHeaderDefaults(const std::string& Title)
     return ReadyHeader;
 }
 
-std::string  tree_processor::getActionLink(const std::string& Href,const std::string& Content)
+std::string  tree_processor::getActionLink(const std::string& Href,const std::string& Content,const std::string& Title)
 {
     std::string ReadyLink=HTMLAction;
     boost::replace_all(ReadyLink,"$action_href",Href);
+    boost::replace_all(ReadyLink,"$title_href",Title);
     boost::replace_all(ReadyLink,"$link_content",Content);
     return ReadyLink;
 }
@@ -193,7 +195,9 @@ std::string  tree_processor::getSeeLink(const std::string& data,URLparser& reque
             link+=data;
         else
             link+=request["&path"]+"/"+data;
-        out+="<a class=\"fasada_view\" href=\""+link+"\" title=\""+link+"\">"+Content+"</a>";
+        out+="<a class=\"fasada_view\" href=\""+link+"\"";
+        //out+=" title=\""+link+"\"";
+        out+=">"+Content+"</a>";
     }
     return out;
 }
@@ -204,21 +208,49 @@ std::string  tree_processor::getHtmlClosure()
     return HTMLFooter;
 }
 
-
-bool tree_processor::is_link(std::string str)
+bool tree_processor::isLink(std::string str)
 {
     return str.find("http:",0)==0 || str.find("https:",0)==0
-            || str.find("ftp:",0)==0 || str.find("ftps:",0)==0;
+            || str.find("ftp:",0)==0 || str.find("ftps:",0)==0
+            ;//More? mail? what else? TODO
 }
 
-bool tree_processor::is_local_file(std::string str)
+bool tree_processor::isLocalFile(std::string str)
 {
     auto len=str.length();
-    return str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
-            || str.rfind(".gif",len-4)==len-4 || str.rfind(".png",len-4)==len-4
+    return len>4 &&
+            (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
             || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
-            || str.rfind(".mp4",len-4)==len-4
-            ;
+            || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
+            || str.rfind(".mpeg",len-5)==len-5 || str.rfind(".mp4",len-4)==len-4
+            || str.rfind(".mov" ,len-4)==len-4 )
+            ;// TODO - dictionary of less popular file extensions
+}
+
+std::string tree_processor::asHtml(const std::string& tmp)
+//Preprocess links and other markers into HTML tags.
+//http://www.cplusplus.com/reference/regex/regex_replace/
+//https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp
+{
+    std::regex link(URLparser::URLpattern);
+    std::string out=std::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
+    boost::replace_all(out,"-->","&rarr;");
+    boost::replace_all(out,"==>","&rArr;");
+    boost::replace_all(out,":-)","&#x1F60A;");//uśmiech
+    boost::replace_all(out,":)", "&#x1F642;");//inny uśmiech
+    boost::replace_all(out,":-(","&#x1F61E;");//smutek
+    boost::replace_all(out,":(", "&#x1F61F;");//obawa
+    boost::replace_all(out,":-D","&#x1F600;");//szeroki uśmiech
+    boost::replace_all(out,":D", "&#x1F603;");//inny szeroki uśmiech
+    boost::replace_all(out,":P", "&#x1F60B;");//ozorek
+    boost::replace_all(out,":-P","&#x1F61B;");//ozorek centralny
+    boost::replace_all(out," :/", "&#x1F615;");//krzywa geba. skonfundowany - bez spacji niszczy linki!
+    boost::replace_all(out,":-/","&#x1F615;");//krzywa geba
+    boost::replace_all(out,";)", "&#x1F609;");//wink
+    boost::replace_all(out,";-)","&#x1F609;");//wink
+    boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
+    boost::replace_all(out,"\n","<BR>");//uśmiechnięty klown
+    return out;
 }
 
 }//namespace "fasada"
