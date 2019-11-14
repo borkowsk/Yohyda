@@ -26,6 +26,8 @@ const char* const EXT_PRE="@E@X@T=";//See for MIME types:
 const unsigned UINT_DEFAULT_LEN_OF_NAME=14;
 #define STR_DEFAULT_LEN_OF_SUBPATH "24"
 const unsigned UINT_DEFAULT_LEN_OF_SUBPATH=24;
+#define STR_WIDTH_LEN_OF_FIELD "132"
+const unsigned UINT_WIDTH_LEN_OF_FIELD=132;
 #define STR_DEFAULT_FILTER "*"
 
 }//namespace "fasada"

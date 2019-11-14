@@ -10,10 +10,15 @@ namespace fasada
 std::string processor_set::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "VALUE: "
-        "<input type=\"text\" size=\"$size_of_value\" name=\"value\" value=\"$value\" ><br>\n"
+        "$INPUT_AREA"
+        "<br>\n"
         "FOR <B class=fasada_path>'$path'</B><BR>\n"
         "<input type=\"submit\" value=\"OK\">\n"
         "</form>";
+
+//$INPUT_AREA possible values:
+const char* INPUT_AREA1="<input type=\"text\" size=\"$size_of_value\" name=\"value\" value=\"$value\" >";
+const char* INPUT_AREA2="<textarea name=\"value\" rows=\"$rows_of_value\" cols=\"$size_of_value\">$value</textarea>";
 
 processor_set::processor_set(const char* name):
     tree_processor(WRITER_READER,name) //also READER because is able to create its own FORM
@@ -36,22 +41,40 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     {
          o+=ipc::string(EXT_PRE)+"htm\n";
          o+=getHtmlHeaderDefaults(fullpath)+"\n";
+
          if(noc==0)
          {
-             //Podmienić procesor, ścieżki, wartość domyślną i ewentualputnie inne zmienne
+             //Podmienić procesor, ścieżki, wartość domyślną i ewentualnie inne zmienne
+             //$INPUT_AREA possible values: INPUT_AREA1 INPUT_AREA2
+             unsigned input_rows=1,value_size=tmp.size();
              std::string ReadyForm=Form;
-             boost::replace_all(ReadyForm,"$proc",procName);///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+
+             if(value_size<1)
+                 value_size=UINT_DEFAULT_LEN_OF_NAME;
+
+             if(value_size<=UINT_WIDTH_LEN_OF_FIELD) //input type="text"
+             {
+                 boost::replace_all(ReadyForm,"$INPUT_AREA",INPUT_AREA1);
+                 boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
+             }
+             else //textarea
+             {
+                 boost::replace_all(ReadyForm,"$INPUT_AREA",INPUT_AREA2);
+                 input_rows=value_size/UINT_WIDTH_LEN_OF_FIELD + 2;
+                 value_size=UINT_WIDTH_LEN_OF_FIELD;
+                 boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
+                 boost::replace_all(ReadyForm,"$rows_of_value", boost::lexical_cast<std::string>(input_rows) );
+             }
+
+             boost::replace_all(ReadyForm,"$proc",procName);//https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
              boost::replace_all(ReadyForm,"$fullpath",fullpath);
              boost::replace_all(ReadyForm,"$path",request["&path"]);
-             unsigned value_size=tmp.size();
-             if(value_size<1) value_size=UINT_DEFAULT_LEN_OF_NAME;
-             if(value_size>132) value_size=132; //TODO TextAreA
-             boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
              boost::replace_all(ReadyForm,"$value",tmp);
              o+=ReadyForm;
          }
          else
              o+="<H2>WARNING!</H2><P>Only leaf type nodes could be modified by '"+procName+"'</P>";
+
          o+=getHtmlClosure();
     }
     else
