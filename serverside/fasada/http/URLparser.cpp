@@ -82,7 +82,8 @@ static
 
     //Regex pattern for URL used in this class
     const char* URLparser::URLpattern=
-            "(http|https|ftp|ftps)://([^/ :]+):?([^/ ]*)(/?[^ #?]*)\\x3f?([^ #]*)#?([^ ]*)";
+            "(http|https|ftp|ftps)://([^/\\x{7f}\u200A :]+):"
+            "?([^/\\x{7f}\u200A ]*)(/?[^\\x{7f}\u200A #?]*)\\x3f?([^\\x{7f}\u200A #]*)#?([^\\x{7f}\u200A ]*)";
 
     void URLparser::doParsing(const val_string& URL)
     //May throw on errors!

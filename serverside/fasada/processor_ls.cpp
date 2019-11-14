@@ -88,7 +88,6 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
     bool html=request["html"]!="false";
     longformat=(request.find("long")!=request.end()?true:false);//longformat jest prywatne
 
-
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";

@@ -7,9 +7,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+#include <boost/regex.hpp>
 #include <iostream>
 #include <string>
-#include <regex>
+//#include <regex>
 
 namespace fasada
 {
@@ -208,6 +209,18 @@ std::string  tree_processor::getHtmlClosure()
     return HTMLFooter;
 }
 
+unsigned int tree_processor::countCharacters(std::string str,char c)
+//https://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string-in-c
+{
+int count = 0, size=str.size();
+
+for (int i = 0; i < size; i++)
+  if (str[i] == c)
+        count++;
+
+return count;
+}
+
 bool tree_processor::isLink(std::string str)
 {
     return str.find("http:",0)==0 || str.find("https:",0)==0
@@ -227,13 +240,21 @@ bool tree_processor::isLocalFile(std::string str)
             ;// TODO - dictionary of less popular file extensions
 }
 
-std::string tree_processor::asHtml(const std::string& tmp)
+std::string tree_processor::asHtml(const std::string& str)
 //Preprocess links and other markers into HTML tags.
 //http://www.cplusplus.com/reference/regex/regex_replace/
 //https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp
 {
-    std::regex link(URLparser::URLpattern);
-    std::string out=std::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
+    std::string tmp=str;
+    boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);//) Sprawia problemy przy połaczeniu z linkami - U+200A z http://jkorpela.fi/chars/spaces.html
+
+    //std::regex link(URLparser::URLpattern);
+    boost::regex link(URLparser::URLpattern);
+    //auto out=std::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
+    auto out=boost::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
+
+    boost::replace_all(out,"\u200A)",")");//Przywracamy emotikony
+
     boost::replace_all(out,"-->","&rarr;");
     boost::replace_all(out,"==>","&rArr;");
     boost::replace_all(out,":-)","&#x1F60A;");//uśmiech
@@ -249,7 +270,7 @@ std::string tree_processor::asHtml(const std::string& tmp)
     boost::replace_all(out,";)", "&#x1F609;");//wink
     boost::replace_all(out,";-)","&#x1F609;");//wink
     boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
-    boost::replace_all(out,"\n","<BR>");//uśmiechnięty klown
+    boost::replace_all(out,"\n","<BR>");//break LINE
     return out;
 }
 

@@ -17,7 +17,9 @@ std::string processor_set::Form=
         "</form>";
 
 //$INPUT_AREA possible values:
-const char* INPUT_AREA1="<input type=\"text\" size=\"$size_of_value\" name=\"value\" value=\"$value\" >";
+const char* INPUT_AREA1="<input type=\"text\" size=\"$size_of_value\" name=\"value\" value=\"$value\" > "
+                        "<input type=\"checkbox\" name=\"long\" title=\"Need longer?\">"
+        ;
 const char* INPUT_AREA2="<textarea name=\"value\" rows=\"$rows_of_value\" cols=\"$size_of_value\">$value</textarea>";
 
 processor_set::processor_set(const char* name):
@@ -31,8 +33,7 @@ processor_set::~processor_set()
 void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 //Implement_read WRITER'a powinno przygotować FORM jeśli jest to format "html"
 {
-    std::string fullpath=request.getFullPath();
-            //request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
+    std::string fullpath=request.getFullPath();//request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
     std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();//czy ma elementy składowe?
     bool html=request["html"]!="false";
@@ -46,22 +47,22 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          {
              //Podmienić procesor, ścieżki, wartość domyślną i ewentualnie inne zmienne
              //$INPUT_AREA possible values: INPUT_AREA1 INPUT_AREA2
-             unsigned input_rows=1,value_size=tmp.size();
+             unsigned input_rows=1,value_size=tmp.size(),inside_lines=countCharacters(tmp,'\n');
              std::string ReadyForm=Form;
 
              if(value_size<1)
                  value_size=UINT_DEFAULT_LEN_OF_NAME;
 
-             if(value_size<=UINT_WIDTH_LEN_OF_FIELD) //input type="text"
+             if(value_size<=UINT_WIDTH_MAX_OF_FIELD && request.find("long")==request.end() && inside_lines==0 ) //input type="text"
              {
                  boost::replace_all(ReadyForm,"$INPUT_AREA",INPUT_AREA1);
                  boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
              }
-             else //textarea
+             else //textarea for long values
              {
                  boost::replace_all(ReadyForm,"$INPUT_AREA",INPUT_AREA2);
-                 input_rows=value_size/UINT_WIDTH_LEN_OF_FIELD + 2;
-                 value_size=UINT_WIDTH_LEN_OF_FIELD;
+                 input_rows=value_size/UINT_WIDTH_MAX_OF_FIELD + 2 + countCharacters(tmp,'\n');
+                 value_size=UINT_WIDTH_MAX_OF_FIELD;
                  boost::replace_all(ReadyForm,"$size_of_value", boost::lexical_cast<std::string>(value_size) );
                  boost::replace_all(ReadyForm,"$rows_of_value", boost::lexical_cast<std::string>(input_rows) );
              }
@@ -87,6 +88,12 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
+    if(request.find("long")!=request.end())
+    {
+        _implement_read(o,top,request);
+        return;
+    }
+
     std::string fullpath;
     unsigned    noc=top.size();//czy ma elementy składowe?
 

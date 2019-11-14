@@ -89,6 +89,8 @@ namespace fasada
         bool isLink(std::string str);//Checks for whole str looks like URL
     static
         bool isLocalFile(std::string str);//Checks for whole str looks like filename
+    static
+        unsigned int countCharacters(std::string str,char c);//Count \n / . or other importatnt characters in the string str
 };
 
 }//namespace "fasada"

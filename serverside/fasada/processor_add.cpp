@@ -12,8 +12,9 @@ std::string processor_add::Form=
         "NAME:&nbsp; "
         "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "VALUE: "
-        "<input type=\"text\" name=\"value\" size=\"80\"><br>\n"
-        "will be ADDed to <B class=fasada_path>'$path'</B> <br>"
+///        "<input type=\"text\" name=\"value\" size=\"" STR_WIDTH_MAX_OF_FIELD "\"><br>\n"
+        "<textarea name=\"value\" rows=\"1\" cols=\"" STR_WIDTH_MAX_OF_FIELD "\"></textarea><br>"
+        "WILL BE ADDED TO <B class=fasada_path>'$path'</B> <br>"
         "<input type=\"submit\" value=\"OK\">"
         "</form>";
 

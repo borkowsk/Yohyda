@@ -61,15 +61,6 @@ form {
         padding: 10px;    
 }
 
-input[type=text] {
-        font-size: 10pt;
-        padding: 4px 10px; 
-        background: white; 
-        border: 1 none;
-        font-family: Arial;
-        border-radius: 10px; 
-}
-
 input[type=submit] {
         font-weight: bold;
         font-size: 13pt;
@@ -79,6 +70,24 @@ input[type=submit] {
         border:2 none;
         cursor:pointer;
         font-family: monospace;
+        border-radius: 10px; 
+}
+
+input[type=text] {
+        font-size: 10pt;
+        padding: 4px 10px; 
+        background: white; 
+        border: 1 none;
+        font-family: Arial;
+        border-radius: 10px; 
+}
+
+textarea {
+        font-size: 10pt;
+        padding: 4px 10px; 
+        background: white; 
+        border: 1 none;
+        font-family: Arial;
         border-radius: 10px; 
 }
 
