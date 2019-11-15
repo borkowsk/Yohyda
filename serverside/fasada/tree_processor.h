@@ -79,10 +79,16 @@ namespace fasada
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw TODO writeToTree?
 
     protected: //Tools for childrens
+    static
         std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
+    static
         std::string  getHtmlClosure();//Compatible set of tags for end of html document
+    static
         std::string  getActionLink(const std::string& Href,const std::string& Content,const std::string& Title="");
+    static
         std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
+    static
+        std::string  getNodePanel(const std::string& nodeval,const std::string& fullpath,URLparser& request);
     static
         std::string asHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags.
     static

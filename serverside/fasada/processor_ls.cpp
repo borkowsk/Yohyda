@@ -49,34 +49,9 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
 void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)
 //Panel akcji dotyczących danego węzła
 {
-    if(data=="")    //Czy to liść czy (potencjalny) węzeł?
-    {
-        o+="&nbsp; "+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
-        o+="&nbsp; "+getActionLink(fullpath+"?add&html","+","Add!");
-    }
-    else
-    if(writing_enabled() && data.at(0)=='!')
-    {
-        o+="&nbsp; "+getActionLink(fullpath+data,"RUN!","Run link read/write");
-    }
-    else
-    if(data.at(0)=='?')
-    {
-        o+="&nbsp; "+getActionLink(fullpath+data,"run","Run link as read only");
-    }
-    else
-    if(isLink(data))
-    {
-        o+="&nbsp; "+getActionLink(data,"follow","Follow link");
-    }
-    else
-    if(isLocalFile(data))
-    {
-        o+="&nbsp; "+getSeeLink(data,request,"see");
-    }
-
-    if(writing_enabled())
-        o+="&nbsp; "+getActionLink(fullpath+"?set&html","=","Set value");
+    o+=getNodePanel(data,fullpath,request);
+    // something more?
+    //...
 }
 
 //Problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo

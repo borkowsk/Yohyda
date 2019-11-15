@@ -209,6 +209,41 @@ std::string  tree_processor::getHtmlClosure()
     return HTMLFooter;
 }
 
+std::string  tree_processor::getNodePanel(const std::string& data,const std::string& fullpath,URLparser& request)
+{
+    std::string o;
+    if(data=="")    //Czy to liść czy (potencjalny) węzeł?
+    {
+        o+="&nbsp; "+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
+        o+="&nbsp; "+getActionLink(fullpath+"?add&html","+","Add!");
+    }
+    else
+    if(writing_enabled() && data.at(0)=='!')
+    {
+        o+="&nbsp; "+getActionLink(fullpath+data,"RUN!","Run link read/write");
+    }
+    else
+    if(data.at(0)=='?')
+    {
+        o+="&nbsp; "+getActionLink(fullpath+data,"run","Run link as read only");
+    }
+    else
+    if(isLink(data))
+    {
+        o+="&nbsp; "+getActionLink(data,"follow","Follow link");
+    }
+    else
+    if(isLocalFile(data))
+    {
+        o+="&nbsp; "+getSeeLink(data,request,"see");
+    }
+
+    if(writing_enabled())
+        o+="&nbsp; "+getActionLink(fullpath+"?set&html","=","Set value");
+
+    return o;
+}
+
 unsigned int tree_processor::countCharacters(std::string str,char c)
 //https://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string-in-c
 {
@@ -231,7 +266,10 @@ bool tree_processor::isLink(std::string str)
 bool tree_processor::isLocalFile(std::string str)
 {
     auto len=str.length();
-    return len>4 &&
+    return len>4
+            && str.find("http:",0)==str.npos && str.find("https:",0)==str.npos
+            && str.find("ftp:",0)==str.npos && str.find("ftps:",0)==str.npos
+            &&
             (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
             || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
             || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
