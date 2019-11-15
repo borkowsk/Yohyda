@@ -47,26 +47,33 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
             std::string pathk=k;
             if(html) o+="<B class=fasada_path><A HREF=\""+fullpath+pathk+"?ls&html&long\">";
             o+=pathk;
+
             if(html) o+="</A></B> : <I class=\"fasada_val\">'";
             else o+=" : '";
+
             if(longformat)
             {
                 if(html)
                     o+="<A HREF=\""+fullpath+pathk+"?get&html&long\">";
                 o+=t.data();
                 if(html)
-                    o+="</A>\n";
-                else o+="\n";
+                    o+="</A>'</I>&nbsp; "
+                            +getNodePanel(t.data(),fullpath+pathk,request)+"\n";
+                else o+="'\n";
             }
             else
             {
                 auto sub=t.data().substr(0,40);
                 if(sub.size()==40) sub+="...";
+
                 o+=sub;
+
+                if(html)
+                    o+="'</I><BR>\n";
+                else
+                    o+="'\n";
             }
-            o+="'";
-            if(html) o+="</I><BR>\n";
-            else o+="\n";
+
             return defret;//wynik nie blokuje, ale "before" jest "never" więc nie ma "after"
         },never,never,"/"
     );

@@ -178,7 +178,8 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                         else o+="' : '";
                                     o+=t.data();
                                     o+="'";
-                                    if(html) o+="</A></I>\n";
+                                    if(html) o+="</A></I>&nbsp; "
+                                              +getNodePanel(t.data(),fullpath+pathk,request)+"\n";
                                         else o+="\n";
                                     return defret;
                                 };
