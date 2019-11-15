@@ -28,21 +28,21 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
     if(writing_enabled())
     {
         o+=getActionLink(fullpath+"?add&html","ADD!","?add&html");
-        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?ren&html","REN!","Rename subnode");
-        o+=+"&nbsp;&nbsp;"+getActionLink(fullpath+"?del&html","DEL!","Delete subnode")+"&nbsp;&nbsp;";
+        o+=+"&nbsp;&nbsp; "+getActionLink(fullpath+"?ren&html","REN!","Rename subnode");
+        o+=+"&nbsp;&nbsp; "+getActionLink(fullpath+"?del&html","DEL!","Delete subnode")+"&nbsp;&nbsp; ";
     }
-    o+=getActionLink(fullpath+"?find&html","FIND","Find")+"&nbsp;&nbsp;";
+    o+=getActionLink(fullpath+"?find&html","FIND","Find")+"&nbsp;&nbsp; ";
     if(longformat)
     {
-        o+=getActionLink(fullpath+"?dfs&html&long","TREE","Print as tree")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html","LSS","List as short")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?dfs&html&long","TREE","Print as tree")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html","LSS","List as short")+"&nbsp;&nbsp; ";
     }
     else
     {
-        o+=getActionLink(fullpath+"?dfs&html","TREE","Print as tree")+"&nbsp;&nbsp;";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long")+"&nbsp;&nbsp;";
+        o+=getActionLink(fullpath+"?dfs&html","TREE","Print as tree")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long")+"&nbsp;&nbsp; ";
     }
-    o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp;";
+    o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp; ";
     o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls","TOP","Top of the tree");
 }
 
@@ -51,32 +51,32 @@ void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,co
 {
     if(data=="")    //Czy to liść czy (potencjalny) węzeł?
     {
-        o+="&nbsp;"+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
-        o+="&nbsp;"+getActionLink(fullpath+"?add&html","+","Add!");
+        o+="&nbsp; "+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
+        o+="&nbsp; "+getActionLink(fullpath+"?add&html","+","Add!");
     }
     else
     if(writing_enabled() && data.at(0)=='!')
     {
-        o+="&nbsp;"+getActionLink(fullpath+data,"RUN!","Run link read/write");
+        o+="&nbsp; "+getActionLink(fullpath+data,"RUN!","Run link read/write");
     }
     else
     if(data.at(0)=='?')
     {
-        o+="&nbsp;"+getActionLink(fullpath+data,"run","Run link as read only");
+        o+="&nbsp; "+getActionLink(fullpath+data,"run","Run link as read only");
     }
     else
     if(isLink(data))
     {
-        o+="&nbsp;"+getActionLink(data,"follow","Follow link");
+        o+="&nbsp; "+getActionLink(data,"follow","Follow link");
     }
     else
     if(isLocalFile(data))
     {
-        o+="&nbsp;"+getSeeLink(data,request,"see");
+        o+="&nbsp; "+getSeeLink(data,request,"see");
     }
 
     if(writing_enabled())
-        o+="&nbsp;"+getActionLink(fullpath+"?set&html","=","Set value");
+        o+="&nbsp; "+getActionLink(fullpath+"?set&html","=","Set value");
 }
 
 //Problem indeksowania tablic JSONów w ptree - kłopotliwy bardzo
@@ -152,7 +152,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                     +top.data()
                     +"'</I></A> ";
             _implement_node_panel(o,top.data(),fullpath,request);
-            o+="&nbsp;&nbsp;"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+            o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }
         else
         o+=" NO SUBNODES ";

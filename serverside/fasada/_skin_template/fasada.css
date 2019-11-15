@@ -56,10 +56,6 @@ a.fasada_view {
         border-radius: 8px; 
 }
 
-form {
-        background-color: orange;   
-        padding: 10px;    
-}
 
 input[type=submit] {
         font-weight: bold;
@@ -89,6 +85,11 @@ textarea {
         border: 1 none;
         font-family: Arial;
         border-radius: 10px; 
+}
+
+form {
+        background-color: orange;   
+        padding: 10px;    
 }
 
 form.fasada_form {

@@ -19,18 +19,18 @@ processor_find::~processor_find()
 
 //default HTML form for this processor
 std::string processor_find::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-        "<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "\n<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
         "\n<BR>SUBPATH:     "
-        "<input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"
-        "\n<BR>FIELD NAME:  "
-        "<input name=\"field\"   type=\"$input_of_field\"   size=\"$size_of_field\"   value=\"$field\">"
+        "   <input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"
+        "\n<BR>FIELD NAME: "
+        "   <input name=\"field\"   type=\"$input_of_field\"   size=\"$size_of_field\"   value=\"$field\">"
         "\n<BR>FIELD VALUE: "
-        "<input name=\"value\"   type=\"$input_of_value\"   size=\"$size_of_value\"   value=\"$value\">"
+        "   <input name=\"value\"   type=\"$input_of_value\"   size=\"$size_of_value\"   value=\"$value\">"
         "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B> "
-        "<input type=\"submit\" value=\"OK\">"
-        "\n<BR><a class=\"fasada_action\" href=\"$fullpath?ls&html&long\">LSL</A>&nbsp;&nbsp;\n"
-        "\n<a class=\"fasada_action\" href=\"$fullpath?dfs&html&long\">TREE</A>&nbsp;&nbsp;\n"
+        "   <input type=\"submit\" value=\"OK\">"
+        "\n<BR><a class=\"fasada_action\" href=\"$fullpath?ls&html&long\">LSL</A>&nbsp;&nbsp; "
+        "\n<a class=\"fasada_action\" href=\"$fullpath?dfs&html&long\">TREE</A>&nbsp;&nbsp; \n" ///TODO Not in the form!
         "</form>";
 
 void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
