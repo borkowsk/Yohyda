@@ -95,13 +95,13 @@ static
         bakURL=URL;
         this->clear();
 
-        if(regex_match(URL.c_str(), what, ex))
+        if(boost::regex_match(URL.c_str(), what, ex))
         {
             string protocol = string(what[1].first, what[1].second);
-            string domain   = string(what[2].first, what[2].second);
+            string domain   = urlDecode(string(what[2].first, what[2].second));
             string port     = string(what[3].first, what[3].second);
-            string path     = string(what[4].first, what[4].second);
-            string query    = string(what[5].first, what[5].second);
+            string path     = urlDecode(string(what[4].first, what[4].second));
+            string query    = urlDecode(string(what[5].first, what[5].second));
             bool   proc_set=false;
             /*cout << protocol <<' '<< domain <<' '<< port <<' '<< path <<' '<< query << endl;*/
             //cout << "'"<< query << "'" << endl;
@@ -122,7 +122,7 @@ static
                     int pos=s.find_first_of(":=");
                     if(pos>0)
                     {
-                        (*this)[s.substr(0,pos)]=urlDecode(s.substr(pos+1));
+                        (*this)[s.substr(0,pos)]=s.substr(pos+1);//urlDecode(s.substr(pos+1));
                         //cout<< s.substr(0,pos) <<" = "<<(*this)[s.substr(0,pos)]<<endl;
                     }
                     else
