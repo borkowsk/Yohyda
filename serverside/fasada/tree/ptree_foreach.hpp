@@ -34,6 +34,22 @@ inline bool  print(const ptree& t,std::string k){ //Drukuj i zwracaj true - Pomo
                                                  std::cout<< t.data() <<" ; "<<std::endl;
                                                  return true; }
 
+/// Funkcja odwiedzająca takie gałęzie, w których "filter" zwraca true
+/// Jeśli zwróci false to cała gałąź jest pomijana "od góry"
+inline
+void for_true_branches(const ptree &tree,//Korzen drzewa w wersji const!
+                         std::string key,  //Sciezka do węzła - niekonieczna niby, ale zwykle przydatna
+                         predc& filter,    //Predykat filtrujący
+                         std::string separator="." //Separator składowych klucza
+              );
+
+/// Wersja powyższej umożliwiająca w funkcji filtra modyfikacje drzewa
+inline
+void for_true_branches(ptree &tree,//Korzen drzewa w wersji const!
+                         std::string key,  //Sciezka do węzła - niekonieczna niby, ale zwykle przydatna
+                         pred& filter,    //Predykat filtrujący
+                         std::string separator="." //Separator składowych klucza
+              );
 
 /// Funkcja ODWIEDZAJĄCA wszystkie wezly i liscie drzewa ptree
 /// Przechodzi wszystkie elementy, wykonując "filter", ale
@@ -43,7 +59,7 @@ inline bool  print(const ptree& t,std::string k){ //Drukuj i zwracaj true - Pomo
 ///               jeśli "before" zwróciło "true" to
 ///                      wykonuje "after"
 ///
-inline
+inline              //TODO - a może for_each_node ???
 void foreach_node(const ptree &tree,//Korzen drzewa w wersji const!
                     std::string key,//Sciezka do węzła - niekonieczna niby, ale zwykle przydatna
                     predc& filter,   //Predykat wykonywany zawsze
@@ -53,10 +69,10 @@ void foreach_node(const ptree &tree,//Korzen drzewa w wersji const!
             );
 
 /// Tu są możliwe zmiany w drzewie, ale...
-/// UWAGA NA MODYFIKACJE!!!
+/// UWAGA!!!
 /// W miarę bezpiecznie można to zrobić tylko w funkcji „after”,
 /// w funkcji "filter" i "before" tylko pod warunkiem  
-/// starannego posprzątania po sobie! Zwłaszcza uważac na usuwanie.
+/// starannego posprzątania po sobie. Zwłaszcza uważac na usuwanie!
 ///
 inline
 void foreach_node(ptree &tree,      //Korzen drzewa
@@ -68,7 +84,7 @@ void foreach_node(ptree &tree,      //Korzen drzewa
             );
 
 /// Numeracja nienazwanych "dzieci"
-/// Funkcja nadaje kolejne(?) numery wszystkim nienazwanym 
+/// Funkcja nadaje kolejne numery wszystkim nienazwanym
 /// dzieciom każdego węzła
 ///
 inline void   insert_numbers(ptree& pt);
@@ -87,7 +103,54 @@ inline void print_all_to(const ptree& pt,
 
 //IMPLEMENTACJA:
 //=====================
+
+inline void for_true_branches(const ptree &tree,//Korzen drzewa w wersji const!
+                         std::string key, //Sciezka do węzła - niekonieczna niby, ale zwykle przydatna
+                         predc& filter,
+                         std::string separator)  //Predykat filtrujący
+{
+    std::string nkey;
+
+    if (!key.empty())
+    {
+        nkey = key + separator; // Selected separator
+    }
+
+    if(filter(tree,key))// FILTR
+    {
+        auto end = tree.end();// REKURENCJA
+        for (auto it = tree.begin(); it != end; ++it)
+        {
+            for_true_branches(it->second, nkey + it->first ,filter,separator);
+        }
+    }
+}
+
+inline void for_true_branches(ptree &tree,//Korzen drzewa w wersji const!
+                         std::string key, //Sciezka do węzła - niekonieczna niby, ale zwykle przydatna
+                         pred& filter,
+                         std::string separator)  //Predykat filtrujący
+{
+    std::string nkey;
+
+    //std::cerr<<separator;
+    if (!key.empty())
+    {
+        nkey = key + separator; // Selected separator
+    }
+
+    if(filter(tree,key))// FILTR
+    {
+        auto end = tree.end();// REKURENCJA
+        for (auto it = tree.begin(); it != end; ++it)
+        {
+            for_true_branches(it->second, nkey + it->first ,filter,separator);
+        }
+    }
+}
+
 // foreach_node(...) to ogólny algorytm robienia czegoś z drzewami ptree
+// NIEZALEŻNIE OD FILTRU ODWIEDZA WSZYSTKIE ELEMENTY DRZEWA
 // (Dobry do lambd, ale jeszcze nie jako template)
 void foreach_node(const ptree &tree, std::string key, predc& filter, predc& before/*=never*/, predc& after/*=never*/,std::string separator)
 {
