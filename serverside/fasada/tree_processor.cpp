@@ -194,10 +194,12 @@ std::string  tree_processor::getSeeLink(const std::string& data,URLparser& reque
         std::string link="http://"+request["&domain"]+":"+request["&port"];
         if(data.at(0)=='/')
             link+=data;
+        else if(data.at(0)=='.' && data.at(1)=='/')
+            link=request.getParentPath()+(data.c_str()+1);
         else
-            link+=request["&path"]+"/"+data;
+            link+=request["&path"]+"?checkFile";//Awaryjnie
+
         out+="<a class=\"fasada_view\" href=\""+link+"\"";
-        //out+=" title=\""+link+"\"";
         out+=">"+Content+"</a>";
     }
     return out;
@@ -235,7 +237,10 @@ std::string  tree_processor::getNodePanel(const std::string& data,const std::str
     else
     if(isLocalFile(data))
     {
-        o+="&nbsp; "+getSeeLink(data,request,"see");
+        if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
+            o+="&nbsp; "+getSeeLink(data,request,"see");//Plik sprawdzony
+        else  if(writing_enabled())
+            o+="&nbsp; "+getActionLink(fullpath+"!checkFile","check!");//Plik do sprawdzenia
     }
 
     if(writing_enabled())

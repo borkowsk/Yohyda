@@ -50,12 +50,19 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
            {
                if(writing_enabled())
                    o+="&nbsp;&nbsp; "+getActionLink(fullpath+"?set&html","SET!","?set&html");
+
                if(writing_enabled() && top.data()=="" )
                    o+="&nbsp;&nbsp; "+getActionLink(fullpath+"?add&html","ADD!","?add&html");
+
                if(writing_enabled() && top.data().at(0)=='!')
                    o+="&nbsp;&nbsp; "+getActionLink(fullpath+top.data(),"RUN!","Run link read/write ");
                else  if(top.data().at(0)=='?')
                    o+="&nbsp;&nbsp; "+getActionLink(fullpath+top.data(),"RUN","Run link read only ");
+
+               if(top.data().at(0)=='/' || (top.data().at(0)=='.' && top.data().at(1)=='/') )
+                   o+="&nbsp;&nbsp; "+getSeeLink(top.data(),request,"SEE");
+               else  if(writing_enabled() && isLocalFile(top.data()))
+                   o+="&nbsp; "+getActionLink(fullpath+"!checkFile","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
            }
            o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }
