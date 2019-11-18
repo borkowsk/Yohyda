@@ -8,6 +8,7 @@
 #include "processor_ls.h"
 #include "processor_dfs.h"
 #include "processor_find.h"
+#include "processor_check_file.h"
 
 namespace fasada
 {
@@ -18,6 +19,7 @@ void register_processors(bool WithWriters)
     static fasada::processor_dfs  DFS;//--//---
     static fasada::processor_ls   LST; //--//---
     static fasada::processor_find FIND;//--//---
+    static fasada::processor_check_file CHECK;//--//---
 
     static fasada::processor_ls  Def("default");//ale mozna robić aliasy
     static fasada::processor_ls  Dir("dir");
