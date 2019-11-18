@@ -66,30 +66,30 @@ tree_processor::tree_processor(Category cat,const char* name):
     if(cat>CONTROL)
       throw(tree_processor_exception("UNKNOWN CATEGORY OF PTREE PROCESSOR "+procName));
 
-    std::cerr<<"Registering "<<procName<<" processor ";
-
     try
     {
         //WRITER could be also a READER - for preparing a FORM
         if((procCategory & WRITER) !=0 )
         {
+            std::cout<<"Tree processor '"<<procName<<"' is registering as WRITER... ";
             map_of_writers()[procName]=this;
-            std::cout<<procName<<" registered as WRITER"<<std::endl;
         }
         if((procCategory & READER) !=0 )
         {
+            std::cout<<"Tree processor '"<<procName<<"' is registering as READER... ";
             map_of_readers()[procName]=this;
-            std::cout<<procName<<" registered as READER"<<std::endl;
         }
     }
     catch(...)
     {
+        std::cout<<std::endl;
+        std::cerr<<"EXCEPTION occured when registering '"<<procName<<"' processor."<<std::endl;
         std::cerr <<"tree_processor:"<<
             ": Unexpected exception, diagnostic information follows:\n" <<
             boost::current_exception_diagnostic_information();
     }
 
-    std::cerr<<"DONE"<<std::endl;
+    std::cerr<<"  DONE"<<std::endl;
 }
 
 tree_processor::~tree_processor()
