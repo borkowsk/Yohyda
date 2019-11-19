@@ -90,7 +90,7 @@ namespace fasada
     static
         std::string  getNodePanel(const std::string& nodeval,const std::string& fullpath,URLparser& request);
     static
-        std::string asHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags.
+        std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags.
     static
         bool isLink(std::string str);//Checks for whole str looks like URL
     static

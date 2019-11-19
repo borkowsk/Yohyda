@@ -43,7 +43,7 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
         o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long")+"&nbsp;&nbsp; ";
     }
     o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp; ";
-    o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls","TOP","Top of the tree");
+    o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls&html","TOP","Top of the tree");
 }
 
 void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)
@@ -60,8 +60,9 @@ void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,co
 void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     unsigned counter=0;
-    bool html=request["html"]!="false";
-    longformat=(request.find("long")!=request.end()?true:false);//longformat jest prywatne
+    bool     html=request.asHTML();
+
+    longformat=request.asLONG();//longformat jest prywatne
 
     if(html)//TYPE HEADER AND HTML HEADER
     {

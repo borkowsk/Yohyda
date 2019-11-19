@@ -17,8 +17,8 @@ processor_get::~processor_get()
 void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     unsigned    noc=top.size();
-    bool longer=request["long"]=="true";
-    bool html=request["html"]!="false";
+    bool longer=request.asLONG();
+    bool html=request.asHTML();
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
@@ -30,7 +30,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     std::string tmp=top.get_value<std::string>();
     if(longer)
     {
-        tmp=asHtml(tmp);//Preprocess links and other markers into HTML tags.
+        tmp=preprocessIntoHtml(tmp);//Preprocess links and other markers into HTML tags.
     }
 
     if(request["verbose"]=="true" || longer)
@@ -62,7 +62,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
                if(top.data().at(0)=='/' || (top.data().at(0)=='.' && top.data().at(1)=='/') )
                    o+="&nbsp;&nbsp; "+getSeeLink(top.data(),request,"SEE");
                else  if(writing_enabled() && isLocalFile(top.data()))
-                   o+="&nbsp; "+getActionLink(fullpath+"!checkFile","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
+                   o+="&nbsp; "+getActionLink(fullpath+"!checkFile&html","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
            }
            o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }

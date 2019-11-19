@@ -65,19 +65,61 @@ static
 
     val_string  URLparser::getFullPath()//Zwraca i jednoczesnie dopisuje "fullpath" do słownika
     {
-        val_string pom=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
-        (*this)["fullpath"]=pom;
-        return pom;
+        if(FULL_path.length()==0)
+        {
+            FULL_path=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
+            (*this)["fullpath"]=FULL_path;
+        }
+        return FULL_path;
     }
 
     val_string  URLparser::getParentPath()//Zwraca i jednoczesnie dopisuje "parentpath" do słownika
     {
-        val_string pom=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
-        int pos=pom.rfind('/');
-        if(pos!=pom.npos)
-            pom=pom.substr(0,pos);
-        (*this)["parentpath"]=pom;
-        return pom;
+        if(PARENT_path.length()==0)
+        {
+            PARENT_path=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
+            int pos=PARENT_path.rfind('/');
+            if(pos!=PARENT_path.npos)
+                PARENT_path=PARENT_path.substr(0,pos);
+            (*this)["parentpath"]=PARENT_path;
+        }
+        return PARENT_path;
+    }
+
+    bool   URLparser::asHTML()//Wymagany wynik w HTMLu
+    {
+        if(HTML_output==-1)
+        {
+            if(find("html")!=end() && (*this)["html"]!="false")
+                HTML_output=1;
+            else
+                HTML_output=0;
+        }
+        return HTML_output==1;
+    }
+
+    bool   URLparser::asMINI()//Minimalny jednoznaczny format danych
+    {
+        if(MINI_output==-1)
+        {
+            if(find("minimal")!=end() && (*this)["minimal"]!="false")
+                MINI_output=1;
+            else
+                MINI_output=0;
+        }
+        return MINI_output==1;
+    }
+
+    bool    URLparser::asLONG()//Format rozbudowany w HTMLu lub NIE!
+    {
+        if(LONG_output==-1)
+        {
+            if(find("long")!=end() && (*this)["long"]!="false")
+                LONG_output=1;
+            else
+                LONG_output=0;
+        }
+        return LONG_output==1;
     }
 
     //Regex pattern for URL used in this class

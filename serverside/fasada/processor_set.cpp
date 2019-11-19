@@ -36,7 +36,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     std::string fullpath=request.getFullPath();//request["&protocol"]+"://"+request["&domain"]+':'+request["&port"]+request["&path"];
     std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();//czy ma elementy składowe?
-    bool html=request["html"]!="false";
+    bool        html=request.asHTML();
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
@@ -88,7 +88,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
 void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
-    if(request.find("long")!=request.end())
+    if(request.asLONG())//Dopóki jest "long" to wyświetla formularz
     {
         _implement_read(o,top,request);
         return;
@@ -103,7 +103,7 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
         throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT CHANGE VALUE OF NOT-LEAF NODE!"));
     }
 
-    bool html=request["html"]!="false";
+    bool html=request.asHTML();
 
     if(html)
     {

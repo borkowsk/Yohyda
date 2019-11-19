@@ -240,7 +240,7 @@ std::string  tree_processor::getNodePanel(const std::string& data,const std::str
         if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
             o+="&nbsp; "+getSeeLink(data,request,"see");//Plik sprawdzony
         else  if(writing_enabled())
-            o+="&nbsp; "+getActionLink(fullpath+"!checkFile","check!");//Plik do sprawdzenia
+            o+="&nbsp; "+getActionLink(fullpath+"!checkFile&html","check!");//Plik do sprawdzenia
     }
 
     if(writing_enabled())
@@ -283,7 +283,7 @@ bool tree_processor::isLocalFile(std::string str)
             ;// TODO - dictionary of less popular file extensions
 }
 
-std::string tree_processor::asHtml(const std::string& str)
+std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //Preprocess links and other markers into HTML tags.
 //http://www.cplusplus.com/reference/regex/regex_replace/
 //https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp

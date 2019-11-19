@@ -38,13 +38,20 @@ namespace fasada
 
 class URLparser:public std::map<key_string,val_string>
 {
-protected://Configuration & redundancy
-    bool parse_query;//is this name OK?
-    val_string bakURL;
+protected:
+    bool parse_query;//Will split query into "variables"?
+    val_string bakURL;//Original URL content
+    //For lazy checking important parts
+    int HTML_output;//Output with HTML?
+    int MINI_output;//Minimal output
+    int LONG_output;//Maximal output
+    val_string FULL_path;
+    val_string PARENT_path;
+
 
 public://Construction, destruction etc.
-    URLparser(bool pq=false):parse_query(pq){}
-    URLparser(const char* URL,bool pq=true):parse_query(pq){ doParsing(URL); }
+    URLparser(bool pq=false):parse_query(pq),HTML_output(-1),MINI_output(-1),LONG_output(-1){}
+    URLparser(const char* URL,bool pq=true):parse_query(pq),HTML_output(-1),MINI_output(-1),LONG_output(-1){ doParsing(URL); }
    ~URLparser(){}
 
 static
@@ -53,6 +60,9 @@ static
     const val_string& getOriURL(){ return bakURL;} //Oryginalne "brzmienie" URLa
     val_string  getFullPath();   //Zwraca i jednoczesnie dopisuje "fullpath" do słownika
     val_string  getParentPath(); //Zwraca i jednoczesnie dopisuje "parentpath" do słownika
+    bool        asHTML();//Wymagany wynik w HTMLu
+    bool        asMINI();//Minimalny jednoznaczny format danych
+    bool        asLONG();//Format rozbudowany w HTMLu lub NIE!
 
 protected://Implementation
     //Parse URL into elements

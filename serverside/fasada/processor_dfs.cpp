@@ -24,10 +24,11 @@ void processor_dfs::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
 void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     unsigned counter=0;
-    bool defret=(request["return"]!="false");
-    bool longformat=(request.find("long")!=request.end()?true:false);
-    bool html=request["html"]!="false";
-    auto fullpath=request.getFullPath();
+    bool     defret=(request["return"]!="false");
+    bool     longformat=request.asLONG();
+    bool     html=request.asHTML();
+
+    auto     fullpath=request.getFullPath();
     if( *(--fullpath.end())!='/' )
         fullpath+="/";
 

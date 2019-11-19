@@ -33,7 +33,7 @@ void processor_ren::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     std::string fullpath=request.getFullPath();
     std::string tmp=top.get_value<std::string>();
     unsigned    noc=top.size();//czy ma elementy składowe?
-    bool html=request["html"]!="false";
+    bool        html=request.asHTML();
 
     if(html)//TYPE HEADER AND HTML HEADER
     {
@@ -77,7 +77,7 @@ void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     if(new_name=="")
         throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT RENAME CHILD INTO EMPTY NAME!"));
 
-    bool html=request["html"]!="false";
+    bool html=request.asHTML();
 
     if(html)
     {

@@ -35,7 +35,7 @@ std::string processor_find::Form=
 
 void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    bool html=request["html"]!="false";
+    bool        html=request.asHTML();
     unsigned    noc=top.size();//czy ma jakieś elementy składowe?
     std::string fullpath=request.getFullPath();
 
@@ -122,7 +122,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
 {
     unsigned counter=0;
     bool defret=(request["return"]!="false");
-    bool   html=(request["html"]!="false");
+    bool   html=request.asHTML();
     std::string fullpath=request.getFullPath();
     if( *(--fullpath.end())!='/' )
         fullpath+="/";
