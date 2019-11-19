@@ -37,6 +37,22 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                 std::cout <<"'"<< lpath <<"' is a JSON!\n";
                 curr.put(pt::ptree::path_type{lpath, '/'},"!FacebookJson");
             }
+            else
+                if(entry.path().extension()==".js")
+                {
+                    const char* lpath=(entry.path().c_str());
+                    lpath+=plen+1;
+                    std::cout <<"'"<< lpath <<"' is a JSon!\n";
+                    curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
+                }
+                else
+                    if(entry.path().extension()==".csv")
+                    {
+                        const char* lpath=(entry.path().c_str());
+                        lpath+=plen+1;
+                        std::cout <<"'"<< lpath <<"' is a CSV!\n";
+                        curr.put(pt::ptree::path_type{lpath, '/'},"!LinkedInCsv");
+                    }
             //std::cout << entry << " is a "<<entry.path().extension()<<"\n";
         }
         else
