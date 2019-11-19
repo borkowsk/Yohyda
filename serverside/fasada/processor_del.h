@@ -1,3 +1,11 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
+
 #ifndef PROCESSOR_DEL_H
 #define PROCESSOR_DEL_H
 

@@ -1,3 +1,11 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
+
 #ifndef TREE_TYPES_H
 #define TREE_TYPES_H
 
@@ -22,12 +30,12 @@ namespace fasada
     namespace ipc = boost::interprocess;
 
 #if(0)
-    using ShmCharAllocator   = ipc::allocator<char, ipc::managed_shared_memory::segment_manager>;
-    using ShmString          = ipc::basic_string<char, std::char_traits<char>,ShmCharAllocator>;
-    using ShmStringAllocator = ipc::allocator<ShmString, ipc::managed_shared_memory::segment_manager>;
-    using ShmVectorOfString  = ipc::vector<ShmString, ShmStringAllocator>;
-    using key_string=std::string;//string_view? https://stackoverflow.com/questions/50608392/using-const-char-as-key-for-map-unordered-map
-    using val_string=std::string;
+    using  ShmCharAllocator   = ipc::allocator<char, ipc::managed_shared_memory::segment_manager>;
+    using  ShmString          = ipc::basic_string<char, std::char_traits<char>,ShmCharAllocator>;
+    using  ShmStringAllocator = ipc::allocator<ShmString, ipc::managed_shared_memory::segment_manager>;
+    using  ShmVectorOfString  = ipc::vector<ShmString, ShmStringAllocator>;
+    using  key_string=std::string;//string_view? https://stackoverflow.com/questions/50608392/using-const-char-as-key-for-map-unordered-map
+    using  val_string=std::string;
     using  processors_map=std::map<key_string,tree_processor*> ;    //Type of processors maps - this type may change!
 #else
     typedef  ipc::allocator<char, ipc::managed_shared_memory::segment_manager>          ShmCharAllocator;

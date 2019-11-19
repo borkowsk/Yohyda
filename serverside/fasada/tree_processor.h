@@ -1,3 +1,11 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
+
 #ifndef TREE_PROCESSOR_H
 #define TREE_PROCESSOR_H (1)
 
@@ -43,7 +51,9 @@ namespace fasada
 
     //Category operator + (Category one,Category two) ???
     //{ return Category(One+Two);}
-    //error: ‘fasada::tree_processor::Category fasada::tree_processor::operator+(fasada::tree_processor::Category, fasada::tree_processor::Category)’
+    //
+    //error: ‘fasada::tree_processor::Category 
+    //        fasada::tree_processor::operator+(fasada::tree_processor::Category, fasada::tree_processor::Category)’
     //
     // must take either zero or one argument
 
@@ -90,7 +100,7 @@ namespace fasada
     static
         std::string  getNodePanel(const std::string& nodeval,const std::string& fullpath,URLparser& request);
     static
-        std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags.
+        std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags & unicode chars
     static
         bool isLink(std::string str);//Checks for whole str looks like URL
     static

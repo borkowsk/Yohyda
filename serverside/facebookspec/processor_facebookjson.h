@@ -1,9 +1,22 @@
+/// This file is a part of Facebook handling library for Fasada 
+/// ------------------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+///
+/// See licence file!
+///
+// ./serverside/facebookspec/facebookspec.cpp
+// ./serverside/facebookspec/facebookspec.h
+// ./serverside/facebookspec/processor_facebookjson.cpp
+// ./serverside/facebookspec/processor_facebookjson.h
+
 #ifndef PROCESSOR_FACEBOOKJSON_H
 #define PROCESSOR_FACEBOOKJSON_H
 
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
+
 #include "tree_processor.h"
 
 using namespace fasada;

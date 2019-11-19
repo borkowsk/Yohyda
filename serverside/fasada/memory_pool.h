@@ -1,3 +1,10 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
 /// File "memory_pool.h" - communication between treeserver and its clients (including wwwserver)
 ///
 #ifndef FACJATA_MEMORY_POOL_H

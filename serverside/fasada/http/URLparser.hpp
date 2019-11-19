@@ -1,4 +1,11 @@
-/// File "URLparser.hpp" - "fasada" compatible URL parser
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
+/// @file "URLparser.hpp" - Fasada compatible URL parser
 ///
 #ifndef FACJATA_URL_PARSER_H
 #define FACJATA_URL_PARSER_H (1)
@@ -39,12 +46,13 @@ namespace fasada
 class URLparser:public std::map<key_string,val_string>
 {
 protected:
-    bool parse_query;//Will split query into "variables"?
+    bool parse_query; //Should split "query" into "variables"?
     val_string bakURL;//Original URL content
+
     //For lazy checking important parts
-    int HTML_output;//Output with HTML?
-    int MINI_output;//Minimal output
-    int LONG_output;//Maximal output
+    int HTML_output;  //Output with HTML?
+    int MINI_output;  //Minimal output
+    int LONG_output;  //Maximal output
     val_string FULL_path;
     val_string PARENT_path;
 
@@ -57,7 +65,7 @@ public://Construction, destruction etc.
 static
     const char* URLpattern;//Regex pattern for URL used in this class
 
-    const val_string& getOriURL(){ return bakURL;} //Oryginalne "brzmienie" URLa
+    const val_string& getOriURL(){ return bakURL;} //Oryginalne "brzmienie" URLa - LANG?
     val_string  getFullPath();   //Zwraca i jednoczesnie dopisuje "fullpath" do słownika
     val_string  getParentPath(); //Zwraca i jednoczesnie dopisuje "parentpath" do słownika
     bool        asHTML();//Wymagany wynik w HTMLu

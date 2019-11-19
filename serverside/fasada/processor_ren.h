@@ -1,9 +1,18 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
+
 #ifndef PROCESSOR_REN_H
 #define PROCESSOR_REN_H
 
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
 #endif
+
 #include "tree_processor.h"
 
 namespace fasada

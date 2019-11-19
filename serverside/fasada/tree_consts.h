@@ -1,3 +1,11 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// 
+/// See licence file!
+///
+
 #ifndef TREE_CONSTS_H
 #define TREE_CONSTS_H
 
@@ -16,7 +24,7 @@ const unsigned    MSGQ_SIZE=1000;
 const char* const MEM_POOL_NAME="FasadaDefMemoryPool";
 const unsigned    MEM_POOL_SIZE=0xfffffff;
 
-///Value of this const mark finish of all tree processors job.
+///Value of this const mark finish of any of tree-processors tasks.
 const char* const MEM_END="@T@h@e@E@n@d@";
 const char* const EXT_PRE="@E@X@T=";//See for MIME types:
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types

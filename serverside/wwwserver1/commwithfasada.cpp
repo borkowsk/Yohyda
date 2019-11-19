@@ -1,12 +1,16 @@
-// FASADA is a simple interface for communicating any user side application
-// thru WWW . Mostly based on boost examples.
-//
-// Copyright (c) 2019, Wojciech Borkowski
-// (wborkowsk MAŁPA gmail KROPA com , wborkowski MAŁPA uw KROPA edu KROPA pl)
-//
-// This version work correctly with txt & html input from fasada
-//
-//#include "URLparser.hpp"
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @copyright 2019
+/// @file "commwithfasada.cpp" - implementation of connection between fasada server & wwwserver
+///
+/// See licence file!
+///
+/// FASADA is a simple interface for communicating any user side application
+/// thru WWW . Mostly based on boost examples.
+/// This version work correctly with txt & html input from fasada
+///
+
 #include "request.hpp"
 #include "reply.hpp"
 #include "tree_types.h"
@@ -143,9 +147,9 @@ static void read_answer(reply& repl,ShmString* resp,const string& uri)
 
       if(replays!=0)//Jesli trzeba poczekac
       {
-        begpos+=strlen(lastpos);//Przesuwamy o to co juz wydrukowane
-        //std::cout<<".";std::cout.flush();
-        std::this_thread::sleep_for(std::chrono::milliseconds(MILLISECONDS_BW));//https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+        begpos+=strlen(lastpos);//Przesuwamy o to co juz "wydrukowane"
+        //https://stackoverflow.com/questions/4184468/sleep-for-milliseconds/10613664#10613664?newreg=6841aea0490b47baa3c6a7ea2bebaa30
+        std::this_thread::sleep_for(std::chrono::milliseconds(MILLISECONDS_BW));
       }
 
     }while(endpos==string::npos && replays<20);
@@ -222,7 +226,7 @@ bool communicate_with_fasada(const request& curr_request, reply& curr_reply) // 
         {
             read_answer(curr_reply,response,req_uri);
             return true; //COŚ ZOSTAŁO ODEBRANE - Z PUNKTU WIDZENIA SERWERA OK
-                         //bo ma co wysyłać, więc może kontynuować
+                         //bo ma co wysyłać, więc może kontynuować LANG?
         }
     }
     catch(const interprocess_exception& exc)
