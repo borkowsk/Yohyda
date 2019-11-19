@@ -3,6 +3,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+#include <boost/exception/diagnostic_information.hpp>
+#include <iostream>
 
 namespace fasada
 {
@@ -10,6 +12,7 @@ namespace fasada
 //default HTML form for this processor
 std::string processor_ren::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "<input type=\"hidden\" name=\"html\" >\n"
         "OLD NAME: "
         "<input type=\"text\" name=\"old_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "NEW NAME: "
@@ -44,7 +47,7 @@ void processor_ren::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
              //Podmienić ścieżkę i wartość domyślną
              std::string ReadyForm=Form;
              boost::replace_all(ReadyForm,"$proc",procName);
-             boost::replace_all(ReadyForm,"$fullpath",fullpath);
+             boost::replace_all(ReadyForm,"$fullpath",fullpath);        //ptree::iterator
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              o+=ReadyForm;
          }
@@ -66,7 +69,7 @@ using boost::property_tree::ptree;
 void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
-
+    bool succes=false;
     std::string fullpath;
 
     std::string old_name=request["old_name"];
@@ -88,27 +91,46 @@ void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
 
-    //top.ren_child(old_name,new_name);//NIE MA CZEGOŚ TAKIEGO
-    //ptree::iterator
-    ptree::iterator ne = top.to_iterator(top.find(new_name));
-    //if(ne!=top.not_found())
-      //  throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT RENAME INTO EXISTING '"+new_name+"'!"));
+    try{
+        //top.ren_child(old_name,new_name);//NIE MA CZEGOŚ TAKIEGO        //ptree::iterator
 
-    ptree::iterator it = top.to_iterator(top.find(old_name));
-    //if(it==top.not_found())
-      //  throw(tree_processor_exception("PTREE PROCESSOR '"+procName+"' CANNOT FIND CHILD WITH NAME '"+old_name+"'!"));
+        ptree::iterator ne = top.to_iterator(top.find(new_name));
+        if(ne!=top.end())
+          throw(tree_processor_exception("PTREE PROCESSOR '"+procName
+                                         +"' CANNOT RENAME INTO EXISTING '"+new_name+"'!"));
 
-    top.insert(it, make_pair(new_name, it->second));
-    top.erase(it);
+        ptree::iterator it = top.to_iterator(top.find(old_name));
+        if(it==top.end())
+          throw(tree_processor_exception("PTREE PROCESSOR '"+procName
+                                         +"' CANNOT FIND CHILD WITH NAME '"+old_name+"'!"));        //ptree::iterator
 
-    if(html)
-    {
-       o+="DONE <B class=fasada_path>'"+old_name+"'</B>--><B>'"+new_name+"'</B>";
-       o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack,"Go back");
-       o+="</P>";
-       o+=getHtmlClosure();
+        top.insert(it, make_pair(new_name, it->second));
+        top.erase(it);
+        succes=true;
     }
-    else o+="DONE '"+old_name+"'-->'"+new_name+"'";
+    catch(tree_processor_exception& ex)
+    {
+        o+=std::string("\n")+ex.what()+"\n";
+    }
+    catch(...)
+    {
+        std::cerr <<procName<<
+            ": Unexpected exception, diagnostic information follows:\n" <<
+            boost::current_exception_diagnostic_information();
+        o+="\nEXCEPTION IN PTREE PROCESSOR '"+procName+"': "
+           +boost::current_exception_diagnostic_information()+"\n";
+    }
+
+    if(succes)
+        if(html)
+        {
+           o+="DONE <B class=fasada_path>'"+old_name+"'</B>&rarr;<B>'"+new_name+"'</B>";
+           o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack,"Go back");
+           o+="</P>";
+        }
+        else o+="DONE '"+old_name+"'-->'"+new_name+"'";
+
+    if(html)  o+="</P>"+getHtmlClosure();
 }
 
 
