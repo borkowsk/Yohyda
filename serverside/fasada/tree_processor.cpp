@@ -286,7 +286,7 @@ bool tree_processor::isLocalFile(std::string str)
 std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //Preprocess links and other markers into HTML tags.
 //http://www.cplusplus.com/reference/regex/regex_replace/
-//https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp
+//https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp, http://defindit.com/ascii.html
 {
     std::string tmp=str;
     boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);//) Sprawia problemy przy połaczeniu z linkami - U+200A z http://jkorpela.fi/chars/spaces.html
