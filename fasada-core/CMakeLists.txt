@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(facjata)
 
-set( SRCPATH "./")
+set( SRCPATH "./") #Directory where this CMakeList.txt is put!
 
 FIND_PACKAGE( Threads REQUIRED)
 FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options filesystem regex locale REQUIRED )
@@ -10,8 +10,8 @@ SET(Boost_USE_MULTITHREADED ON)
 
 include_directories(
                     "${SRCPATH}"
-                    "${SRCPATH}/fasada/"
-                    "${SRCPATH}/facebookspec/"
+                    "${SRCPATH}/lib/fasada/"
+                    "${SRCPATH}/lib/facebookspec/"
                     "${SRCPATH}/tools/"
                      ${Boost_INCLUDE_DIR}
                     )
@@ -41,25 +41,25 @@ add_executable( wwwserver
                 )
 
 add_library(fasada
-    "${SRCPATH}/fasada/fasada.cpp"
-    "${SRCPATH}/fasada/tree_processor.cpp"
-    "${SRCPATH}/fasada/processor_get.cpp"
-    "${SRCPATH}/fasada/processor_set.cpp"
-    "${SRCPATH}/fasada/processor_add.cpp"
-    "${SRCPATH}/fasada/processor_del.cpp"
-    "${SRCPATH}/fasada/processor_ren.cpp"
-    "${SRCPATH}/fasada/processor_ls.cpp"
-    "${SRCPATH}/fasada/processor_dfs.cpp"
-    "${SRCPATH}/fasada/processor_find.cpp"
-    "${SRCPATH}/fasada/processor_check_file.cpp"
-    "${SRCPATH}/fasada/register_processors.cpp"
-    "${SRCPATH}/fasada/http/URLparser.cpp"
-    "${SRCPATH}/fasada/tree/tree.cpp"
+    "${SRCPATH}/lib/fasada/fasada.cpp"
+    "${SRCPATH}/lib/fasada/tree_processor.cpp"
+    "${SRCPATH}/lib/fasada/processor_get.cpp"
+    "${SRCPATH}/lib/fasada/processor_set.cpp"
+    "${SRCPATH}/lib/fasada/processor_add.cpp"
+    "${SRCPATH}/lib/fasada/processor_del.cpp"
+    "${SRCPATH}/lib/fasada/processor_ren.cpp"
+    "${SRCPATH}/lib/fasada/processor_ls.cpp"
+    "${SRCPATH}/lib/fasada/processor_dfs.cpp"
+    "${SRCPATH}/lib/fasada/processor_find.cpp"
+    "${SRCPATH}/lib/fasada/processor_check_file.cpp"
+    "${SRCPATH}/lib/fasada/register_processors.cpp"
+    "${SRCPATH}/lib/fasada/http/URLparser.cpp"
+    "${SRCPATH}/lib/fasada/tree/tree.cpp"
     )
 
 add_library(facebookspec
-    "${SRCPATH}/facebookspec/facebookspec.cpp"
-    "${SRCPATH}/facebookspec/processor_facebookjson.cpp"
+    "${SRCPATH}/lib/facebookspec/facebookspec.cpp"
+    "${SRCPATH}/lib/facebookspec/processor_facebookjson.cpp"
     )
 
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
