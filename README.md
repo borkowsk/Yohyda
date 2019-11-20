@@ -18,9 +18,11 @@ Jeszcze inna możliwość to właczenie interfejsu FASADY (poprzez bibliotekę) 
 Po za tym aplikacje oparte o FASADĘ mogą umożliwiać, a przynajmniej ułatwiać, użytkownikowi nie znającemu się tworzeniu kontentu WWW aktywne korzystanie z takiej możlowości w sieci lokalnej, a także, pośrednio, globalnej.
 
 *UWAGA - BOOST!*
+
 Projekt został oparty na bibliotece BOOST. Wymaga jej do kompilacji i działania. Instalacja boost na UBUNTU 16.04: 
 
 sudo apt-get install libboost-all-dev
 
 *CO ZROBIĆ GDY ZMIENI SIĘ NAZWA REPOZYTORIUM?*
+
 https://www.linuxquestions.org/questions/programming-9/git-my-remote-repository-moved-how-do-i-tell-my-local-repo-to-use-the-new-one-781785/
