@@ -1,128 +1,160 @@
 #!/bin/bash
 
-#NARZĘDZIA
-function pause(){
-   read -p "$*"
-}
-
-#KONFIGURACJA
+#KONFIGURACJA FASADY
 browser="firefox"
 PRIVATEDIR="private/"
 PRIVATEPORT=8080 #ONLY ONE USER PER HOST CAN HAVE THIS NUMBER!
 PUBLICDIR="public/"
 PUBLICPORT=8000 #ONLY ONE USER PER HOST CAN HAVE THIS NUMBER!
 
-echo
-echo "KREATOR INSTALACJI SYSTEMU FASADA DLA Linux-UBUNTU (polskojęzyczny)"
-echo "(For english version use creator_en.sh)"
-echo
+#KONFIGURACJA WYSWIETLANIA
+ECHO="echo -e"
+COLOR1="\e[36m"
+COLOR2="\e[35m"
+NORMCO="\e[0m"
 
-echo "Szukam niezbędnych składników..."
+
+$ECHO
+$ECHO $COLOR1 "KREATOR INSTALACJI SYSTEMU FASADA DLA Linux-UBUNTU (polskojęzyczny)"
+$ECHO $COLOR2 "(For english version use creator_en.sh)"
+$ECHO $NORMCO
+
+#NARZĘDZIA
+function pause(){
+   $ECHO "$*"
+   read -p "?"
+}
+
+$ECHO $COLOR2 "Szukam niezbędnych składników..." $NORMCO
 CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`
 GPP=`whereis g++ | cut --delimiter=' '   -f 2`
 
-echo "Przeszukano."
+$ECHO $COLOR2 "Przeszukano." $NORMCO
 
 if [ ! -e "$CMAKE" ]
 then
-      echo "cmake jest konieczny. Zainstaluj ten program."
-      pause "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)"
+      $ECHO $COLOR1 "cmake jest konieczny. Zainstaluj ten program." $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 else
-      echo "cmake znaleziony: $CMAKE"
+      $ECHO $COLOR2 "cmake znaleziony:$COLOR1 $CMAKE" $NORMCO
 fi
 
 if [ ! -e "$GPP" ]
 then
-      echo "g++ jest konieczny. Zainstaluj ten program."
-      pause "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)"
+      $ECHO $COLOR1 "g++  jest konieczny.  Zainstaluj ten program." $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 else
-      echo "g++ znaleziony: $GPP"
+      $ECHO $COLOR2 "g++ znaleziony:$COLOR1 $GPP" $NORMCO
 fi
 
 
-echo
-echo "AKTUALIZACJA ŹRÓDEŁ..."
+$ECHO
+$ECHO $COLOR2 "AKTUALIZACJA ŹRÓDEŁ..." $NORMCO
 git pull
-echo "WYKONANO"
-echo
+$ECHO "WYKONANO" 
+$ECHO $NORMCO
 
-echo "BUDOWANIE AKTUALNEJ WERSJI..."
+$ECHO $COLOR2 "BUDOWANIE AKTUALNEJ WERSJI..." $NORMCO
 pushd fasada-core/
 rm Makefile
+$ECHO $COLOR1
 $CMAKE .
 if [ ! -e Makefile ]
 then
-      echo "Makefile nie został wygenerowany"
+      $ECHO $COLOR1 "Makefile nie został wygenerowany"
 else
-      echo "BUDOWANIE PROJEKTU"
+      $ECHO $COLOR2 "BUDOWANIE PROJEKTU" $NORMCO
       make
 fi
 popd
-echo "WYKONANO"
-echo
+$ECHO $COLOR2 "WYKONANO"
+$ECHO $NORMCO
 
-echo "POSZUKIWANIE I AKTUALIZACJA DANYCH Z PORTALI SPOŁECZNOŚCIOWYCH"
+$ECHO $COLOR2 "POSZUKIWANIE I AKTUALIZACJA DANYCH Z PORTALI SPOŁECZNOŚCIOWYCH" $NORMCO
 pushd $PRIVATEDIR
-echo
-echo "LISTA ARCHIWÓW W KATALOGU $PRIVATEDIR"
+$ECHO
+$ECHO $COLOR2 "LISTA ARCHIWÓW W KATALOGU" $PRIVATEDIR $NORMCO
 ls -lt *.zip
 ZIPS=`ls -t *.zip`
-echo
-for file in "$ZIPS"
+$ECHO $COLOR1 $ZIPS $NORMCO
+
+for file in $ZIPS
 do 
-      echo "	ARCHIWUM" `file $file`
       DIRNAME=`echo "$file" | cut -d'.' -f1`
-      if [ ! -e $DIRNAME ]
+      $ECHO $COLOR2 "	ARCHIWUM" $COLOR1 $file 
+      $ECHO $COLOR2 "   ROZPAKOWUJE DO KATALOGU" $COLOR1 $DIRNAME $COLOR2 "\n"
+
+      if [ ! -e "$DIRNAME" ]
       then
-	echo "	TWORZĘ KATALOG $DIRNAME	" 
+	$ECHO "	TWORZĘ KATALOG" $DIRNAME 
 	mkdir $DIRNAME
       fi
-      echo "	ROZPAKOWYWANIE: unzip -u $file -d $DIRNAME "
+
+      $ECHO "\n\t" "ROZPAKOWYWANIE: unzip -u $file -d $DIRNAME $NORMCO"
       unzip -u $file -d $DIRNAME
-      echo "	ROZPAKOWYWANIE ZAKOŃCZONE"
+      $ECHO $COLOR2 "	ROZPAKOWYWANIE ZAKOŃCZONE"
 done
-echo
+$ECHO $NORMCO
 
 BACKUP=".BACKUP"
 if [ ! -e "$BACKUP" ]
 then
-  echo "	TWORZĘ KATALOG" "$BACKUP"
+  $ECHO $COLOR1 "	TWORZĘ KATALOG" "$BACKUP" $NORMCO
   mkdir "$BACKUP"
 fi
 
 if [ -e "index.json" ]
 then
-  echo "	ZAPAMIĘTUJE POPRZEDNI PLIK index.json"
+  $ECHO $COLOR2 "ZAPAMIĘTUJE POPRZEDNI PLIK index.json" $COLOR1
   mv index.json "${BACKUP}/"
+  $ECHO $NORMCO
 fi
+$ECHO $NORMCO
 
-echo
-echo "INDEKSUJE ZAWARTOŚĆ KATALOGU $PRIVATEDIR"
+$ECHO $COLOR2 "INDEKSUJE ZAWARTOŚĆ KATALOGU" $PRIVATEDIR $NORMCO
+pwd
+$ECHO $COLOR1
 ../fasada-core/indexer "."
-echo "WYKONANO"
-echo
+$ECHO $COLOR2 "WYKONANO"
+$ECHO $NORMCO
 
 popd
-echo "POSZUKIWANIE I INDEKSOWANIE WYKONANE"
-echo
+$ECHO $COLOR2 "POSZUKIWANIE I INDEKSOWANIE WYKONANE" 
+$ECHO $NORMCO
 
-echo "PIERWSZE ODPALENIE SERWISU"
+SKIN="$PRIVATEDIR/_skin/"
+if [ ! -e "$SKIN" ]
+then
+  $ECHO $COLOR1 "	TWORZĘ KATALOG $SKIN i JEGO OBOWIĄZKOWĄ ZAWARTOŚĆ" $NORMCO
+  mkdir "$SKIN"
+  cp fasada-core/lib/fasada/_skin_template/* "$SKIN"
+fi
+
+$ECHO $COLOR2 "PIERWSZE ODPALENIE SERWISU" $COLOR1
 indexpath=`realpath "$PRIVATEDIR/index.json"`
-echo "treeserver $indexpath - "
-./fasada-core/treeserver $indexpath --force > treeserver.log &
-pause "Naciśnij ENTER"
-echo
-echo "wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log"
+$ECHO "treeserver $indexpath - " $NORMCO
+./fasada-core/treeserver $indexpath --force &
+pause $COLOR2 "Naciśnij ENTER" $COLOR1
+$ECHO
+$ECHO "wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log" $NORMCO
 ./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
-pause "Naciśnij ENTER"
-echo 
-$browser "http:localhost:$PRIVATEPORT/?ls&html"
-echo
-pause "Nacisniej ENTER gdy skończysz testowanie"
+pause $COLOR2 "Naciśnij ENTER" $NORMCO
+$ECHO 
+$browser "http:localhost:$PRIVATEPORT/?ls&html&long"
+$ECHO
+pause $COLOR2 "Nacisniej ENTER gdy skończysz testowanie" $NORMCO
 $browser "http:localhost:$PRIVATEPORT/!!!!"
-echo "ZAKOŃCZONE"
+$ECHO $COLOR2 "ZAKOŃCZONE"
+$ECHO $NORMCO
 
+cat > fasada_start.sh <<EOF 
+./fasada-core/treeserver $indexpath - 2>&1 > treeserver.log &
+./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR 2>&1 > wwwserver.log &
+$browser "http:localhost:$PRIVATEPORT/?ls&html&long"
+EOF
 
-echo "..."
+chmod +x fasada_start.sh
 
-echo "NIE MAM JUŻ NIC WIĘCEJ DO ZROBIENIA"
+wait
+$ECHO $COLOR1 "NIE MAM JUŻ NIC WIĘCEJ DO ZROBIENIA" $NORMCO
+
