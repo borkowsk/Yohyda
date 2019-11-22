@@ -21,6 +21,9 @@ $ECHO $COLOR2 "(For english version use creator_en.sh)"
 $ECHO $NORMCO
 
 #NARZĘDZIA
+
+TIMESTAMP=`date --utc +%Y%m%d_%H%M%SZ`
+
 function pause(){
    $ECHO "$*"
    read -p "?"
@@ -86,6 +89,12 @@ popd
 $ECHO $COLOR2 "WYKONANO"
 $ECHO $NORMCO
 
+if [ -e "stop.sh" ]
+then
+     $ECHO $COLOR1 "WYŁĄCZENIE SERWISU FASADA"
+     ./stop.sh
+fi
+
 $ECHO $COLOR2 "POSZUKIWANIE I AKTUALIZACJA DANYCH Z PORTALI SPOŁECZNOŚCIOWYCH" $NORMCO
 pushd $PRIVATEDIR
 $ECHO
@@ -124,7 +133,7 @@ fi
 if [ -e "index.json" ]
 then
   $ECHO $COLOR2 "ZAPAMIĘTUJE POPRZEDNI PLIK $COLOR1 index.json" $NORMCO
-  mv index.json "${BACKUP}/"
+  mv index.json "${BACKUP}/index$TIMESTAMP.json"
   $ECHO $NORMCO
 fi
 $ECHO $NORMCO
@@ -149,7 +158,14 @@ then
 fi
 $ECHO $NORMCO
 
-$ECHO $COLOR2 "PIERWSZE ODPALENIE SERWISU" $COLOR1
+$ECHO $COLOR2 "TESTOWE ODPALENIE SERWISU" $COLOR1
+
+if [ -e "output.fac" ]
+then
+   $ECHO $COLOR2 "ZABEZPIECZENIE OSTATNICH WYNIKÓW:$COLOR1  cp output.fac output$TIMESTAMP.fac $NORMCO"
+   mv output.fac output$TIMESTAMP.fac
+fi
+
 indexpath=`realpath "$PRIVATEDIR/index.json"`
 $ECHO "treeserver $indexpath - " $NORMCO
 ./fasada-core/treeserver $indexpath --force &
@@ -182,7 +198,7 @@ EOF
 
 cat > stop.sh <<EOF 
 #!/bin/bash
-#FINISHING FASADA 
+#FINISHING FASADA - WHEN WWWSERVER STOPS, ALL ATHERS PARTS ALSO EXIT
 $browser "http:localhost:$PRIVATEPORT/!!!!"
 EOF
 
