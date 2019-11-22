@@ -9,6 +9,7 @@ namespace fasada
 //default HTML form for this processor
 std::string processor_set::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "\n<input name=\"html\"   type=\"hidden\" >"
         "VALUE: "
         "$INPUT_AREA"
         "<br>\n"

@@ -9,6 +9,7 @@ namespace fasada
 //default HTML form for this processor
 std::string processor_del::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "\n<input name=\"html\"   type=\"hidden\" >"
         "NAME: "
         "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "will be DELeted from <B class=fasada_path>'$path'</B><BR>\n"

@@ -240,7 +240,7 @@ std::string  tree_processor::getNodePanel(const std::string& data,const std::str
         if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
             o+="&nbsp; "+getSeeLink(data,request,"see");//Plik sprawdzony
         else  if(writing_enabled())
-            o+="&nbsp; "+getActionLink(fullpath+"!checkFile&html","check!");//Plik do sprawdzenia
+            o+="&nbsp; "+getActionLink(fullpath+"!checkFile?html","check!");//Plik do sprawdzenia
     }
 
     if(writing_enabled())

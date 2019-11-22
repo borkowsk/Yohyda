@@ -20,6 +20,7 @@ processor_find::~processor_find()
 //default HTML form for this processor
 std::string processor_find::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "\n<input name=\"html\"   type=\"hidden\" >"
         "\n<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
         "\n<BR>SUBPATH:     "
         "   <input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"

@@ -62,7 +62,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
                if(top.data().at(0)=='/' || (top.data().at(0)=='.' && top.data().at(1)=='/') )
                    o+="&nbsp;&nbsp; "+getSeeLink(top.data(),request,"SEE");
                else  if(writing_enabled() && isLocalFile(top.data()))
-                   o+="&nbsp; "+getActionLink(fullpath+"!checkFile&html","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
+                   o+="&nbsp; "+getActionLink(fullpath+"!checkFile?html","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
            }
            o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }

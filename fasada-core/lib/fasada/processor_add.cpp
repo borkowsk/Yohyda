@@ -9,6 +9,7 @@ namespace fasada
 //default HTML form for this processor
 std::string processor_add::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "\n<input name=\"html\"   type=\"hidden\" >"
         "NAME:&nbsp; "
         "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "VALUE: "

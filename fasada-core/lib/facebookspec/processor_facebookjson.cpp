@@ -13,6 +13,7 @@ namespace facebook
 //default HTML form for this processor
 std::string processor_facebookJson::Form="";
 //        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+//        "\n<input name=\"html\"   type=\"hidden\" >"
 //        "FOR <B class=fasada_path>'$path'</B><BR>\n"
 //        "<input type=\"submit\" value=\"OK\">\n"
 //        "</form>";
