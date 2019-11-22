@@ -3,9 +3,10 @@
 #KONFIGURACJA FASADY
 browser="firefox"
 PRIVATEDIR="private/"
-PRIVATEPORT=8080 #ONLY ONE USER PER HOST CAN HAVE THIS NUMBER!
+PRIVATEPORT=8080 #TYLKO JEDEN UŻYTKOWNIK KOMPUTERA MOŻE MIEĆ TAKI NUMER!
 PUBLICDIR="public/"
-PUBLICPORT=8000 #ONLY ONE USER PER HOST CAN HAVE THIS NUMBER!
+PUBLICPORT=8000 #TYLKO JEDEN UŻYTKOWNIK KOMPUTERA MOŻE MIEĆ TAKI NUMER!
+SOURCEDIR="fasada-core/"
 
 #KONFIGURACJA WYSWIETLANIA
 ECHO="echo -e"
@@ -46,26 +47,41 @@ then
 else
       $ECHO $COLOR2 "g++ znaleziony:$COLOR1 $GPP" $NORMCO
 fi
+$ECHO $NORMCO
 
-
-$ECHO
 $ECHO $COLOR2 "AKTUALIZACJA ŹRÓDEŁ..." $NORMCO
 git pull
-$ECHO "WYKONANO" 
+$ECHO $COLOR2 "WYKONANO" 
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "BUDOWANIE AKTUALNEJ WERSJI..." $NORMCO
-pushd fasada-core/
+pushd $SOURCEDIR
 rm Makefile
 $ECHO $COLOR1
 $CMAKE .
+$ECHO $NORMCO
+
 if [ ! -e Makefile ]
 then
-      $ECHO $COLOR1 "Makefile nie został wygenerowany"
+      $ECHO $COLOR1 "Makefile nie został wygenerowany" $NORMCO
+      exit
 else
       $ECHO $COLOR2 "BUDOWANIE PROJEKTU" $NORMCO
       make
 fi
+
+if [ ! -e treeserver ]
+then
+      $ECHO $COLOR1 "Brak koniecznego pliku wykonywalnego treeserver" $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+fi
+
+if [ ! -e wwwserver ]
+then
+      $ECHO $COLOR1 "Brak koniecznego pliku wykonywalnego treeserver" $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+fi
+
 popd
 $ECHO $COLOR2 "WYKONANO"
 $ECHO $NORMCO
@@ -76,36 +92,38 @@ $ECHO
 $ECHO $COLOR2 "LISTA ARCHIWÓW W KATALOGU" $PRIVATEDIR $NORMCO
 ls -lt *.zip
 ZIPS=`ls -t *.zip`
-$ECHO $COLOR1 $ZIPS $NORMCO
+$ECHO $COLOR2 "DO SPRAWDZENIA:" $COLOR1 $ZIPS
+$ECHO $NORMCO
 
 for file in $ZIPS
 do 
       DIRNAME=`echo "$file" | cut -d'.' -f1`
-      $ECHO $COLOR2 "	ARCHIWUM" $COLOR1 $file 
-      $ECHO $COLOR2 "   ROZPAKOWUJE DO KATALOGU" $COLOR1 $DIRNAME $COLOR2 "\n"
+      $ECHO $COLOR2 "\t" "ARCHIWUM" $COLOR1 $file 
+      $ECHO $COLOR2 "\t" "ROZPAKOWUJE DO KATALOGU" $COLOR1 $DIRNAME $COLOR2
 
       if [ ! -e "$DIRNAME" ]
       then
-	$ECHO "	TWORZĘ KATALOG" $DIRNAME 
+	$ECHO $COLOR2 "\t" "TWORZĘ KATALOG" $COLOR1 $DIRNAME $NORMCO
 	mkdir $DIRNAME
       fi
 
-      $ECHO "\n\t" "ROZPAKOWYWANIE: unzip -u $file -d $DIRNAME $NORMCO"
+      $ECHO "\t" "ROZPAKOWYWANIE: $COLOR1 unzip -u $file -d $DIRNAME $NORMCO"
       unzip -u $file -d $DIRNAME
-      $ECHO $COLOR2 "	ROZPAKOWYWANIE ZAKOŃCZONE"
+      $ECHO $COLOR2 "\t" "ROZPAKOWYWANIE ZAKOŃCZONE"
+      $ECHO $NORMCO
 done
-$ECHO $NORMCO
+
 
 BACKUP=".BACKUP"
 if [ ! -e "$BACKUP" ]
 then
-  $ECHO $COLOR1 "	TWORZĘ KATALOG" "$BACKUP" $NORMCO
+  $ECHO $COLOR1 "TWORZĘ KATALOG" "$BACKUP" $NORMCO
   mkdir "$BACKUP"
-fi
+fi 
 
 if [ -e "index.json" ]
 then
-  $ECHO $COLOR2 "ZAPAMIĘTUJE POPRZEDNI PLIK index.json" $COLOR1
+  $ECHO $COLOR2 "ZAPAMIĘTUJE POPRZEDNI PLIK $COLOR1 index.json" $NORMCO
   mv index.json "${BACKUP}/"
   $ECHO $NORMCO
 fi
@@ -114,7 +132,7 @@ $ECHO $NORMCO
 $ECHO $COLOR2 "INDEKSUJE ZAWARTOŚĆ KATALOGU" $PRIVATEDIR $NORMCO
 pwd
 $ECHO $COLOR1
-../fasada-core/indexer "."
+../fasada-core/indexer "." | tee indexer.log | grep -v "#"
 $ECHO $COLOR2 "WYKONANO"
 $ECHO $NORMCO
 
@@ -125,10 +143,11 @@ $ECHO $NORMCO
 SKIN="$PRIVATEDIR/_skin/"
 if [ ! -e "$SKIN" ]
 then
-  $ECHO $COLOR1 "	TWORZĘ KATALOG $SKIN i JEGO OBOWIĄZKOWĄ ZAWARTOŚĆ" $NORMCO
+  $ECHO $COLOR2 "TWORZĘ KATALOG $COLOR1 $SKIN $COLOR2 i JEGO OBOWIĄZKOWĄ ZAWARTOŚĆ" $NORMCO
   mkdir "$SKIN"
   cp fasada-core/lib/fasada/_skin_template/* "$SKIN"
 fi
+$ECHO $NORMCO
 
 $ECHO $COLOR2 "PIERWSZE ODPALENIE SERWISU" $COLOR1
 indexpath=`realpath "$PRIVATEDIR/index.json"`
@@ -147,13 +166,27 @@ $browser "http:localhost:$PRIVATEPORT/!!!!"
 $ECHO $COLOR2 "ZAKOŃCZONE"
 $ECHO $NORMCO
 
-cat > fasada_start.sh <<EOF 
-./fasada-core/treeserver $indexpath - 2>&1 > treeserver.log &
-./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR 2>&1 > wwwserver.log &
+cat > start.sh <<EOF 
+#!/bin/bash
+#STARTING FASADA 
+if [ -e "output.fac" ]
+then
+   cp output.fac $PRIVATEDIR/input.fac
+   ./fasada-core/treeserver $PRIVATEDIR/input.fac -  > treeserver.log 2>&1 &
+else
+   ./fasada-core/treeserver $indexpath -  > treeserver.log 2>&1 &
+fi
+./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR  > wwwserver.log 2>&1 &
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
 EOF
 
-chmod +x fasada_start.sh
+cat > stop.sh <<EOF 
+#!/bin/bash
+#FINISHING FASADA 
+$browser "http:localhost:$PRIVATEPORT/!!!!"
+EOF
+
+chmod +x *.sh
 
 wait
 $ECHO $COLOR1 "NIE MAM JUŻ NIC WIĘCEJ DO ZROBIENIA" $NORMCO
