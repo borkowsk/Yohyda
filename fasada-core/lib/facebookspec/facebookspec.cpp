@@ -1,5 +1,5 @@
 #include "facebookspec.h"
-#include "processor_facebookjson.h"
+#include "loader_facebookjson.h"
 #include "tree/ptree_foreach.hpp"
 #include <boost/locale.hpp>
 
@@ -134,7 +134,7 @@ void call_recoders(pt::ptree& start,bool PL)
 
 void register_processors()
 {
-    static processor_facebookJson FacebookJson;
+    static loader_facebookJson FacebookJson;
 }
 
 } //namespace facebook

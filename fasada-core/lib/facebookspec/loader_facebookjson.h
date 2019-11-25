@@ -24,14 +24,14 @@ using namespace fasada;
 namespace facebook
 {
 
-class processor_facebookJson : public tree_processor //WRITER
+class loader_facebookJson : public tree_processor //WRITER
 {
 protected:
     static std::string Form;//default HTML form for this processor
 
 public:
-    processor_facebookJson(const char* name="FacebookJson");
-   ~processor_facebookJson();
+    loader_facebookJson(const char* name="FacebookJson");
+   ~loader_facebookJson();
  protected://implementation
  virtual
      void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
