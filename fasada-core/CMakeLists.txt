@@ -43,6 +43,7 @@ add_executable( wwwserver
 add_library(fasada
     "${SRCPATH}/lib/fasada/fasada.cpp"
     "${SRCPATH}/lib/fasada/tree_processor.cpp"
+    "${SRCPATH}/lib/fasada/tree_attributes.cpp"
     "${SRCPATH}/lib/fasada/processor_get.cpp"
     "${SRCPATH}/lib/fasada/processor_set.cpp"
     "${SRCPATH}/lib/fasada/processor_add.cpp"

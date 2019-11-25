@@ -10,7 +10,6 @@
 #include <boost/regex.hpp>
 #include <iostream>
 #include <string>
-//#include <regex>
 
 namespace fasada
 {
@@ -68,7 +67,7 @@ tree_processor::tree_processor(Category cat,const char* name):
 
     try
     {
-        //WRITER could be also a READER - for preparing a FORM
+        //WRITER could be also a READER - for preparing a FORM//#include <regex>
         if((procCategory & WRITER) !=0 )
         {
             std::cout<<"Tree processor '"<<procName<<"' is registering as WRITER... ";
