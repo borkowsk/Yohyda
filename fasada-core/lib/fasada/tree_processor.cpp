@@ -288,14 +288,22 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp, http://defindit.com/ascii.html
 {
     std::string tmp=str;
-    boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);//) Sprawia problemy przy połaczeniu z linkami - U+200A z http://jkorpela.fi/chars/spaces.html
+
+    // , ) ] i . sprawiają problemy przy połaczeniu z linkami - U+200A z http://jkorpela.fi/chars/spaces.html
+    boost::replace_all(tmp,",","\u200A," /*"\x7f"*/);
+    boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);
+    boost::replace_all(tmp,"]","\u200A]" /*"\x7f"*/);
+    boost::replace_all(tmp,". ","\u200A. " /*"\x7f"*/);
 
     //std::regex link(URLparser::URLpattern);
     boost::regex link(URLparser::URLpattern);
     //auto out=std::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
     auto out=boost::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
 
-    boost::replace_all(out,"\u200A)",")");//Przywracamy emotikony
+    boost::replace_all(out,"\u200A,",",");//Przywracamy
+    boost::replace_all(out,"\u200A)",")");//Przywracamy
+    boost::replace_all(out,"\u200A]","]");//Przywracamy
+    boost::replace_all(out,"\u200A. ",". ");//Przywracamy
 
     boost::replace_all(out,"-->","&rarr;");
     boost::replace_all(out,"==>","&rArr;");

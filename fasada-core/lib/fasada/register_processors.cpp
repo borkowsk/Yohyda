@@ -9,6 +9,9 @@
 #include "processor_dfs.h"
 #include "processor_find.h"
 #include "processor_check_file.h"
+#include "loader_txt.h"
+#include "loader_csv.h"
+#include "loader_json.h"
 
 namespace fasada
 {
@@ -32,6 +35,13 @@ void register_processors(bool WithWriters)
         static fasada::processor_add  ADD;//--//---
         static fasada::processor_del  DEL;//--//---
         static fasada::processor_ren  REN;//--//---
+        static fasada::loader_txt     TXT;//--//---
+        static fasada::loader_csv     CSV;//--//---
+        static fasada::loader_json   JSON;//--//---
+                                                                  //ale mozna robić aliasy
+        static fasada::loader_csv      LinkedInCsv("LinkedInCsv");
+        //static fasada::loader_json   TwitterJson("TwitterJson");//Json'y z Twittera mają takie cosie na początku "window.YTD.tweet.part0 ="
+                                                                  //które wywalają boostowy parser
     }
 }
 
