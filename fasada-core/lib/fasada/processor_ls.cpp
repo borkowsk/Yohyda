@@ -43,7 +43,11 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
         o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long")+"&nbsp;&nbsp; ";
     }
     o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp; ";
-    o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls&html","TOP","Top of the tree");
+    //o+="<br>{"+request["&path"]+"}<br>\n";
+    if(request["&path"]=="/")
+        o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/!!!!","SHUTDOWN!!!!","Close this www server!");
+    else
+        o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls&html&long","TOP","Top of the tree");
 }
 
 void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)

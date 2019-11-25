@@ -119,6 +119,17 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     }
 }
 
+void processor_find::_implement_action_panel(ShmString& o,URLparser& request)
+//Górny i dolny panel akcji dotyczących całej listy
+{
+    std::string fullpath=request.getFullPath();
+    o+=getActionLink(fullpath+"?find&html","FIND","Find subnodes")+"&nbsp;&nbsp; ";
+    o+=getActionLink(fullpath+"?dfs&html&long","TREE","View tree in long format")+"&nbsp;&nbsp; ";
+    o+=getActionLink(fullpath+"?ls&html&long","LSL","Lista as long")+"&nbsp;&nbsp; ";
+    o+=getActionLink(fullpath+"?ls&html","LSS","Lista as short")+"&nbsp;&nbsp; ";
+    o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+}
+
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     unsigned counter=0;
@@ -138,7 +149,9 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"])+"<UL>\n";
+        o+=getHtmlHeaderDefaults(request["&path"])+"\n";
+        _implement_action_panel(o,request);
+        o+="\n<UL>\n";//Zawsze jest UL?
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
@@ -207,15 +220,16 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     {
         o+="</UL>";
         o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
-        o+=getActionLink(fullpath+"?find&html","FIND","Find subnodes")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?dfs&html&long","TREE","View tree in long format")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL","Lista as long")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?ls&html","LSS","Lista as short")+"&nbsp;&nbsp; ";
-        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
-        o+=getHtmlClosure();
+        if(counter>10) _implement_action_panel(o,request);
+        o+="\n"+getHtmlClosure();
     }
 }
 
+void processor_find::_implement_regex_find(ShmString& o,pt::ptree& top,URLparser& request)
+//Called in _implement_write
+{
+
+}
 
 void processor_find::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 {

@@ -21,6 +21,19 @@ void processor_dfs::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+"IS REALLY NOT A WRITER!"));
 }
 
+void processor_dfs::_implement_action_panel(ShmString& o,URLparser& request)
+//Górny i dolny panel akcji dotyczących całej listy
+{
+    std::string fullpath=request.getFullPath();
+    o+=getActionLink(fullpath+"?dfs&html"+(!request.asLONG()?"&long":""),"TREE",
+                    (request.asLONG()?"View tree in short format":"View tree in long format"))
+                    +"&nbsp;&nbsp; ";
+    o+=getActionLink(fullpath+"?find&html","FIND","Find nodes")+"&nbsp;&nbsp; ";
+    o+=getActionLink(fullpath+"?ls&html&long","LSL","List long")+"&nbsp;&nbsp; ";
+    o+=getActionLink(fullpath+"?ls&html","LSS","List short")+"&nbsp;&nbsp; ";
+    o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+}
+
 void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     unsigned counter=0;
@@ -35,7 +48,9 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"])+(longformat?"<UL>\n":"\n");
+        o+=getHtmlHeaderDefaults(request["&path"]);
+         _implement_action_panel(o,request);
+        o+=(longformat?"<BR><UL>\n":"<BR>\n");
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
@@ -83,14 +98,8 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     {
         if(longformat) o+="</UL>\n";
         o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
-        o+=getActionLink(fullpath+"?dfs&html"+(longformat?"":"&long"),"TREE",
-                        (longformat?"View tree in short format":"View tree in long format"))
-                        +"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?find&html","FIND","Find nodes")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL","List long")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?ls&html","LSS","List short")+"&nbsp;&nbsp; ";
-        o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
-        o+=getHtmlClosure();
+        if(counter>10) _implement_action_panel(o,request);
+        o+="\n"+getHtmlClosure();
     }
 }
 
