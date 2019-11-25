@@ -117,7 +117,7 @@ void recode_facebook_pl_to_utf8(pt::ptree& start)
 }
 
 void call_recoders(pt::ptree& start,bool PL)
-{
+{   //na o+= a nie na cerr!!! TODO!!!
     std::cerr<<"inserting timestamps as table indexes for top level tables"<<std::endl;
     insert_mintimestamps(start);
     //else
