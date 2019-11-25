@@ -312,7 +312,7 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(out,";)", "&#x1F609;");//wink
     boost::replace_all(out,";-)","&#x1F609;");//wink
     boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
-    boost::replace_all(out,"\n","<BR>");//break LINE
+    boost::replace_all(out,"\n","<BR>");//break LINEs
     return out;
 }
 
