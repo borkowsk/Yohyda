@@ -9,23 +9,16 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 
-//#include <boost/filesystem/string_file.hpp> //only new boost
-
 using namespace boost::filesystem;
 
+#if(0)
+#include <boost/filesystem/string_file.hpp> //only new boost
 namespace fasada
 {
 
-loader_csv::loader_csv(const char* name):
-    tree_processor(WRITER,name) //also may be READER if it should create its own FORM
+#else
+namespace fasada
 {
-
-}
-
-void loader_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
-{
-    throw(tree_processor_exception("READ FUNCTION FOR PTREE PROCESSOR "+procName+" NOT IMPLEMENTED!"));
-}
 
 inline
 void load_string_file(const path& p, std::string& str)
@@ -36,6 +29,16 @@ void load_string_file(const path& p, std::string& str)
   std::size_t sz = static_cast<std::size_t>(file_size(p));
   str.resize(sz, '\0');
   file.read(&str[0], sz);
+}
+#endif
+
+loader_csv::loader_csv(const char* name):
+    tree_processor(WRITER,name) //also may be READER if it should create its own FORM
+{}
+
+void loader_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
+{
+    throw(tree_processor_exception("READ FUNCTION FOR PTREE PROCESSOR "+procName+" NOT IMPLEMENTED!"));
 }
 
 void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
