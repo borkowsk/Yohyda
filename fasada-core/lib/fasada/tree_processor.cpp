@@ -289,17 +289,20 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 {
     std::string tmp=str;
 
-    // , ) ] i . sprawiają problemy przy połaczeniu z linkami - U+200A z http://jkorpela.fi/chars/spaces.html
-    boost::replace_all(tmp,",","\u200A," /*"\x7f"*/);
+    //\r \n , ) ] i . sprawiają problemy przy połaczeniu z linkami - U+200A z http://jkorpela.fi/chars/spaces.html
+    boost::replace_all(tmp,", ","\u200A, " /*"\x7f"*/);
     boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);
     boost::replace_all(tmp,"]","\u200A]" /*"\x7f"*/);
     boost::replace_all(tmp,". ","\u200A. " /*"\x7f"*/);
+    boost::replace_all(tmp,"\r","\x7f\r" /*"\x7f"*/);
+    boost::replace_all(tmp,"\n","\u200A\n" /*"\x7f"*/);
 
     //std::regex link(URLparser::URLpattern);
     boost::regex link(URLparser::URLpattern);
     //auto out=std::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
     auto out=boost::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
 
+    boost::replace_all(out,"\u200A\n","\n");//Przywracamy
     boost::replace_all(out,"\u200A,",",");//Przywracamy
     boost::replace_all(out,"\u200A)",")");//Przywracamy
     boost::replace_all(out,"\u200A]","]");//Przywracamy
@@ -320,7 +323,7 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(out,";)", "&#x1F609;");//wink
     boost::replace_all(out,";-)","&#x1F609;");//wink
     boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
-    boost::replace_all(out,"\n","<BR>");//break LINEs
+    boost::replace_all(out,"\n","\n<BR>");//break LINEs
     return out;
 }
 
