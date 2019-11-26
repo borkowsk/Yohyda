@@ -25,6 +25,7 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
 //Górny i dolny panel akcji dotyczących całej listy
 {
     std::string fullpath=request.getFullPath();
+    o+="\n";//For cleaner HTML code
     if(writing_enabled())
     {
         o+=getActionLink(fullpath+"?add&html","ADD!","?add&html");
@@ -48,6 +49,7 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
         o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/!!!!","SHUTDOWN!!!!","Close this www server!");
     else
         o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/?ls&html&long","TOP","Top of the tree");
+    o+="\n";//For cleaner HTML code
 }
 
 void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)
@@ -118,6 +120,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         {
             o+="<BR><BR>\n";
             _implement_action_panel(o,request);
+            o+="\n";//For cleaner HTML code
         }
     }
     else
@@ -133,6 +136,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                     +"'</I></A> ";
             _implement_node_panel(o,top.data(),fullpath,request);
             o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+            o+="\n";//For cleaner HTML code
         }
         else
         o+=" NO SUBNODES ";

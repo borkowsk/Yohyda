@@ -25,6 +25,7 @@ void processor_dfs::_implement_action_panel(ShmString& o,URLparser& request)
 //Górny i dolny panel akcji dotyczących całej listy
 {
     std::string fullpath=request.getFullPath();
+    o+="\n";//For cleaner HTML code
     o+=getActionLink(fullpath+"?dfs&html"+(!request.asLONG()?"&long":""),"TREE",
                     (request.asLONG()?"View tree in short format":"View tree in long format"))
                     +"&nbsp;&nbsp; ";
@@ -32,6 +33,7 @@ void processor_dfs::_implement_action_panel(ShmString& o,URLparser& request)
     o+=getActionLink(fullpath+"?ls&html&long","LSL","List long")+"&nbsp;&nbsp; ";
     o+=getActionLink(fullpath+"?ls&html","LSS","List short")+"&nbsp;&nbsp; ";
     o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+    o+="\n";//For cleaner HTML code
 }
 
 void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)

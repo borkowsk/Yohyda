@@ -123,11 +123,13 @@ void processor_find::_implement_action_panel(ShmString& o,URLparser& request)
 //Górny i dolny panel akcji dotyczących całej listy
 {
     std::string fullpath=request.getFullPath();
+    o+="\n";//For cleaner HTML code
     o+=getActionLink(fullpath+"?find&html","FIND","Find subnodes")+"&nbsp;&nbsp; ";
     o+=getActionLink(fullpath+"?dfs&html&long","TREE","View tree in long format")+"&nbsp;&nbsp; ";
     o+=getActionLink(fullpath+"?ls&html&long","LSL","Lista as long")+"&nbsp;&nbsp; ";
     o+=getActionLink(fullpath+"?ls&html","LSS","Lista as short")+"&nbsp;&nbsp; ";
     o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+    o+="\n";//For cleaner HTML code
 }
 
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
