@@ -169,10 +169,12 @@ fi
 indexpath=`realpath "$PRIVATEDIR/index.json"`
 $ECHO "treeserver $indexpath - " $NORMCO
 ./fasada-core/treeserver $indexpath --force &
+sleep 5
 pause $COLOR2 "Naciśnij ENTER" $COLOR1
 $ECHO
 $ECHO "wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log" $NORMCO
 ./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
+sleep 5
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
 $ECHO 
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
