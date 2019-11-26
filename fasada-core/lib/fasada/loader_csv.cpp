@@ -6,10 +6,12 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/filesystem/string_file.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 
-namespace fs = boost::filesystem;
-namespace pt = boost::property_tree;
+//#include <boost/filesystem/string_file.hpp> //only new boost
+
+using namespace boost::filesystem;
 
 namespace fasada
 {
@@ -23,6 +25,17 @@ loader_csv::loader_csv(const char* name):
 void loader_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     throw(tree_processor_exception("READ FUNCTION FOR PTREE PROCESSOR "+procName+" NOT IMPLEMENTED!"));
+}
+
+inline
+void load_string_file(const path& p, std::string& str)
+{
+  ifstream file;
+  file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+  file.open(p, std::ios_base::binary);
+  std::size_t sz = static_cast<std::size_t>(file_size(p));
+  str.resize(sz, '\0');
+  file.read(&str[0], sz);
 }
 
 void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
@@ -44,7 +57,9 @@ void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     o+="\n";
 
     std::string content;
-    boost::filesystem::load_string_file(discPath,content);
+    //boost::filesystem::
+    load_string_file(discPath,content);
+
     top.add_child("content",pt::ptree{content});
 
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
