@@ -35,12 +35,12 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
     if(longformat)
     {
         o+=getActionLink(fullpath+"?dfs&html&long","TREE","Print as tree")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?ls&html","LSS","List as short")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html","LSS","List as short content of "+request["&path"])+"&nbsp;&nbsp; ";
     }
     else
     {
         o+=getActionLink(fullpath+"?dfs&html","TREE","Print as tree")+"&nbsp;&nbsp; ";
-        o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long")+"&nbsp;&nbsp; ";
+        o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
     }
     o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp; ";
     //o+="<br>{"+request["&path"]+"}<br>\n";

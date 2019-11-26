@@ -178,6 +178,7 @@ sleep 5
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
 $ECHO 
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
+sleep 1
 $ECHO
 pause $COLOR2 "Nacisniej ENTER gdy skończysz testowanie" $NORMCO
 $browser "http:localhost:$PRIVATEPORT/!!!!"
@@ -194,7 +195,9 @@ then
 else
    ./fasada-core/treeserver $indexpath -  > treeserver.log 2>&1 &
 fi
+sleep 3
 ./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR  > wwwserver.log 2>&1 &
+sleep 3
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
 EOF
 
