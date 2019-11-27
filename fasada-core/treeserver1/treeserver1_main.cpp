@@ -258,9 +258,11 @@ int main(int argc, char* argv[])
         {
             facebook::call_recoders(root,true/*PL*/);
             insert_property(root,"_source",filename);
-            insert_property(root,"loader","");
+            insert_property(root,"loader","FacebookJson");
             insert_property(root,"saver","saveJson");
             insert_property(root,"alternative_savers.xml","saveAsXml");
+            insert_property(root,"oth_actions.Check_All_Locals","runTree&action=checkFile");
+            insert_property(root,"oth_actions.Load_All_Jsons","runTree&action=FacebookJson");
         }
         std::cerr<<"LOADED SUCCESFULLY!"<<std::endl;
 

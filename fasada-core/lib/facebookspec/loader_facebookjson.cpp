@@ -56,6 +56,7 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     insert_property(top,"loader",procName);
     insert_property(top,"saver","saveJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");
+    insert_property(top,"oth_actions.Check_All_Files","runTree&action=checkFile");
 
     call_recoders(top,true/*PL*/);
 

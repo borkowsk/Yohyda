@@ -51,6 +51,8 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
     insert_property(top,"loader",procName);
     insert_property(top,"saver", "saveJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");
+    insert_property(top,"oth_actions.Check_All_Locals","runTree&action=checkFile");
+    insert_property(top,"oth_actions.Load_All_Jsons","runTree&action=Json");
 
     o+="DONE";
 }
