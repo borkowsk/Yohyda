@@ -37,12 +37,11 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
 {
     std::string discPath=request["&private_directory"]+request["&path"];
     boost::replace_all(discPath,"//","/");
-    unsigned    noc=top.size();//czy ma elementy składowe?
 
-    if(noc!=0)
+    if(top.size()!=0  && request["force"]!="true" ) //Jak już jest zawartość to trzeba być pewnym
     {
         //o+="Only leaf type nodes can be modified by "+procName+"\n";
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT LOAD NOT-LEAF NODE!"));
+        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT LOAD NOT-LEAF NODE!\nUse &force=true if You are sure."));
     }
 
     //....
