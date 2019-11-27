@@ -46,12 +46,11 @@ void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
 {
     std::string discPath=request["&private_directory"]+request["&path"];
     boost::replace_all(discPath,"//","/");
-    unsigned    noc=top.size();//czy ma elementy składowe?
 
-    if(noc!=0)
+    if(top.size()!=0  && request["force"]!="true" ) //Jak już jest zawartość to trzeba być pewnym
     {
         //o+="Only leaf type nodes can be modified by "+procName+"\n";
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT LOAD NOT-LEAF NODE!"));
+        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT LOAD NOT-LEAF NODE!\nUse &force=true if You are sure."));
     }
 
     //....
@@ -68,7 +67,7 @@ void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
 
-    // Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    // Most important properties is "_source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_source",discPath);
     insert_property(top,"loader",procName);
     insert_property(top,"saver", "saveTxt");
@@ -78,6 +77,5 @@ void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
 
     o+="DONE";
 }
-
 
 }
