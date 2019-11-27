@@ -252,10 +252,15 @@ int main(int argc, char* argv[])
 
         std::cerr<<"Loading file "<<filename<<"..."<<std::endl;
         pt::read_json(filename, root);//Czyta podstawowe dane - jakiś całkiem spory plik json
+
         //Dokonuje modyfikacji przy założeniu że jest to plik json ściągnięty z Facebooka
         if( filename.substr(filename.rfind('.')) == ".json")
         {
             facebook::call_recoders(root,true/*PL*/);
+            insert_property(root,"_source",filename);
+            insert_property(root,"loader","");
+            insert_property(root,"saver","saveJson");
+            insert_property(root,"alternative_savers.xml","saveAsXml");
         }
         std::cerr<<"LOADED SUCCESFULLY!"<<std::endl;
 

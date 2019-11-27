@@ -39,6 +39,8 @@ time_t find_minimal_timestamp(const pt::ptree& start)
 
 void insert_mintimestamps(pt::ptree& start)
 {
+    start.add_child("_used_decoders.insert_mintimestamps",ptree{});
+
     for_true_branches(start,"",
         [](ptree& t,std::string k)
         {
@@ -77,6 +79,8 @@ void insert_mintimestamps(pt::ptree& start)
 
 void recode_facebook_timestamps(pt::ptree& start)
 {
+     start.add_child("_used_decoders.recode_facebook_timestamps",ptree{});
+
      foreach_node(start,"",always,always,
          [](ptree& t,std::string k)
          {
@@ -104,6 +108,7 @@ void recode_facebook_timestamps(pt::ptree& start)
 
 void recode_facebook_pl_to_utf8(pt::ptree& start)
 {
+    start.add_child("_used_decoders.recode_facebook_pl_to_utf8",ptree{});
     foreach_node(start,"",always,
         [](ptree& t,std::string k)
         {

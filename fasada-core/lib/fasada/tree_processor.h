@@ -37,9 +37,9 @@ namespace fasada
     };
 
     /// Each node may have special subnodes called properties saved under xmlattr subtree
-    /// Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions".
+    /// Most important properties is "_source", "loader", "viever", "saver", "alternative_savers", "oth_actions".
     /// Standard attributes are presented in HTML by _implement_attributes() method
-    void insert_property(pt::ptree& Node,std::string FasadaPropertyName,std::string PropertyValue);
+    void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& PropertyValue);
 
     /// This class ...
     /// ...

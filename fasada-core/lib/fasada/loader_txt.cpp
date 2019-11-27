@@ -63,10 +63,19 @@ void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     //boost::filesystem::
     load_string_file(discPath,content);
 
-    top.add_child("content",pt::ptree{content});
+    top.add_child("_content",pt::ptree{content});
 
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
+
+    // Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    insert_property(top,"_source",discPath);
+    insert_property(top,"loader",procName);
+    insert_property(top,"saver", "saveTxt");
+    insert_property(top,"alternative_savers.json","saveAsJson");
+    insert_property(top,"alternative_savers.xml","saveAsXml");
+    insert_property(top,"oth_actions.decode","ContentAsTabDelimited");
+
     o+="DONE";
 }
 

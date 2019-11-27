@@ -50,7 +50,15 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     o+=discPath;
     o+="\n";
     pt::read_json(discPath, top);
+
+    // Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    insert_property(top,"_source",discPath);
+    insert_property(top,"loader",procName);
+    insert_property(top,"saver","saveJson");
+    insert_property(top,"alternative_savers.xml","saveAsXml");
+
     call_recoders(top,true/*PL*/);
+
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
     o+="DONE";
