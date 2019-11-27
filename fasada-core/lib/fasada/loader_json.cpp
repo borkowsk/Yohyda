@@ -26,19 +26,30 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
 {
     std::string discPath=request["&private_directory"]+request["&path"];
     boost::replace_all(discPath,"//","/");
-    unsigned    noc=top.size();//czy ma elementy składowe?
 
-    if(noc!=0)
+    if(top.size()!=0  && request["force"]!="true" ) //Jak już jest zawartość to trzeba być pewnym
     {
         //o+="Only leaf type nodes can be modified by "+procName+"\n";
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT LOAD NOT-LEAF NODE!"));
+        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT LOAD NOT-LEAF NODE!\nUse &force=true if You are sure."));
     }
 
-    //....
-    o+="LOADING:";
+    o+="OPENING:";
     o+=discPath;
+    std::ifstream source(discPath);
     o+="\n";
-    pt::read_json(discPath, top);
+    o+="CHECKING:";
+    auto Character=source.get();
+    source.unget();
+    o+=std::string(">>")+char(Character)+std::string("<<\n");
+    char line[LINE_MAX]="";
+    if(Character!='{' && Character!='[')
+    {
+        source.getline(line,LINE_MAX,'=');
+        o+=std::string(">>")+line+std::string("<<\n");
+    }
+    o+="LOADING:";
+    pt::read_json(source, top);
+    o+="\n";
 
     o+="inserting consecutive numbers as table indexes...\n";
     insert_numbers(top);
@@ -47,6 +58,7 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
     top.data()="";
 
     // Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    insert_property(top,"_lead",line);
     insert_property(top,"_source",discPath);
     insert_property(top,"loader",procName);
     insert_property(top,"saver", "saveJson");
