@@ -26,3 +26,7 @@ sudo apt-get install libboost-all-dev
 *CO ZROBIĆ GDY ZMIENI SIĘ NAZWA REPOZYTORIUM?*
 
 https://www.linuxquestions.org/questions/programming-9/git-my-remote-repository-moved-how-do-i-tell-my-local-repo-to-use-the-new-one-781785/
+
+TYMCZASOWA WITRYNA PROJEKTU:
+https://sites.google.com/view/fasada-cpp/
+ 
