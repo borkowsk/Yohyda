@@ -1,3 +1,13 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
+/// @copyright 2019
+/// @version 0.01
+///
+///  See CURRENT licence file!
+///
+
 #include "processor_check_file.h"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>

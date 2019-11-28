@@ -1,3 +1,13 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
+/// @copyright 2019
+/// @version 0.01
+///
+///  See CURRENT licence file!
+///
+
 //Local tree console editor for "fasada"
 //
 #include "memory_pool.h"

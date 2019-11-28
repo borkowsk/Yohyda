@@ -1,3 +1,13 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
+/// @copyright 2019
+/// @version 0.01
+///
+///  See CURRENT licence file!
+///
+
 #include "fasada.hpp"
 #include "processor_get.h"
 #include <boost/lexical_cast.hpp>

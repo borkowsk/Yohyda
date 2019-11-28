@@ -1,10 +1,11 @@
 /// This file is a part of Fasada toolbox
 /// ---------------------------------------------------
 /// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
 /// @copyright 2019
-/// @file "commwithfasada.cpp" - implementation of connection between fasada server & wwwserver
+/// @version 0.01
 ///
-/// See licence file!
+///  See CURRENT licence file!
 ///
 /// FASADA is a simple interface for communicating any user side application
 /// thru WWW . Mostly based on boost examples.

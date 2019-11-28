@@ -1,3 +1,13 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
+/// @copyright 2019
+/// @version 0.01
+///
+///  See CURRENT licence file!
+///
+
 // This is a directory indexer for user data downloaded from Facebook.
 // (author: Wojciech Borkowski)
 // base on: https://stackoverflow.com/questions/20923456/boost-directory-iterator-example-how-to-list-directory-files-not-recursive

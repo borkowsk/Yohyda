@@ -1,3 +1,13 @@
+/// This file is a part of Fasada toolbox
+/// ---------------------------------------------------
+/// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
+/// @copyright 2019
+/// @version 0.01
+///
+///  See CURRENT licence file!
+///
+
 #include "facebookspec.h"
 #include "loader_facebookjson.h"
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c

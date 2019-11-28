@@ -1,3 +1,13 @@
+# This file is a part of Fasada toolbox
+# ---------------------------------------------------
+# @author Wojciech Borkowski <wborkowsk@gmail.com>
+# @footnote Technical mail: <fasada.wb@gmail.com>
+# @copyright 2019
+# @version 0.01
+#
+#  See CURRENT licence file!
+#
+
 cmake_minimum_required(VERSION 2.8)
 
 project(facjata)
