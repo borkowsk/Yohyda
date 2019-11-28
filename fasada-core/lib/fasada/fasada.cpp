@@ -4,6 +4,8 @@
 
 namespace fasada
 {
+const float _version=FASADA_VERSION;
+const char* _version_str=FASADA_VERSION_STR;
 
 static int _fasflags=0;
 

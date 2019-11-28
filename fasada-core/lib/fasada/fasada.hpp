@@ -13,12 +13,18 @@
 #  pragma once
 #endif
 
+#define FASADA_VERSION (0.01)
+#define FASADA_VERSION_STR "0.01"
+
 #include "tree_types.h"
 #include "tree_consts.h"
 #include "tree_processor.h"
 
 namespace fasada
 {
+extern const float _version;//=FASADA_VERSION;
+extern const char* _version_str;//=FASADA_VERSION_STR;
+static const char* _compiled=__DATE__ " ;  " __TIME__;//Diferent for any compilation unit
 
 void init(bool WithWriting);//INITIALIZE THE FASADA LIBRARY
 void register_processors(bool WithWriters); //Function for registering default set of tree_processors

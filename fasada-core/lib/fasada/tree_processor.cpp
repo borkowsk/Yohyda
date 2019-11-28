@@ -204,10 +204,13 @@ std::string  tree_processor::getSeeLink(const std::string& data,URLparser& reque
     return out;
 }
 
-std::string  tree_processor::getHtmlClosure()
+std::string  tree_processor::getHtmlClosure(const char* _unit_comp)
 //Compatible set of tags for end of html document
 {
-    return HTMLFooter;
+    std::string Footer="<HR class=\"footer_hr\"><P class=\"footer_p\">Fasada version ";
+    Footer+=_version_str+std::string(" Unit compiled: ")+(*_unit_comp!='\0'?_unit_comp:_compiled)+"</P>";
+    Footer+=HTMLFooter;
+    return Footer;
 }
 
 std::string  tree_processor::getNodePanel(const std::string& data,const std::string& fullpath,URLparser& request)
