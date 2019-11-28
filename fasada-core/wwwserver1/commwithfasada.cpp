@@ -7,9 +7,15 @@
 ///
 ///  See CURRENT licence file!
 ///
+/// This file:
+/// @file  commwithfasada.cpp
+/// @brief Implementation of connection between fasada server & wwwserver
+///
 /// FASADA is a simple interface for communicating any user side application
-/// thru WWW . Mostly based on boost examples.
-/// This version work correctly with txt & html input from fasada
+/// thru WWW . Mostly based on boost examples & open source solutions from StackOverflow
+///
+/// This version work correctly with txt & html input from fasada and most type of common
+/// file types used in WWW communication.
 ///
 
 #include "request.hpp"
