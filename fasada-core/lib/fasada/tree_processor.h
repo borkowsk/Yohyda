@@ -73,7 +73,7 @@ namespace fasada
     virtual
         void _implement_write(ShmString& o,pt::ptree& top,URLparser& request)=0;
     virtual
-        void _implement_attributes(ShmString& o,pt::ptree& top,URLparser& request);
+        void _implement_attributes(ShmString& o,const pt::ptree& top,URLparser& request,std::string nameOfTop="");
 
     public://Construction, destruction etc.
         tree_processor(Category cat,const char* name);

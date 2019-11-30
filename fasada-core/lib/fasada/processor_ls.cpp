@@ -36,6 +36,7 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
 {
     std::string fullpath=request.getFullPath();
     o+="\n";//For cleaner HTML code
+
     if(writing_enabled())
     {
         o+=getActionLink(fullpath+"?add&html","ADD!","?add&html");
@@ -43,6 +44,7 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
         o+=+"&nbsp;&nbsp; "+getActionLink(fullpath+"?del&html","DEL!","Delete subnode")+"&nbsp;&nbsp; ";
     }
     o+=getActionLink(fullpath+"?find&html","FIND","Find")+"&nbsp;&nbsp; ";
+
     if(longformat)
     {
         o+=getActionLink(fullpath+"?dfs&html&long","TREE","Print as tree")+"&nbsp;&nbsp; ";
@@ -53,8 +55,9 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
         o+=getActionLink(fullpath+"?dfs&html","TREE","Print as tree")+"&nbsp;&nbsp; ";
         o+=getActionLink(fullpath+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
     }
+
     o+=getActionLink(request.getParentPath()+"?"+request["&query"],HTMLBack,"Go back")+"&nbsp;&nbsp; ";
-    //o+="<br>{"+request["&path"]+"}<br>\n";
+
     if(request["&path"]=="/")
         o+=getActionLink("http://"+request["&domain"]+":"+request["&port"]+"/!!!!","SHUTDOWN!!!!","Close this www server!");
     else
@@ -95,7 +98,9 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         std::string parentpath=request.getFullPath();
         if( *(--parentpath.end())!='/' )
             parentpath+="/";
+
         o+=(longformat & html?"\n<UL>\n":"\n");
+
         for(auto p:top)
         {
             if(html)
@@ -109,6 +114,8 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +std::string(p.second.data())
                         +"'</I></A> ";
                 _implement_node_panel(o,p.second.data(),fullpath,request);
+                if(longformat)
+                    _implement_attributes(o,p.second,request,p.first.data());
             }
             else
                 o+=std::string(p.first.data())+std::string(" : ")+std::string(p.second.data());
@@ -145,6 +152,8 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                     +top.data()
                     +"'</I></A> ";
             _implement_node_panel(o,top.data(),fullpath,request);
+            if(longformat)
+                _implement_attributes(o,top,request);
             o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
             o+="\n";//For cleaner HTML code
         }

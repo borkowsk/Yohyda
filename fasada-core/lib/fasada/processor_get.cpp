@@ -74,6 +74,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
                else  if(writing_enabled() && isLocalFile(top.data()))
                    o+="&nbsp; "+getActionLink(fullpath+"!checkFile?html","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
            }
+           _implement_attributes(o,top,request);
            o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }
         else

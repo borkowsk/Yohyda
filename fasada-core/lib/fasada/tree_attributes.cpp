@@ -10,6 +10,7 @@
 
 #include "fasada.hpp"
 #include "tree_processor.h"
+#include "tree/ptree_foreach.hpp"
 
 namespace pt = boost::property_tree;
 
@@ -17,7 +18,7 @@ namespace fasada
 {
 
 /// Each node may have special subnodes called properties saved under xmlattr subtree
-/// Most important properties is "source", "loader", "saver", "alternative_savers", "oth_actions".
+/// Most important properties is "_source", "loader", "saver", "alternative_savers", "oth_actions".
 /// Standard attributes are presented in HTML by _implement_attributes() method
 void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& PropertyValue)
 {
@@ -25,9 +26,33 @@ void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const
 }
 
 
-void tree_processor::_implement_attributes(ShmString& o,pt::ptree& top,URLparser& request)
+void tree_processor::_implement_attributes(ShmString& o,const pt::ptree& top,URLparser& request,std::string nameOfTop/*=""*/)
 {
+    auto attr=top.find("xmlattr");
 
+    if(nameOfTop.length()>0 && nameOfTop.at(0)!='/')
+        nameOfTop="/"+nameOfTop;
+
+    if(attr!=top.not_found())
+        for_true_branches(attr->second, //Search only in attributes!
+                          std::string("attr"),//Just cosmetic meaning
+        [&o,&request,&nameOfTop](const ptree& t,std::string k)
+        {
+            auto posit=k.rfind("/");
+            if(posit==k.npos)
+                return true;//RATHER INVALID, BUT MAYBE IS SOMETHING BELOW
+
+            std::string field=k.substr(posit+1);
+            if(field.at(0)=='_')
+                return false;//HIDDEN SUBTREE
+
+            if(t.data()!="")
+                o+="&nbsp;"+getActionLink(request.getFullPath()+nameOfTop+"?"+t.data(),field,k+": "+t.data());
+
+            return true;
+        },
+                        std::string("/") //PATH SEPARATOR
+                        );
 }
 
 
