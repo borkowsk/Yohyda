@@ -51,9 +51,11 @@ add_executable( wwwserver
                 )
 
 add_library(fasada
+    #base
     "${SRCPATH}/lib/fasada/fasada.cpp"
     "${SRCPATH}/lib/fasada/tree_processor.cpp"
     "${SRCPATH}/lib/fasada/tree_attributes.cpp"
+    #first set of processors
     "${SRCPATH}/lib/fasada/processor_info.cpp"
     "${SRCPATH}/lib/fasada/processor_get.cpp"
     "${SRCPATH}/lib/fasada/processor_set.cpp"
@@ -67,6 +69,17 @@ add_library(fasada
     "${SRCPATH}/lib/fasada/loader_txt.cpp"
     "${SRCPATH}/lib/fasada/loader_csv.cpp"
     "${SRCPATH}/lib/fasada/loader_json.cpp"
+    #generated processors
+    "${SRCPATH}/lib/fasada/view_csv.cpp"
+    "${SRCPATH}/lib/fasada/run_on_tree.cpp"
+    "${SRCPATH}/lib/fasada/save_as_txt.cpp"
+    "${SRCPATH}/lib/fasada/save_as_csv.cpp"
+    "${SRCPATH}/lib/fasada/save_as_xml.cpp"
+    "${SRCPATH}/lib/fasada/save_as_json.cpp"
+    "${SRCPATH}/lib/fasada/view_processor.cpp"
+    "${SRCPATH}/lib/fasada/saver_processor.cpp"
+    "${SRCPATH}/lib/fasada/loader_processor.cpp"
+    #general
     "${SRCPATH}/lib/fasada/register_processors.cpp"
     "${SRCPATH}/lib/fasada/http/URLparser.cpp"
     "${SRCPATH}/lib/fasada/tree/tree.cpp"

@@ -55,5 +55,22 @@ void tree_processor::_implement_attributes(ShmString& o,const pt::ptree& top,URL
                         );
 }
 
+//Currently used atrribute actions:
+/*
+ insert_property(top,"oth_actions.Check_All_Files", "runTree&action=checkFile");
+  insert_property(top,"oth_actions.Load_All_Jsons","runTree&action=Json");
+
+ insert_property(top,"oth_actions.decode","ContentAsTabDelimited");
+ insert_property(top,"oth_actions.decode","decodeCsvContent");
+
+ insert_property(top,"alternative_savers.json","saveAsJson");
+ insert_property(top,"saver", "saveJson");
+ insert_property(top,"alternative_savers.xml","saveAsXml");
+ insert_property(top,"saver", "saveCsv");
+ insert_property(top,"saver", "saveTxt");
+
+ insert_property(top,"viever","viewCsv");
+*/
+
 
 } //namespace fasada
