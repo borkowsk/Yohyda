@@ -7,7 +7,7 @@ echo "    only letters and _ are allowed in parameters!"
 
 if [ $# -ne 3 ]; 
 then
-   echo "Not enought parameters!"
+   echo "Illegal number of parameters! Expected 3."
 else
    echo "Creating:"
    
