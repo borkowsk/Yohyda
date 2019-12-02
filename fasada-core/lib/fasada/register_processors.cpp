@@ -23,6 +23,7 @@
 #include "loader_txt.h"
 #include "loader_csv.h"
 #include "loader_json.h"
+#include "view_csv.h"
 
 namespace fasada
 {
@@ -30,10 +31,11 @@ namespace fasada
 void register_processors(bool WithWriters)
 {
     static fasada::processor_info     INFO;//Istnieje co najmniej jedna zmienna każdego typu
-    static fasada::processor_get      GET;//--//---
-    static fasada::processor_dfs      DFS;//--//---
-    static fasada::processor_ls       LST;//--//---
-    static fasada::processor_find    FIND;//--//---
+    static fasada::processor_get      GET; //--//---
+    static fasada::processor_dfs      DFS; //--//---
+    static fasada::processor_ls       LST; //--//---
+    static fasada::processor_find     FIND;//--//---
+    static fasada::view_csv           VIEW_CSV;
     static fasada::processor_check_file CHECK_FILE;//--//---
 
     static fasada::processor_ls       Def("default");//ale można też robić aliasy

@@ -19,7 +19,7 @@
 namespace fasada
 {
 
-class view_csv : public view_processor //Category READER/&/WRITER
+class view_csv : public view_processor //Category READER
 {
     public:
         view_csv(const char* name="viewCsv");
@@ -27,8 +27,6 @@ class view_csv : public view_processor //Category READER/&/WRITER
     protected://implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
-    virtual
-        void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);
 };
 
 }//namespace "fasada"
