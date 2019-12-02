@@ -26,6 +26,9 @@ include_directories(
                      ${Boost_INCLUDE_DIR}
                     )
 
+#How to make version.h from GIT versioning?
+#See: https://gist.github.com/rkitover/3fe24bbf8f3a0e32a19259aca384680a
+
 add_executable( treeserver
     "${SRCPATH}/treeserver1/treeserver1_main.cpp"
                 )
