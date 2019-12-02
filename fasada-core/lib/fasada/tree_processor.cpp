@@ -307,6 +307,7 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);
     boost::replace_all(tmp,"]","\u200A]" /*"\x7f"*/);
     boost::replace_all(tmp,". ","\u200A. " /*"\x7f"*/);
+    boost::replace_all(tmp,"|","\u200A| " /*"\x7f"*/);
     boost::replace_all(tmp,"\r","\x7f\r" /*"\x7f"*/);
     boost::replace_all(tmp,"\n","\u200A\n" /*"\x7f"*/);
 

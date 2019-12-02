@@ -30,15 +30,17 @@ void tree_processor::_implement_attributes(ShmString& o,const pt::ptree& top,URL
 {
     auto attr=top.find("xmlattr");
 
-    if(nameOfTop.length()>0 && nameOfTop.at(0)!='/')
-        nameOfTop="/"+nameOfTop;
-
     if(attr!=top.not_found())
+    {
+        if(nameOfTop.length()>0 && nameOfTop.at(0)!='/')
+            nameOfTop="/"+nameOfTop;
+
         for_true_branches(attr->second, //Search only in attributes!
                           std::string("attr"),//Just cosmetic meaning
-        [&o,&request,&nameOfTop](const ptree& t,std::string k)
+                          [&o,&request,&nameOfTop](const ptree& t,std::string k)
         {
             auto posit=k.rfind("/");
+
             if(posit==k.npos)
                 return true;//RATHER INVALID, BUT MAYBE IS SOMETHING BELOW
 
@@ -47,12 +49,13 @@ void tree_processor::_implement_attributes(ShmString& o,const pt::ptree& top,URL
                 return false;//HIDDEN SUBTREE
 
             if(t.data()!="")
-                o+="&nbsp;"+getActionLink(request.getFullPath()+nameOfTop+"?"+t.data(),field,k+": "+t.data());
+                o+="&nbsp;"+getActionLink(request.getFullPath()+nameOfTop+"?"+t.data()+"&html",field,k+": "+t.data());
 
             return true;
         },
-                        std::string("/") //PATH SEPARATOR
-                        );
+                          std::string("/") //PATH SEPARATOR
+                         );
+     }
 }
 
 //Currently used atrribute actions:
