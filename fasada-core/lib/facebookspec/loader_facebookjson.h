@@ -17,14 +17,14 @@
 #  pragma once
 #endif
 
-#include "tree_processor.h"
+#include "loader_processor.h"
 
 using namespace fasada;
 
 namespace facebook
 {
 
-class loader_facebookJson : public tree_processor //WRITER
+class loader_facebookJson : public loader_processor //WRITER
 {
 protected:
     static std::string Form;//default HTML form for this processor

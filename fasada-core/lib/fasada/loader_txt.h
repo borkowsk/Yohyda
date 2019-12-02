@@ -6,12 +6,12 @@
 #endif
 
 #include "fasada.hpp"
-#include "tree_processor.h"
+#include "loader_processor.h"
 
 namespace fasada
 {
 
-class loader_txt : public tree_processor
+class loader_txt : public loader_processor
 {
 public:
     loader_txt(const char* name="txt");

@@ -20,10 +20,14 @@ namespace fasada
 
 class loader_processor : public tree_processor //Category READER/&/WRITER
 {
-    public:
+protected:
+    static std::string Form;//default HTML form for this processor
+
+public:
         loader_processor(const char* name="generic_loader");
        ~loader_processor();
-    protected://implementation
+
+protected://implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
     virtual

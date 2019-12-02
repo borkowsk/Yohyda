@@ -9,7 +9,6 @@
 ///
 
 #include "fasada.hpp"
-#include "tree_processor.h"
 #include "loader_txt.h"
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <boost/property_tree/ptree.hpp>
@@ -43,7 +42,7 @@ void load_string_file(const path& p, std::string& str)
 #endif
 
 loader_txt::loader_txt(const char* name):
-    tree_processor(WRITER,name) //also may be READER if it should create its own FORM
+    loader_processor(name) //also may be READER if it should create its own FORM
 {}
 
 void loader_txt::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)

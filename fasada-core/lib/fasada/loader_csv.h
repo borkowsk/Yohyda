@@ -6,13 +6,12 @@
 #endif
 
 #include "fasada.hpp"
-#include "tree_processor.h"
+#include "loader_processor.h"
 
 namespace fasada
 {
 
-
-class loader_csv : public tree_processor
+class loader_csv : public loader_processor
 {
 public:
     loader_csv(const char* name="csv");

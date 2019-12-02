@@ -29,7 +29,7 @@ std::string loader_facebookJson::Form="";
 //        "</form>";
 
 loader_facebookJson::loader_facebookJson(const char* name):
-    tree_processor(WRITER,name) //also may be READER if it should create its own FORM
+    loader_processor(name) //also may be READER if it should create its own FORM
 {
 }
 

@@ -17,16 +17,20 @@ namespace fasada
 
 loader_processor::loader_processor(const char* name):
     tree_processor(WRITER_READER/*READER? WRITER?*/,name)
-{
-
-}
+{}
 
 loader_processor::~loader_processor()
 {}
 
+
+//default HTML form for this processor
+std::string loader_processor::Form=
+        ""
+        ;
+
 void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A WRITER!"));
+    throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A READER!"));
 }
 
 
