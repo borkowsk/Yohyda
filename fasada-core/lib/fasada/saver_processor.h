@@ -6,8 +6,8 @@
 /// See licence file!
 ///
 
-#ifndef PROCESSOR_generic_saver_H
-#define PROCESSOR_generic_saver_H
+#ifndef PROCESSOR_saver_processor_H
+#define PROCESSOR_saver_processor_H
 
 #if defined(BOOST_HAS_PRAGMA_ONCE)
 #  pragma once
@@ -32,4 +32,4 @@ class saver_processor : public tree_processor //Category READER/&/WRITER
 
 }//namespace "fasada"
 
-#endif // PROCESSOR_generic_saver_H
+#endif // PROCESSOR_saver_processor_H
