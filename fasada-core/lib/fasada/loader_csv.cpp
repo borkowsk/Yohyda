@@ -72,7 +72,7 @@ void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     //boost::filesystem::
     load_string_file(discPath,content);
 
-    top.add_child("_content",pt::ptree{content});
+    top.add_child("_raw_content",pt::ptree{content});
 
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
@@ -81,10 +81,10 @@ void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     insert_property(top,"_source",discPath);
     insert_property(top,"loader",procName);
     insert_property(top,"viever","viewCsv");
-    insert_property(top,"saver", "saveCsv");
+    insert_property(top,"saver", "saveAsCsv");
     insert_property(top,"alternative_savers.json","saveAsJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");
-    insert_property(top,"oth_actions.decode","decodeCsvContent");
+    insert_property(top,"oth_actions.decode","rawContentAsCsv");
     o+="DONE";
 }
 
