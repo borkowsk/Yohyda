@@ -1,19 +1,11 @@
 #!/bin/bash
 
-#KONFIGURACJA FASADY
-browser="firefox"
-PRIVATEDIR="private/"
-PRIVATEPORT=8080 #TYLKO JEDEN UŻYTKOWNIK KOMPUTERA MOŻE MIEĆ TAKI NUMER!
-PUBLICDIR="public/"
-PUBLICPORT=8000 #TYLKO JEDEN UŻYTKOWNIK KOMPUTERA MOŻE MIEĆ TAKI NUMER!
-SOURCEDIR="fasada-core/"
-
 #KONFIGURACJA WYSWIETLANIA
-ECHO="echo -e"
-COLOR1="\e[36m"
-COLOR2="\e[35m"
-NORMCO="\e[0m"
-
+if [ ! -e "screen.ini" ]
+then
+  cp  "fasada-core/lib/fasada/_config_template/screen.ini" ./
+fi
+source "screen.ini"
 
 $ECHO
 $ECHO $COLOR1 "KREATOR INSTALACJI SYSTEMU FASADA DLA Linux-UBUNTU (polskojęzyczny)"
@@ -28,6 +20,20 @@ function pause(){
    $ECHO "$*"
    read -p "?"
 }
+
+#KONFIGURACJA FASADY
+if [ ! -e "fasada.ini" ]
+then
+      $ECHO $COLOR1 "Brak pliku fasada.ini. Kopiowanie z zasobów..." $NORMCO
+      cp  "fasada-core/lib/fasada/_config_template/fasada.ini" ./
+      echo
+      cat "fasada.ini"
+      echo
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać i edytować)" $NORMCO
+else
+      $ECHO $COLOR2 "fasada.ini" $NORMCO
+fi
+source "fasada.ini"
 
 $ECHO $COLOR2 "Szukam niezbędnych składników..." $NORMCO
 CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`
@@ -57,7 +63,7 @@ git pull
 $ECHO $COLOR2 "WYKONANO" 
 $ECHO $NORMCO
 
-$ECHO $COLOR2 "BUDOWANIE AKTUALNEJ WERSJI..." $NORMCO
+$ECHO $COLOR2 "BUDOWANIE AKTUALNEJ WERSJI W KATALOGU $COLOR1 '${SOURCEDIR}'" $NORMCO
 pushd $SOURCEDIR
 rm Makefile
 $ECHO $COLOR1
@@ -141,7 +147,7 @@ $ECHO $NORMCO
 $ECHO $COLOR2 "INDEKSUJE ZAWARTOŚĆ KATALOGU" $PRIVATEDIR $NORMCO
 pwd
 $ECHO $COLOR1
-../fasada-core/indexer "." | tee indexer.log | grep -v "#"
+$BINDIR/indexer "." | tee indexer.log | grep -v "#"
 $ECHO $COLOR2 "WYKONANO"
 $ECHO $NORMCO
 
@@ -166,21 +172,27 @@ then
    mv output.fac output$TIMESTAMP.fac
 fi
 
-indexpath=`realpath "$PRIVATEDIR/index.json"`
-$ECHO "treeserver $indexpath - " $NORMCO
-./fasada-core/treeserver $indexpath --force &
-sleep 5
-pause $COLOR2 "Naciśnij ENTER" $COLOR1
+$ECHO $COLOR2 "URUCHOMIENIE SERWISU:" $NORMCO
 $ECHO
-$ECHO "wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log" $NORMCO
-./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
+indexpath=`realpath "$PRIVATEDIR/index.json"`
+
+$ECHO $COLOR1 "treeserver $COLOR2 $indexpath - " $NORMCO
+$BINDIR/treeserver $indexpath --force &
 sleep 5
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
+
+$ECHO
+$ECHO $COLOR1 "wwwserver localhost $COLOR2 $PRIVATEPORT $PRIVATEDIR" $NORMCO
+$BINDIR/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
+sleep 5
+pause $COLOR2 "Naciśnij ENTER" $NORMCO
+
 $ECHO 
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
 sleep 1
 $ECHO
 pause $COLOR2 "Nacisniej ENTER gdy skończysz testowanie" $NORMCO
+
 $browser "http:localhost:$PRIVATEPORT/!!!!"
 $ECHO $COLOR2 "ZAKOŃCZONE"
 $ECHO $NORMCO
@@ -190,13 +202,15 @@ cat > start.sh <<EOF
 #STARTING FASADA 
 if [ -e "output.fac" ]
 then
+   echo "Kontynuuje ze znalezionego pliku output.fac" 
    cp output.fac $PRIVATEDIR/input.fac
-   ./fasada-core/treeserver $PRIVATEDIR/input.fac -  > treeserver.log 2>&1 &
+   ${BINDIR}treeserver $PRIVATEDIR/input.fac -  > treeserver.log 2>&1 &
 else
-   ./fasada-core/treeserver $indexpath -  > treeserver.log 2>&1 &
+   echo "Rozpoczęcie z pliku indeksu: $indexpath"
+   ${BINDIR}treeserver $indexpath -  > treeserver.log 2>&1 &
 fi
 sleep 3
-./fasada-core/wwwserver localhost $PRIVATEPORT $PRIVATEDIR  > wwwserver.log 2>&1 &
+${BINDIR}wwwserver localhost $PRIVATEPORT $PRIVATEDIR  > wwwserver.log 2>&1 &
 sleep 3
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
 EOF
