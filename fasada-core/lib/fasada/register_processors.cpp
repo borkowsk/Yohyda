@@ -54,6 +54,9 @@ void register_processors(bool WithWriters)
         static fasada::loader_csv     CSV;//--//---
         static fasada::loader_json   JSON;//--//---
                                                                 //ale można zrobić aliasy
+        static fasada::loader_txt     Txt("Txt");//--//---
+        static fasada::loader_csv     Csv("Csv");//--//---
+        static fasada::loader_json   Json("Json");//--//---
         static fasada::loader_csv    LinkedInCsv("LinkedInCsv");
         static fasada::loader_json   TwitterJson("TwitterJson");//Json'y z Twittera mają takie cosie na początku "window.YTD.tweet.part0 ="
                                                                 //które wywalają boostowy parser, ale już je usuwamy i wpisujemy jako atrybut _lead

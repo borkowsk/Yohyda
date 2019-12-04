@@ -17,26 +17,68 @@
 // g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp -lboost_system -lboost_filesystem && ./a.out .
 // 
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <iostream>
+#include <cstring>
 
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
+bool isHiddenOrDots(const fs::path &p) //https://stackoverflow.com/questions/12735634/how-do-i-ignore-hidden-files-and-files-in-hidden-directories-with-boost-filesy
+{
+    std::string name = p.filename().string();
+    if(name == ".." ||
+       name == "."  ||
+       name.at(0) == '.')
+    {
+       return true;
+    }
+
+    return false;
+}
+
+class StrTempVal
+{
+    std::string& Var;
+    std::string  RVal;
+public:
+    StrTempVal(std::string& iVar,std::string iVal):Var(iVar),RVal(Var){Var=iVal;}
+    ~StrTempVal(){Var=RVal;}
+};
+
+bool allFiles=false;
+
 void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
 {
+    static std::string ArchiveSource="";
+    unsigned counter=0;
+
     for(fs::directory_entry& entry : boost::make_iterator_range( fs::directory_iterator(p), {}))
     {
-        if(is_directory(entry))
+        counter++;
+        if(is_directory(entry) && !isHiddenOrDots(entry.path())  ) //Ale nie ukryte ani specjalne!?
         {
-            std::cout <<"#"<< entry.path() << "/\n";
-            list_directory(entry.path(),curr,plen);
+            std::cout <<"#"<< entry.path() <<std::endl;
+
+            if( strncasecmp( entry.path().filename().c_str(),"facebook",8)==0)
+            {
+                StrTempVal Tmp(ArchiveSource,"Facebook");
+                list_directory(entry.path(),curr,plen);//REKURENCJA Z USTAWIONYM ArchiveSource
+            }
+            else
+            {
+                list_directory(entry.path(),curr,plen);//REKURENCJA!!!
+            }
+
         }
         else
         if(is_symlink(entry))
-            std::cout <<"#"<< entry << "-> SYMLINKS ARE NOT FOLLOWED!!!\n";
+        {
+            std::cout <<"#"<< entry << "-> SYMLINKS ARE NOT FOLLOWED!!!"<<std::endl;
+        }
         else
         if(is_regular_file(entry))
         {
@@ -44,15 +86,17 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
             {
                 const char* lpath=(entry.path().c_str());
                 lpath+=plen+1;
-                std::cout <<"'"<< lpath <<"' is a JSON!\n";
-                curr.put(pt::ptree::path_type{lpath, '/'},"!FacebookJson");
+                std::cout <<"'"<< lpath <<"' is considered as a "<<ArchiveSource<<" JSON!"<<std::endl;
+
+                curr.put(pt::ptree::path_type{lpath, '/'},"!"+ArchiveSource+"Json");
             }
             else
-                if(entry.path().extension()==".js")
+                if(entry.path().extension()==".js") //Maybe JavaScript
                 {
                     const char* lpath=(entry.path().c_str());
                     lpath+=plen+1;
-                    std::cout <<"'"<< lpath <<"' is a JSon!\n";
+                    std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!"<<std::endl;
+
                     curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
                 }
                 else
@@ -60,14 +104,43 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                     {
                         const char* lpath=(entry.path().c_str());
                         lpath+=plen+1;
-                        std::cout <<"'"<< lpath <<"' is a CSV!\n";
-                        curr.put(pt::ptree::path_type{lpath, '/'},"!LinkedInCsv");
+                        std::cout <<"'"<< lpath <<"' is a CSV!"<<std::endl;
+
+                        curr.put(pt::ptree::path_type{lpath, '/'},"!Csv");
                     }
-            //std::cout << entry << " is a "<<entry.path().extension()<<"\n";
+                    else
+                        if(entry.path().extension()==".txt")
+                        {
+                            const char* lpath=(entry.path().c_str());
+                            lpath+=plen+1;
+                            std::cout <<"'"<< lpath <<"' is a TXT!"<<std::endl;
+
+                            curr.put(pt::ptree::path_type{lpath, '/'},"!Txt");
+                        }
+                        else
+                            if(allFiles)
+                            {
+                               std::cout<<entry.path()<<":"<<std::endl;
+                               std::string fpath=entry.path().parent_path().string()
+                                       +"/files/"
+                                       +boost::lexical_cast<std::string>(counter);
+                               const char* lpath=fpath.c_str();
+                               lpath+=plen+1;
+
+                               std::cout <<"'"<< lpath << "' is a file, type '"<<entry.path().extension()
+                                         <<"', in directory "<<p.string()<<std::endl;
+
+                               curr.add(pt::ptree::path_type
+                                        { lpath , '/'},
+                                        entry.path().filename().string());
+                            }
+
         }
         else
         if(is_other(entry))
+        {
             std::cout <<"#"<< entry << "?\n";
+        }
         else
             ;//std::cout <<"#"<< entry << "???\n";
     }
@@ -77,16 +150,38 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
 int main(int argc, char *argv[]) 
 {
     pt::ptree top;
+    bool flaga=false;
 
-    fs::path p(argc>1? argv[1] : ".");
+    fs::path p(argc>=1? argv[1] : ".");
     unsigned plen=p.string().length();
     std::cout<<"Path is "<<p<<"["<<plen<<"]"<<std::endl;
+
+    if(argc >= 2 && strcmp(argv[2],"--all")==0)
+        allFiles=true;
 
     if(fs::is_directory(p))
     {
         std::cout << p << " is a directory containing:\n";
-        list_directory(p,top,plen);
-        pt::write_json("index.json",top);
+        try
+        {
+            list_directory(p,top,plen);
+        }
+        catch (const fs::filesystem_error& ex)
+        {
+            flaga=true;
+            std::cerr << ex.what() << '\n';
+        }
+        catch (const pt::ptree_error& ex)
+        {
+            flaga=true;
+            std::cerr << ex.what() << '\n';
+        }
+
+        if(flaga)
+           std::cerr<<"Because of error index.json not saved.\a\b\a\b"<<std::endl;
+        else
+            pt::write_json("index.json",top);
+
         return 0;
     }
     else

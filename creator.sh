@@ -9,11 +9,14 @@ source "screen.ini"
 
 $ECHO
 $ECHO $COLOR1 "KREATOR INSTALACJI SYSTEMU FASADA DLA Linux-UBUNTU (polskojęzyczny)"
-$ECHO $COLOR2 "(For english version use creator_en.sh)"
+$ECHO $COLOR2 "(For english version use creator_en.sh)" $COLOR1
+$ECHO
+$ECHO "Informacje o systemie:" $COLOR2
+uname -a
+lsb_release -a
 $ECHO $NORMCO
 
 #NARZĘDZIA
-
 TIMESTAMP=`date --utc +%Y%m%d_%H%M%SZ`
 
 function pause(){
@@ -29,14 +32,25 @@ then
       echo
       cat "fasada.ini"
       echo
-      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać i edytować)" $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać i edytować plik)" $NORMCO
 else
-      $ECHO $COLOR2 "fasada.ini" $NORMCO
+      $ECHO $COLOR2 "Wczytanie$COLOR1 fasada.ini" $NORMCO
 fi
 source "fasada.ini"
 
+#WERSJA SYSTEMU
+#https://unix.stackexchange.com/questions/88644/how-to-check-os-and-version-using-a-linux-command
+source "/etc/lsb-release"
+if [ -e "/etc/debian_version" ]
+then
+DEBIAN=`cat /etc/debian_version`
+fi
+pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+
+#POSZUKIWANIE SKŁADNIKÓW
 $ECHO $COLOR2 "Szukam niezbędnych składników..." $NORMCO
 CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`
+MAKE=`whereis make | cut --delimiter=' '   -f 2` #raczej zawsze jest? TODO
 GPP=`whereis g++ | cut --delimiter=' '   -f 2`
 
 $ECHO $COLOR2 "Przeszukano." $NORMCO
@@ -59,15 +73,18 @@ fi
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "AKTUALIZACJA ŹRÓDEŁ..." $NORMCO
-git pull
+git pull | tee git.log
 $ECHO $COLOR2 "WYKONANO" 
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "BUDOWANIE AKTUALNEJ WERSJI W KATALOGU $COLOR1 '${SOURCEDIR}'" $NORMCO
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+
 pushd $SOURCEDIR
 rm Makefile
 $ECHO $COLOR1
-$CMAKE .
+CMAKEDEFS="-DDISTRIB_ID:STRING=$DISTRIB_ID -DDISTRIB_RELEASE:INTERNAL=$DISTRIB_RELEASE"
+$CMAKE . $CMAKEDEFS #| tee cmake.log
 $ECHO $NORMCO
 
 if [ ! -e Makefile ]
@@ -75,8 +92,8 @@ then
       $ECHO $COLOR1 "Makefile nie został wygenerowany" $NORMCO
       exit
 else
-      $ECHO $COLOR2 "BUDOWANIE PROJEKTU" $NORMCO
-      make
+      $ECHO $COLOR2 "BUDOWANIE PROJEKTU ZA POMOCĄ $MAKE" $NORMCO
+      $MAKE #| tee make.log
 fi
 
 if [ ! -e treeserver ]
@@ -97,11 +114,14 @@ $ECHO $NORMCO
 
 if [ -e "stop.sh" ]
 then
-     $ECHO $COLOR1 "WYŁĄCZENIE SERWISU FASADA"
+     $ECHO $COLOR1 "WYŁĄCZENIE SERWISU FASADA!!!"
+     pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
      ./stop.sh
 fi
 
 $ECHO $COLOR2 "POSZUKIWANIE I AKTUALIZACJA DANYCH Z PORTALI SPOŁECZNOŚCIOWYCH" $NORMCO
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+
 pushd $PRIVATEDIR
 $ECHO
 $ECHO $COLOR2 "LISTA ARCHIWÓW W KATALOGU" $PRIVATEDIR $NORMCO
@@ -144,15 +164,19 @@ then
 fi
 $ECHO $NORMCO
 
-$ECHO $COLOR2 "INDEKSUJE ZAWARTOŚĆ KATALOGU" $PRIVATEDIR $NORMCO
+$ECHO $COLOR2 "INDEKSOWANIE ZAWARTOŚCI KATALOGU" $PRIVATEDIR $NORMCO
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
 pwd
 $ECHO $COLOR1
-$BINDIR/indexer "." | tee indexer.log | grep -v "#"
+$BINDIR/indexer "." $INDEXPAR #| tee indexer.log | grep -v "#"  #$INDEXPAR may be all, means ALL FILES!!!
 $ECHO $COLOR2 "WYKONANO"
 $ECHO $NORMCO
 
 popd
+
+
 $ECHO $COLOR2 "POSZUKIWANIE I INDEKSOWANIE WYKONANE" 
+pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
 $ECHO $NORMCO
 
 SKIN="$PRIVATEDIR/_skin/"
@@ -165,6 +189,7 @@ fi
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "TESTOWE ODPALENIE SERWISU" $COLOR1
+pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
 
 if [ -e "output.fac" ]
 then
@@ -172,11 +197,12 @@ then
    mv output.fac output$TIMESTAMP.fac
 fi
 
-$ECHO $COLOR2 "URUCHOMIENIE SERWISU:" $NORMCO
+$ECHO $COLOR2 "URUCHOMIENIE SERWISU..." $NORMCO
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
 $ECHO
 indexpath=`realpath "$PRIVATEDIR/index.json"`
 
-$ECHO $COLOR1 "treeserver $COLOR2 $indexpath - " $NORMCO
+$ECHO $COLOR1 "treeserver" "$COLOR2$indexpath" "--force" $NORMCO
 $BINDIR/treeserver $indexpath --force &
 sleep 5
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
@@ -187,7 +213,7 @@ $BINDIR/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
 sleep 5
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
 
-$ECHO 
+$ECHO $COLOR1 $browser "http:localhost:$PRIVATEPORT/?ls&html&long" $NORMCO
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
 sleep 1
 $ECHO
