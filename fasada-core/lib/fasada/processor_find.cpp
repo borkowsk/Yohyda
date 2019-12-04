@@ -190,7 +190,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                     return ( found != std::string::npos );
                                 };
 
-    auto print_lambda=[&o,defret,html,&request,fullpath,&counter](const ptree& t,std::string k)
+    auto print_lambda=[&o,defret,html,fullpath,&request,&counter,this](const ptree& t,std::string k)
                                 {
                                     counter++;
                                     o+=(html?"<LI>":"* ");
@@ -204,9 +204,18 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                         else o+="' : '";
                                     o+=t.data();
                                     o+="'";
-                                    if(html) o+="</A></I>&nbsp; "
-                                              +getNodePanel(t.data(),fullpath+pathk,request)+"\n";
-                                        else o+="\n";
+                                    if(html)
+                                    {
+                                        o+="</A></I>&nbsp; "+getNodePanel(t.data(),fullpath+pathk,request);
+                                        if(t.data()=="")
+                                        {
+                                            auto pos=k.rfind('/');
+                                            _implement_attributes(o,t,request,k.substr(pos+1));
+                                        }
+                                        o+="\n";
+                                    }
+                                    else o+="\n";
+
                                     return defret;
                                 };
 

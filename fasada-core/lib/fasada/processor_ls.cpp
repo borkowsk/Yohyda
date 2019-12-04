@@ -107,12 +107,13 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
             {
                 std::string fullpath=parentpath+std::string(p.first.data());
                 o+=std::string(longformat?"<LI>":"")
-                        +" <A href=\""+fullpath+"?"+request["&query"]+"\"><B class=fasada_path>'"
+                        +" <A href=\""+fullpath+"?"+request["&query"]+"\">"
+                        +"<B class=fasada_path>'"
                         +std::string(p.first.data())
                         +"'</B></A>"
                         +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                         +std::string(p.second.data())
-                        +"'</I></A> ";
+                        +"' </I></A> ";
                 _implement_node_panel(o,p.second.data(),fullpath,request);
                 if(longformat)
                     _implement_attributes(o,p.second,request,p.first.data());

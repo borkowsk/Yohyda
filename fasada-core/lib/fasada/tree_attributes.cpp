@@ -72,7 +72,7 @@ void tree_processor::_implement_attributes(ShmString& o,const pt::ptree& top,URL
  insert_property(top,"saver", "saveCsv");
  insert_property(top,"saver", "saveTxt");
 
- insert_property(top,"viever","viewCsv");
+ insert_property(top,"viewer","viewCsv");
 */
 
 

@@ -24,7 +24,8 @@ saver_processor::saver_processor(const char* name):
 saver_processor::~saver_processor()
 {}
 
-void saver_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
+void saver_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)    //TODO
+//Wspólny formularz dla SAVERÓW!
 {
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A WRITER!"));
 }

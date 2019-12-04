@@ -28,7 +28,8 @@ std::string loader_processor::Form=
         ""
         ;
 
-void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
+void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)   //TODO
+//Wspólna funkcja formularza dla wszystkich loaderów
 {
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A READER!"));
 }

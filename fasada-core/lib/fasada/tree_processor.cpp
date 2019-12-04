@@ -226,10 +226,20 @@ std::string  tree_processor::getHtmlClosure(const char* _unit_comp)
 std::string  tree_processor::getNodePanel(const std::string& data,const std::string& fullpath,URLparser& request)
 {
     std::string o;
+
+    o+="&nbsp; "+getActionLink(fullpath+"?get&html&long","?","Get value");
+
     if(data=="")    //Czy to liść czy (potencjalny) węzeł?
     {
         o+="&nbsp; "+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
         o+="&nbsp; "+getActionLink(fullpath+"?add&html","+","Add!");
+
+       /* auto attr=t.find("local_uri");
+        if(attr!=t.not_found())
+        {
+            auto data=t.data();//na góre
+            //Łatwy podgląd już sprawdzonego pliku. TODO
+        }*/
     }
     else
     if(writing_enabled() && data.at(0)=='!')
@@ -288,6 +298,8 @@ bool tree_processor::isLocalFile(std::string str)
             && str.find("ftp:",0)==str.npos && str.find("ftps:",0)==str.npos
             &&
             (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
+            || str.rfind(".css", len-4)==len-4 || str.rfind(".js", len-3)==len-3
+            || str.rfind(".json",len-5)==len-5 || str.rfind(".md", len-3)==len-3
             || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
             || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
             || str.rfind(".mpeg",len-5)==len-5 || str.rfind(".mp4",len-4)==len-4

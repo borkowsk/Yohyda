@@ -60,10 +60,10 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     o+="\n";
     pt::read_json(discPath, top);
 
-    // Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    // Most important properties is "source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_source",discPath);
-    insert_property(top,"loader",procName);
-    insert_property(top,"saver","saveJson");
+    insert_property(top,"loader", procName);
+    insert_property(top,"saver","saveAsJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");
     insert_property(top,"oth_actions.Check_All_Files","runTree&action=checkFile");
 

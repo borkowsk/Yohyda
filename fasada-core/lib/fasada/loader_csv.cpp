@@ -76,10 +76,10 @@ void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
 
-    // Most important properties is "source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    // Most important properties is "source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_source",discPath);
-    insert_property(top,"loader",procName);
-    insert_property(top,"viever","viewCsv");
+    insert_property(top,"viewer","viewCsv");
+    insert_property(top,"loader", procName);
     insert_property(top,"saver", "saveAsCsv");
     insert_property(top,"alternative_savers.json","saveAsJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");

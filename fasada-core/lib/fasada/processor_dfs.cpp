@@ -68,7 +68,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
 
     foreach_node(top,"",
-    [&o,defret,longformat,html,&request,fullpath,&counter](const ptree& t,std::string k)
+    [&o,defret,longformat,html,&request,fullpath,&counter,this](const ptree& t,std::string k)
         {
             counter++;
             o+=(longformat && html ? "<LI>":"");
@@ -85,8 +85,15 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
                     o+="<A HREF=\""+fullpath+pathk+"?get&html&long\">";
                 o+=t.data();
                 if(html)
-                    o+="</A>'</I>&nbsp; "
-                            +getNodePanel(t.data(),fullpath+pathk,request)+"\n";
+                {
+                    o+="</A>'</I>&nbsp; "+getNodePanel(t.data(),fullpath+pathk,request);
+                    if(t.data()=="")
+                    {
+                        auto pos=k.rfind('/');
+                        _implement_attributes(o,t,request,k.substr(pos+1));
+                    }
+                    o+="\n";
+                }
                 else o+="'\n";
             }
             else

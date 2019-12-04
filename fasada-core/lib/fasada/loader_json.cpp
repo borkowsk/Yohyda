@@ -66,10 +66,10 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
 
-    // Most important properties is "_source", "loader", "viever", "saver", "alternative_savers", "oth_actions":
+    // Most important properties is "_source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_lead",line);
     insert_property(top,"_source",discPath);
-    insert_property(top,"loader",procName);
+    insert_property(top,"loader", procName);
     insert_property(top,"saver", "saveJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");
     insert_property(top,"oth_actions.Check_All_Locals","runTree&action=checkFile");
