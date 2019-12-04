@@ -45,12 +45,12 @@ if [ -e "/etc/debian_version" ]
 then
 DEBIAN=`cat /etc/debian_version`
 fi
-pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 
 #POSZUKIWANIE SKŁADNIKÓW
 $ECHO $COLOR2 "Szukam niezbędnych składników..." $NORMCO
 CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`
-MAKE=`whereis make | cut --delimiter=' '   -f 2` #raczej zawsze jest? TODO
+MAKE=`whereis make | cut --delimiter=' '   -f 2`
 GPP=`whereis g++ | cut --delimiter=' '   -f 2`
 
 $ECHO $COLOR2 "Przeszukano." $NORMCO
@@ -61,6 +61,14 @@ then
       pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 else
       $ECHO $COLOR2 "cmake znaleziony:$COLOR1 $CMAKE" $NORMCO
+fi
+
+if [ ! -e "$MAKE" ]
+then
+      $ECHO $COLOR1 "make jest konieczny.  Zainstaluj ten program." $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+else
+      $ECHO $COLOR2 "make znaleziony:$COLOR1 $MAKE" $NORMCO
 fi
 
 if [ ! -e "$GPP" ]
@@ -159,7 +167,7 @@ fi
 if [ -e "index.json" ]
 then
   $ECHO $COLOR2 "ZAPAMIĘTUJE POPRZEDNI PLIK $COLOR1 index.json" $NORMCO
-  mv index.json "${BACKUP}/index$TIMESTAMP.json"
+  mv index.json "${BACKUP}/index$TIMESTAMP.json" 
   $ECHO $NORMCO
 fi
 $ECHO $NORMCO
@@ -167,9 +175,9 @@ $ECHO $NORMCO
 $ECHO $COLOR2 "INDEKSOWANIE ZAWARTOŚCI KATALOGU" $PRIVATEDIR $NORMCO
 #pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
 pwd
-$ECHO $COLOR1
-$BINDIR/indexer "." $INDEXPAR #| tee indexer.log | grep -v "#"  #$INDEXPAR may be all, means ALL FILES!!!
-$ECHO $COLOR2 "WYKONANO"
+$ECHO $COLOR2
+$BINDIR/indexer "." $INDEXPAR > indexer.log #| grep -v "#"  #$INDEXPAR may be --all, means ALL FILES!!!
+$ECHO $COLOR1 "WYKONANO." $COLOR2 "Dokładna lista normalnych działań w pliku" $COLOR1 "indexer.log"
 $ECHO $NORMCO
 
 popd
@@ -210,7 +218,7 @@ pause $COLOR2 "Naciśnij ENTER" $NORMCO
 $ECHO
 $ECHO $COLOR1 "wwwserver localhost $COLOR2 $PRIVATEPORT $PRIVATEDIR" $NORMCO
 $BINDIR/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
-sleep 5
+sleep 2
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
 
 $ECHO $COLOR1 $browser "http:localhost:$PRIVATEPORT/?ls&html&long" $NORMCO
@@ -235,9 +243,9 @@ else
    echo "Rozpoczęcie z pliku indeksu: $indexpath"
    ${BINDIR}treeserver $indexpath -  > treeserver.log 2>&1 &
 fi
-sleep 3
+sleep 5
 ${BINDIR}wwwserver localhost $PRIVATEPORT $PRIVATEDIR  > wwwserver.log 2>&1 &
-sleep 3
+sleep 2
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
 EOF
 
