@@ -26,7 +26,7 @@ processor_xxx::~processor_xxx()
 
 void processor_xxx::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A WRITER!"));
+    throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A READER!"));
 }
 
 

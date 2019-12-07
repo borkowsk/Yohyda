@@ -5,6 +5,8 @@ echo "$0 'class_name' 'base_class' 'fasada_name'"
 echo 
 echo "    only letters and _ are allowed in parameters!"
 
+UPCASE3=${3^^}
+
 if [ $# -ne 3 ]; 
 then
    echo "Illegal number of parameters! Expected 3."
@@ -17,7 +19,7 @@ else
         echo "../$1.h already exist."
    else
         sed "s/processor_xxx/$1/g" processor_xxx.h   | sed "s/yyy_class/$2/g" |\
-        sed "s/XXX/$3/g" | sed "s/xxx/$3/g"  > "../$1.h"
+        sed "s/XXX/$UPCASE3/g" | sed "s/xxx/$3/g"  > "../$1.h"
    fi
 
    echo "../$1.cpp"
@@ -26,6 +28,6 @@ else
         echo "../$1.cpp already exist."
    else
         sed "s/processor_xxx/$1/g" processor_xxx.cpp | sed "s/yyy_class/$2/g" |\
-        sed "s/XXX/$3/g" | sed "s/xxx/$3/g"  > "../$1.cpp"
+        sed "s/XXX/$UPCASE3/g" | sed "s/xxx/$3/g"  > "../$1.cpp"
    fi
 fi

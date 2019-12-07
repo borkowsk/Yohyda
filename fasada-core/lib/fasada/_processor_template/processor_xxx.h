@@ -19,7 +19,7 @@
 namespace fasada
 {
 
-class processor_xxx : public yyy_class //Category READER/&/WRITER
+class processor_xxx : public yyy_class //Category READER/^/&/WRITER ?
 {
     public:
         processor_xxx(const char* name="xxx");
