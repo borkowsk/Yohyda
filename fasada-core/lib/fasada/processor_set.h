@@ -13,16 +13,17 @@
 #  pragma once
 #endif
 
-#include "tree_processor.h"
+#include "form_processor.h"
 
 namespace fasada
 {
 
-class processor_set : public tree_processor //READER&WRITER
+class processor_set : public form_processor //READER&WRITER
 {
 protected:
-    static std::string Form;//default HTML form for this processor
-
+    static std::string Form;//default HTML form TEMPLATE for this processor
+    virtual
+         const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
 public:
     processor_set(const char* name="set");
    ~processor_set();

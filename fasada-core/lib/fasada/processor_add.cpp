@@ -30,9 +30,8 @@ std::string processor_add::Form=
         "</form>";
 
 processor_add::processor_add(const char* name):
-    tree_processor(WRITER_READER,name) //also READER because is able to create its own FORM
-{
-}
+    form_processor(name) //also READER because is able to create its own FORM
+{}
 
 processor_add::~processor_add()
 {}

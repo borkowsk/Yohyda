@@ -34,7 +34,7 @@ const char* INPUT_AREA1="<input type=\"text\" size=\"$size_of_value\" name=\"val
 const char* INPUT_AREA2="<textarea name=\"value\" rows=\"$rows_of_value\" cols=\"$size_of_value\">$value</textarea>";
 
 processor_set::processor_set(const char* name):
-    tree_processor(WRITER_READER,name) //also READER because is able to create its own FORM
+    form_processor(name) //also READER because is able to create its own FORM
 {
 }
 

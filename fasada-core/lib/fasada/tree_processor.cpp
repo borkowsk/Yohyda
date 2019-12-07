@@ -300,10 +300,14 @@ bool tree_processor::isLocalFile(std::string str)
             (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
             || str.rfind(".css", len-4)==len-4 || str.rfind(".js", len-3)==len-3
             || str.rfind(".json",len-5)==len-5 || str.rfind(".md", len-3)==len-3
+            || str.rfind(".txt", len-4)==len-4 || str.rfind(".sh", len-3)==len-3
+            || str.rfind(".log", len-4)==len-4 || str.rfind(".ls", len-3)==len-3
             || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
             || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
             || str.rfind(".mpeg",len-5)==len-5 || str.rfind(".mp4",len-4)==len-4
-            || str.rfind(".mov" ,len-4)==len-4 )
+            || str.rfind(".mov" ,len-4)==len-4
+            || str.rfind(".cpp", len-4)==len-4 || str.rfind(".h", len-2)==len-2 ||  str.rfind(".hpp", len-4)==len-4
+            )
             ;// TODO - dictionary of less popular file extensions
 }
 

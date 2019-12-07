@@ -33,7 +33,7 @@ std::string processor_ren::Form=
 
 
 processor_ren::processor_ren(const char* name):
-    tree_processor(WRITER_READER,name) //also READER because is able to create its own FORM
+    form_processor(name) //also READER because is able to create its own FORM
 {
 }
 

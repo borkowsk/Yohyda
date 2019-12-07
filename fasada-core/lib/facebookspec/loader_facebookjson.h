@@ -27,8 +27,9 @@ namespace facebook
 class loader_facebookJson : public loader_processor //WRITER
 {
 protected:
-    static std::string Form;//default HTML form for this processor
-
+    static std::string Form;//default HTML form TEMPLATE for this processor
+    virtual
+         const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
 public:
     loader_facebookJson(const char* name="FacebookJson");
    ~loader_facebookJson();

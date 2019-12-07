@@ -13,20 +13,22 @@
 #  pragma once
 #endif
 
-#include "tree_processor.h"
+#include "form_processor.h"
 
 namespace fasada
 {
 
-class processor_find : public tree_processor //Really it is a READER, but only !actions can be used for <FORM>
+class processor_find : public form_processor //Really it is a READER, but only !actions can be used for <FORM>
 {
 protected:
-    static std::string Form;//default HTML form for this processor
-
+    static std::string Form;//default HTML form TEMPLATE for this processor
+    virtual
+         const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
 public:
         processor_find(const char* name="find");
        ~processor_find();
-    protected://implementation
+
+protected://implementation
     virtual
         void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
     virtual

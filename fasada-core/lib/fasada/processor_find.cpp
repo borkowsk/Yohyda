@@ -19,7 +19,7 @@ namespace fasada
 {
 
 processor_find::processor_find(const char* name):
-    tree_processor(WRITER_READER,name)
+    form_processor(name)
 {
 
 }
@@ -52,7 +52,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
 
     if(noc<1)
     {
-        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" HAS NOTHING TO DO WITH NODE "+request["&path"]));
+        throw(tree_processor_exception("PTREE PROCESSOR "+procName+" HAS NOTHING TO DO WITH LEAF NODE "+request["&path"]));
     }
 
     if(request["ready"]=="true")//<FORM> is filled completelly

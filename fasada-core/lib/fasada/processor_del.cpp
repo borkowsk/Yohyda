@@ -27,7 +27,7 @@ std::string processor_del::Form=
         "</form>";
 
 processor_del::processor_del(const char* name):
-    tree_processor(WRITER_READER,name) //also READER because is able to create its own FORM
+    form_processor(name) //also READER because is able to create its own FORM
 {
 }
 

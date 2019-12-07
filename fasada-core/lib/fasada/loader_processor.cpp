@@ -16,7 +16,7 @@ namespace fasada
 {
 
 loader_processor::loader_processor(const char* name):
-    tree_processor(WRITER_READER/*READER? WRITER?*/,name)
+        form_processor(name)
 {}
 
 loader_processor::~loader_processor()

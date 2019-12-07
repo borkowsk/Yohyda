@@ -58,6 +58,9 @@ add_library(fasada
     "${SRCPATH}/lib/fasada/fasada.cpp"
     "${SRCPATH}/lib/fasada/tree_processor.cpp"
     "${SRCPATH}/lib/fasada/tree_attributes.cpp"
+    "${SRCPATH}/lib/fasada/form_processor.cpp"
+    "${SRCPATH}/lib/fasada/saver_processor.cpp"
+    "${SRCPATH}/lib/fasada/loader_processor.cpp"
     #first set of processors
     "${SRCPATH}/lib/fasada/processor_info.cpp"
     "${SRCPATH}/lib/fasada/processor_get.cpp"
@@ -80,8 +83,6 @@ add_library(fasada
     "${SRCPATH}/lib/fasada/save_as_xml.cpp"
     "${SRCPATH}/lib/fasada/save_as_json.cpp"
     "${SRCPATH}/lib/fasada/view_processor.cpp"
-    "${SRCPATH}/lib/fasada/saver_processor.cpp"
-    "${SRCPATH}/lib/fasada/loader_processor.cpp"
     #general
     "${SRCPATH}/lib/fasada/register_processors.cpp"
     "${SRCPATH}/lib/fasada/http/URLparser.cpp"
