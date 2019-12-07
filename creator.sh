@@ -168,6 +168,7 @@ if [ -e "index.json" ]
 then
   $ECHO $COLOR2 "ZAPAMIĘTUJE POPRZEDNI PLIK $COLOR1 index.json" $NORMCO
   mv index.json "${BACKUP}/index$TIMESTAMP.json" 
+  #Tarem to? https://stackoverflow.com/questions/20487843/how-to-make-tar-exclude-hidden-directories/27822155 TODO?
   $ECHO $NORMCO
 fi
 $ECHO $NORMCO
