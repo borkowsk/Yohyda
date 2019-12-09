@@ -5,7 +5,7 @@ echo "$0 'class_name' 'base_class' 'fasada_name'"
 echo 
 echo "    only letters and _ are allowed in parameters!"
 
-UPCASE3=${3^^}
+UPCASE3=${3^^} #https://linuxhint.com/bash_lowercase_uppercase_strings/
 
 if [ $# -ne 3 ]; 
 then
