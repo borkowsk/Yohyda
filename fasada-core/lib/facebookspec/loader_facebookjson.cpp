@@ -30,17 +30,10 @@ std::string loader_facebookJson::Form="";
 
 loader_facebookJson::loader_facebookJson(const char* name):
     loader_processor(name) //also may be READER if it should create its own FORM
-{
-}
+{}
 
 loader_facebookJson::~loader_facebookJson()
 {}
-
-
-void loader_facebookJson::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
-{
-    throw(tree_processor_exception("READ FUNCTION FOR PTREE PROCESSOR "+procName+" NOT IMPLEMENTED!"));
-}
 
 void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
@@ -62,6 +55,7 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
 
     // Most important properties is "source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_source",discPath);
+    insert_property(top,"_loadtimestamp",std::to_string(time(NULL)));
     insert_property(top,"loader", procName);
     insert_property(top,"saver","saveAsJson");
     insert_property(top,"alternative_savers.xml","saveAsXml");
@@ -69,7 +63,7 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
 
     call_recoders(top,true/*PL*/);
 
-    //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
+    //Jeśli nie wylecialo do góry na wyjątku to nazwę procesora likwidujemy
     top.data()="";
     o+="DONE";
 }

@@ -231,7 +231,9 @@ std::string  tree_processor::getNodePanel(const std::string& data,const std::str
 
     if(data=="")    //Czy to liść czy (potencjalny) węzeł?
     {
+        //if(noc>0) //TODO
         o+="&nbsp; "+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
+
         o+="&nbsp; "+getActionLink(fullpath+"?add&html","+","Add!");
 
        /* auto attr=t.find("local_uri");

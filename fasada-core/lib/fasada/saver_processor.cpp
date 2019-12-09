@@ -130,6 +130,7 @@ void saver_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparse
 
 void saver_processor::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 {
+    insert_property(top,"_savetimestamp",std::to_string(time(NULL)));//MUST BE IN IMPLEMENTATIONS !TODO
     throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A WRITER!"));
 }
 
