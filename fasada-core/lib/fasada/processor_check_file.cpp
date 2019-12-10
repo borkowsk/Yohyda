@@ -76,8 +76,16 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
 
     //First try - as full path
     link=request["&private_directory"]+request["&path"]+"/"+top.data();
-    o+=link+" ... "; if ( !boost::filesystem::exists( link ) ) o+= "Can't find the file!\n";
-    else {o+= "EXIST!\n"; request["file_found"]="./"+top.data();return;}
+    o+=link+" ... ";
+    if ( !boost::filesystem::exists( link ) )
+        o+= "Can't find the file!\n";
+    else
+    {
+        o+= "EXIST!\n";
+        request["timestamp"]=last_write_time(link);
+        request["file_found"]="./"+top.data();
+        return;
+    }
 
     //Trying to cut the fullpath
     link=request["&path"];
@@ -91,15 +99,30 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
         file+=link+"/"+top.data();
         o+=file+" ... ";
 
-        if ( !boost::filesystem::exists( file ) ) o+= "Can't find the file!\n";
-        else { o+= "EXIST!\n"; request["file_found"]=link+"/"+top.data();return;}
+        if ( !boost::filesystem::exists( file ) )
+            o+= "Can't find the file!\n";
+        else
+        {
+            o+= "EXIST!\n";
+            request["timestamp"]=last_write_time(file);
+            request["file_found"]=link+"/"+top.data();
+            return;
+        }
 
     }while(1);//Albo znajdzie albo skończą się '/'
 
     //Maybe from the top of private directory?
     link=private_directory+"/"+top.data();
-    o+=link+" ... ";if ( !boost::filesystem::exists( link ) ) o+= "Can't find the file!\n";
-    else { o+= "EXIST!\n"; request["file_found"]="/"+top.data();return;}
+    o+=link+" ... ";
+    if ( !boost::filesystem::exists( link ) )
+        o+= "Can't find the file!\n";
+    else
+    {
+         o+= "EXIST!\n";
+         request["timestamp"]=last_write_time(link);
+         request["file_found"]="/"+top.data();
+         return;
+    }
 
     //Searching directory tree below "private"
     path myfound = "/";
@@ -112,6 +135,7 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
         o+="FOUND! '"+nameOfFound+"'\n";
         nameOfFound=nameOfFound.substr(private_directory.length());
         request["file_found"]=nameOfFound;
+        request["timestamp"]=last_write_time(myfound);
         return;
     }
     else o+= "Can't find the file!\n";
@@ -126,9 +150,10 @@ void processor_check_file::_implement_write(ShmString& o,pt::ptree& top,URLparse
             o+="\n RESULT: '"+ request["file_found"] + "'\n\n";
 
             //Setting new path if found before
-            auto orig=top.data()+" ";//SPACE intentionaly. It blocs the next level CHECK.
+            auto orig=top.data()+" ";//SPACE is intentional. It blocs the next CHECKs.
             top.data()="";
             top.add("local_uri",request["file_found"]);
+            top.add("moditime",request["timestamp"]);
             top.add("orig",orig);
     }
 }
