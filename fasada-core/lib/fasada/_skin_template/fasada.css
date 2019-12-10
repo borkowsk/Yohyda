@@ -69,6 +69,31 @@ input[type=submit] {
         border-radius: 10px; 
 }
 
+input[type=button] {
+        font-weight: bold;
+        font-size: 13pt;
+        padding: 4px 13px; 
+        background: yellow; 
+        color: navy;
+        border:2 none;
+        cursor:pointer;
+        font-family: monospace;
+        border-radius: 10px; 
+}
+
+button
+{
+        font-weight: bold;
+        font-size: 13pt;
+        padding: 4px 13px; 
+        background: yellow; 
+        color: navy;
+        border:2 none;
+        cursor:pointer;
+        font-family: monospace;
+        border-radius: 10px; 
+}
+
 input[type=text] {
         font-size: 10pt;
         padding: 4px 10px; 
