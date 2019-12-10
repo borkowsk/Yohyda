@@ -54,7 +54,7 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     pt::read_json(discPath, top);
 
     // Most important properties is "source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
-    insert_property(top,"_source",discPath);
+    insert_property(top,"_source",discPath+" ");//SPACE is intentional. It blocs the next CHECKs.
     insert_property(top,"_loadtimestamp",std::to_string(time(NULL)));
     insert_property(top,"loader", procName);
     insert_property(top,"saver","saveAsJson");

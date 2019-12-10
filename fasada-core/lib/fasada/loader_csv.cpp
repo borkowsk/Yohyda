@@ -72,7 +72,7 @@ void loader_csv::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     top.data()="";
 
     // Most important properties is "source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
-    insert_property(top,"_source",discPath);
+    insert_property(top,"_source",discPath+" ");//SPACE is intentional. It blocs the next CHECKs.
     insert_property(top,"_loadtimestamp",std::to_string(time(NULL)));
     insert_property(top,"viewer","viewCsv");
     insert_property(top,"loader", procName);

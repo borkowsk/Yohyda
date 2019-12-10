@@ -54,6 +54,8 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
     o+="\n";
 
     o+="inserting consecutive numbers as table indexes...\n";
+    insert_ids(top,"id");
+    insert_ids(top,"ID");
     insert_numbers(top);
 
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
@@ -61,7 +63,7 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
 
     // Most important properties is "_source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_lead",line);
-    insert_property(top,"_source",discPath);
+    insert_property(top,"_source",discPath+" ");//SPACE is intentional. It blocs the next CHECKs.
     insert_property(top,"_loadtimestamp",std::to_string(time(NULL)));
     insert_property(top,"loader", procName);
     insert_property(top,"saver", "saveJson");
