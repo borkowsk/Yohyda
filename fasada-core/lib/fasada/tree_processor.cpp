@@ -223,25 +223,31 @@ std::string  tree_processor::getHtmlClosure(const char* _unit_comp)
     return Footer;
 }
 
-std::string  tree_processor::getNodePanel(const std::string& data,const std::string& fullpath,URLparser& request)
+std::string  tree_processor::getNodePanel(const pt::ptree& node,const std::string& fullpath,URLparser& request)
 {
     std::string o;
+    const std::string& data=node.data();
+    std::string proplong=(request.asLONG()?"&long":"");
 
     o+="&nbsp; "+getActionLink(fullpath+"?get&html&long","?","Get value");
 
     if(data=="")    //Czy to liść czy (potencjalny) węzeł?
     {
-        //if(noc>0) //TODO
-        o+="&nbsp; "+getActionLink(fullpath+"?dfs&html","&forall;","Print as tree");
+        if(node.size()>0)
+        {
+          o+="&nbsp; "+getActionLink(fullpath+"?ls&html"+proplong,"&hellip;","Print as list");
+          o+="&nbsp; "+getActionLink(fullpath+"?dfs&html"+proplong,"&forall;","Print as tree");
+        }
 
         o+="&nbsp; "+getActionLink(fullpath+"?add&html","+","Add!");
 
-       /* auto attr=t.find("local_uri");
-        if(attr!=t.not_found())
+        auto attr=node.find("local_uri");
+        if(attr!=node.not_found())
         {
-            auto data=t.data();//na góre
             //Łatwy podgląd już sprawdzonego pliku. TODO
-        }*/
+            o+="&nbsp; "+getActionLink(attr->second.data(),"&#x1f441;","See as file "
+                                       +std::string(attr->first.data())+":"+attr->second.data());//HTML Eye https://www.fileformat.info/info/unicode/char/1f441/index.htm
+        }
     }
     else
     if(writing_enabled() && data.at(0)=='!')
@@ -263,12 +269,16 @@ std::string  tree_processor::getNodePanel(const std::string& data,const std::str
     {
         if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
             o+="&nbsp; "+getSeeLink(data,request,"see");//Plik sprawdzony
+
         else  if(writing_enabled())
             o+="&nbsp; "+getActionLink(fullpath+"!checkFile?html","check!");//Plik do sprawdzenia
     }
 
     if(writing_enabled())
         o+="&nbsp; "+getActionLink(fullpath+"?set&html","=","Set value");
+
+    std::string parentpath=fullpath.substr(0,fullpath.rfind("/"));
+    o+="&nbsp;"+getActionLink(parentpath+"?ls&html"+proplong,"&isin;","Is node of "+parentpath);
 
     return o;
 }

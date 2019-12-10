@@ -96,7 +96,7 @@ namespace fasada
         //Does some work, calls _implement_read, cleans, adds MEM_END & returns
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw TODO writeToTree?
 
-    protected: //Tools for childrens - theese below schould be changed into "mixin" TODO
+    protected: //Tools for childrens - theese below schould be changed into "mixin" TODO!!! Expected large changes!!!
     static
         std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
     static
@@ -106,7 +106,7 @@ namespace fasada
     static
         std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
     static
-        std::string  getNodePanel(const std::string& nodeval,const std::string& fullpath,URLparser& request);
+        std::string  getNodePanel(const pt::ptree& node,const std::string& fullpath,URLparser& request);
     static
         std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags & unicode chars
     static

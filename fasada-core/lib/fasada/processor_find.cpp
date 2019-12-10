@@ -31,6 +31,7 @@ processor_find::~processor_find()
 std::string processor_find::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
         "\n<input name=\"html\"   type=\"hidden\" >"
+        "\n<input name=\"long\"   type=\"hidden\" >"
         "\n<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
         "\n<BR>SUBPATH:     "
         "   <input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"
@@ -206,7 +207,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                     o+="'";
                                     if(html)
                                     {
-                                        o+="</A></I>&nbsp; "+getNodePanel(t.data(),fullpath+pathk,request);
+                                        o+="</A></I>&nbsp; "+getNodePanel(t,fullpath+pathk,request);
                                         if(t.data()=="")
                                         {
                                             auto pos=k.rfind('/');

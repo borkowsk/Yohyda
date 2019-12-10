@@ -65,10 +65,11 @@ void processor_ls::_implement_action_panel(ShmString& o,URLparser& request)
     o+="\n";//For cleaner HTML code
 }
 
-void processor_ls::_implement_node_panel(ShmString& o,const std::string& data,const std::string& fullpath,URLparser& request)
+void processor_ls::_implement_node_panel(ShmString& o,const pt::ptree& node,const std::string& fullpath,URLparser& request)
 //Panel akcji dotyczących danego węzła
 {
-    o+=getNodePanel(data,fullpath,request);
+    //const std::string& data=node.data();
+    o+=getNodePanel(node,fullpath,request);
     // something more?
     //...
 }
@@ -114,7 +115,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                         +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                         +std::string(p.second.data())
                         +"' </I></A> ";
-                _implement_node_panel(o,p.second.data(),fullpath,request);
+                _implement_node_panel(o,p.second,fullpath,request);
                 if(longformat)
                     _implement_attributes(o,p.second,request,p.first.data());
             }
@@ -152,7 +153,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
                     +" <A href=\""+fullpath+"?get&html&long\"> : <I class=\"fasada_val\">'"
                     +top.data()
                     +"'</I></A> ";
-            _implement_node_panel(o,top.data(),fullpath,request);
+            _implement_node_panel(o,top,fullpath,request);
             if(longformat)
                 _implement_attributes(o,top,request);
             o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");

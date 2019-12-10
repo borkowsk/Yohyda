@@ -86,7 +86,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
                 o+=t.data();
                 if(html)
                 {
-                    o+="</A>'</I>&nbsp; "+getNodePanel(t.data(),fullpath+pathk,request);
+                    o+="</A>'</I>&nbsp; "+getNodePanel(t,fullpath+pathk,request);
                     if(t.data()=="")
                     {
                         auto pos=k.rfind('/');
