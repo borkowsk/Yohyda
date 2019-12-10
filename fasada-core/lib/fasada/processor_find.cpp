@@ -29,7 +29,7 @@ processor_find::~processor_find()
 
 //default HTML form for this processor
 std::string processor_find::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "<form action=\"${fullpath}!${proc}\" class=\"fasada_form\">"
         "\n<input name=\"html\"   type=\"hidden\" >"
         "\n<input name=\"long\"   type=\"hidden\" >"
         "\n<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
@@ -41,8 +41,8 @@ std::string processor_find::Form=
         "   <input name=\"value\"   type=\"$input_of_value\"   size=\"$size_of_value\"   value=\"$value\">"
         "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B> "
         "   <input type=\"submit\" value=\"OK\">"
-        "\n<BR><a class=\"fasada_action\" href=\"$fullpath?ls&html&long\">LSL</A>&nbsp;&nbsp; "
-        "\n<a class=\"fasada_action\" href=\"$fullpath?dfs&html&long\">TREE</A>&nbsp;&nbsp; \n" ///TODO Not in the form!
+        "\n<BR><a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\">LSL</A>&nbsp;&nbsp; "
+        "\n<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\">TREE</A>&nbsp;&nbsp; \n" ///TODO Not in the form!
         "</form>";
 
 void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
@@ -67,14 +67,12 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
 
         o+=ipc::string(EXT_PRE)+"htm\n";
         o+=getHtmlHeaderDefaults(fullpath)+"\n";
-        std::string ReadyForm=Form;
-        boost::replace_all(ReadyForm,"$proc",procName);
-        boost::replace_all(ReadyForm,"$fullpath",fullpath);
+        std::string ReadyForm=replace_all_variables(Form,request);
         boost::replace_all(ReadyForm,"$path",request["&path"]);
 
         if( (request.find("subpath") != request.end() && request["subpath"]!="" )
-        &&  (request.find("field") != request.end() && request["field"]!="" )
-        &&  (request.find("value") != request.end() && request["value"]!="" )
+        &&  (request.find( "field" ) != request.end() && request["field"]!="" )
+        &&  (request.find( "value" ) != request.end() && request["value"]!="" )
                 )
         {
             boost::replace_all(ReadyForm,"$is_ready","true");
@@ -92,7 +90,8 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
             boost::replace_all(ReadyForm,"$input_of_subpath","hidden");
             std::string replacer=(request["subpath"]+"\"><I class=\"fasada_val\">"+request["subpath"]+"</I>");
             boost::replace_all(ReadyForm,"$subpath\">",replacer);
-            boost::replace_all(ReadyForm,"$size_of_subpath","1");
+            boost::replace_all(ReadyForm,"$size_of_subpath","1");        boost::replace_all(ReadyForm,"$proc",procName);
+            boost::replace_all(ReadyForm,"$fullpath",fullpath);
         }
 
         ///<input name="field"   type="$input_of_field"    value="$field"   size="$size_of_field">

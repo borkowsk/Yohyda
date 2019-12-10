@@ -20,7 +20,7 @@
 
 using namespace boost::filesystem;
 
-#if(0)
+#if(1)
 #include <boost/filesystem/string_file.hpp> //only new boost
 namespace fasada
 {
@@ -48,6 +48,13 @@ loader_txt::loader_txt(const char* name):
 void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
+    bool        html=request.asHTML();
+    if(html)
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
+    }
+
     std::string discPath=request["&private_directory"]+request["&path"];
     boost::replace_all(discPath,"//","/");
 
@@ -66,7 +73,7 @@ void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     //boost::filesystem::
     load_string_file(discPath,content);
 
-    top.add_child("_raw_content",pt::ptree{content});
+    top.put_child("_raw_content",pt::ptree{content});
 
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
@@ -82,6 +89,13 @@ void loader_txt::_implement_write(ShmString& o,pt::ptree& top,URLparser& request
     insert_property(top,"oth_actions.decode","rawContentAsTabDelimited");
 
     o+="DONE";
+
+    if(html)
+    {
+        o+="\n</PRE>\n";
+        o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
+        o+=getHtmlClosure(_compiled);
+    }
 }
 
 }

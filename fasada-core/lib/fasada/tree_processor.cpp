@@ -204,9 +204,9 @@ std::string  tree_processor::getSeeLink(const std::string& data,URLparser& reque
         if(data.at(0)=='/')
             link+=data;
         else if(data.at(0)=='.' && data.at(1)=='/')
-            link=request.getParentPath()+(data.c_str()+1);
+            link=request.getParentPath()+(data.c_str()+1)+"?self&html";
         else
-            link+=request["&path"]+"?checkFile";//Awaryjnie
+            link+=request["&path"]+"?checkFile&html";//Awaryjnie
 
         out+="<a class=\"fasada_view\" href=\""+link+"\"";
         out+=">"+Content+"</a>";
@@ -217,8 +217,8 @@ std::string  tree_processor::getSeeLink(const std::string& data,URLparser& reque
 std::string  tree_processor::getHtmlClosure(const char* _unit_comp)
 //Compatible set of tags for end of html document
 {
-    std::string Footer="<HR class=\"footer_hr\"><P class=\"footer_p\">Fasada version ";
-    Footer+=_version_str+std::string(" Unit compiled: ")+(*_unit_comp!='\0'?_unit_comp:_compiled)+"</P>";
+    std::string Footer="\n<HR class=\"footer_hr\"><P class=\"footer_p\">Fasada version ";
+    Footer+=_version_str+std::string(" &ofcir; Unit compiled: ")+(*_unit_comp!='\0'?_unit_comp:_compiled)+"</P>";
     Footer+=HTMLFooter;
     return Footer;
 }
@@ -252,26 +252,27 @@ std::string  tree_processor::getNodePanel(const pt::ptree& node,const std::strin
     else
     if(writing_enabled() && data.at(0)=='!')
     {
-        o+="&nbsp; "+getActionLink(fullpath+data,"RUN!","Run link read/write");
+        bool haveQ=(data.find('?',0)!=data.npos);//Is parameter list already started?
+        o+="&nbsp; "+getActionLink(fullpath+data+(haveQ?"&html":"?self&html"),"RUN!","Run link read/write");
     }
     else
     if(data.at(0)=='?')
     {
-        o+="&nbsp; "+getActionLink(fullpath+data,"run","Run link as read only");
+        o+="&nbsp; "+getActionLink(fullpath+data+"&html","run","Run link as read only");
     }
     else
     if(isLink(data))
     {
-        o+="&nbsp; "+getActionLink(data,"follow","Follow link");
+        o+="&nbsp; "+getActionLink(data,"&#x1F30D;","Follow link");//&#x1F30D; :globe:
     }
     else
     if(isLocalFile(data))
     {
         if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
-            o+="&nbsp; "+getSeeLink(data,request,"see");//Plik sprawdzony
+            o+="&nbsp; "+getSeeLink(data,request,"&#x1f441;");//Plik sprawdzony
 
         else  if(writing_enabled())
-            o+="&nbsp; "+getActionLink(fullpath+"!checkFile?html","check!");//Plik do sprawdzenia
+            o+="&nbsp; "+getActionLink(fullpath+"!checkFile?self&html","check!");//Plik do sprawdzenia
     }
 
     if(writing_enabled())
@@ -353,6 +354,9 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 
     boost::replace_all(out,"-->","&rarr;");
     boost::replace_all(out,"==>","&rArr;");
+    boost::replace_all(out,":eye:","&#x1f441;");//OKO
+    boost::replace_all(out,":link:","&#x1f517;");//LINK
+    boost::replace_all(out,":earth:","&#x1F30D;");//Earth globe https://www.compart.com/en/unicode/U+1F30D
     boost::replace_all(out,":-)","&#x1F60A;");//uśmiech
     boost::replace_all(out,":)", "&#x1F642;");//inny uśmiech
     boost::replace_all(out,":-(","&#x1F61E;");//smutek
@@ -368,6 +372,18 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
     boost::replace_all(out,"\n","\n<BR>");//break LINEs
     return out;
+}
+
+//Replacing ${variable_name} with variables from request
+//First working version - not best optimised ;-)
+std::string tree_processor::replace_all_variables(std::string template_version,URLparser& request)
+{
+    std::string fullpath=request.getFullPath();
+    boost::replace_all(template_version,"${proc}",procName);
+    boost::replace_all(template_version,"${fullpath}",fullpath);
+    //MODYFIKACJE ZMIENNYMI Z REQUEST
+    //...
+    return template_version;//Już zmodyfikowana
 }
 
 }//namespace "fasada"

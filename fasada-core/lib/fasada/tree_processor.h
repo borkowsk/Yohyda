@@ -95,7 +95,8 @@ namespace fasada
         void read_tree(ShmString& o,const pt::ptree& top,URLparser& request);//may throw TODO readFromTree?
         //Does some work, calls _implement_read, cleans, adds MEM_END & returns
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw TODO writeToTree?
-
+    virtual//Replacing ${variable_name} with variables from request
+        std::string replace_all_variables(std::string template_version,URLparser& request);
     protected: //Tools for childrens - theese below schould be changed into "mixin" TODO!!! Expected large changes!!!
     static
         std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>

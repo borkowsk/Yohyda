@@ -26,6 +26,13 @@ loader_json::loader_json(const char* name):
 void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
+    bool        html=request.asHTML();
+    if(html)
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
+    }
+
     std::string discPath=request["&private_directory"]+request["&path"];
     boost::replace_all(discPath,"//","/");
 
@@ -72,6 +79,13 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
     insert_property(top,"oth_actions.Load_All_Jsons","runTree&action=Json");
 
     o+="DONE";
+
+    if(html)
+    {
+        o+="\n</PRE>\n";
+        o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
+        o+=getHtmlClosure(_compiled);
+    }
 }
 
 }

@@ -38,6 +38,13 @@ loader_facebookJson::~loader_facebookJson()
 void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 //Implement_write WRITER'a powinno zmienić wartości na powstawie FORMularza z method==GET
 {
+    bool        html=request.asHTML();
+    if(html)
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
+    }
+
     std::string discPath=request["&private_directory"]+request["&path"];
     boost::replace_all(discPath,"//","/");
 
@@ -66,6 +73,13 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     //Jeśli nie wylecialo do góry na wyjątku to nazwę procesora likwidujemy
     top.data()="";
     o+="DONE";
+
+    if(html)
+    {
+        o+="\n</PRE>\n";
+        o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"]+"&nbsp;&nbsp; ");
+        o+=getHtmlClosure(_compiled);
+    }
 }
 
 }//namespace Facebook

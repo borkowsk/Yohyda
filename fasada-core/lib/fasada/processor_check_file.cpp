@@ -55,6 +55,13 @@ static bool find_file( const path & dir_path,  // in this directory,
 
 void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
+    bool        html=request.asHTML();
+    if(html)
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
+    }
+
     o+="\nChecking file path in "+request["&path"]+"\n";//Nagłówek
 
     unsigned    noc=top.size();//czy ma jakieś elementy składowe? Wtedy chryja ;-)
@@ -82,7 +89,7 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
     else
     {
         o+= "EXIST!\n";
-        request["timestamp"]=last_write_time(link);
+        request["timestamp"]=std::to_string( last_write_time(link) );
         request["file_found"]="./"+top.data();
         return;
     }
@@ -104,7 +111,7 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
         else
         {
             o+= "EXIST!\n";
-            request["timestamp"]=last_write_time(file);
+            request["timestamp"]=std::to_string( last_write_time(file) );
             request["file_found"]=link+"/"+top.data();
             return;
         }
@@ -119,7 +126,7 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
     else
     {
          o+= "EXIST!\n";
-         request["timestamp"]=last_write_time(link);
+         request["timestamp"]=std::to_string( last_write_time(link) );
          request["file_found"]="/"+top.data();
          return;
     }
@@ -135,10 +142,16 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
         o+="FOUND! '"+nameOfFound+"'\n";
         nameOfFound=nameOfFound.substr(private_directory.length());
         request["file_found"]=nameOfFound;
-        request["timestamp"]=last_write_time(myfound);
+        request["timestamp"]=std::to_string( last_write_time(myfound) );
         return;
     }
     else o+= "Can't find the file!\n";
+
+    if(html)
+    {
+        o+="\n</PRE>\n";
+        o+=getHtmlClosure(_compiled);
+    }
 }
 
 void processor_check_file::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
@@ -155,6 +168,13 @@ void processor_check_file::_implement_write(ShmString& o,pt::ptree& top,URLparse
             top.add("local_uri",request["file_found"]);
             top.add("moditime",request["timestamp"]);
             top.add("orig",orig);
+
+            if(request.asHTML())
+            {
+                o+="\n</PRE>\n";
+                o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
+                o+=getHtmlClosure(_compiled);
+            }
     }
 }
 

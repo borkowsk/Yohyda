@@ -22,7 +22,7 @@ namespace fasada
 /// Standard attributes are presented in HTML by _implement_attributes() method
 void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& PropertyValue)
 {
-    Node.add_child(std::string("xmlattr.")+FasadaPropertyName,pt::ptree{PropertyValue});
+    Node.put_child(std::string("xmlattr.")+FasadaPropertyName,pt::ptree{PropertyValue});
 }
 
 
