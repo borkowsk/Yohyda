@@ -327,6 +327,7 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //Preprocess links and other markers into HTML tags.
 //http://www.cplusplus.com/reference/regex/regex_replace/
 //https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp, http://defindit.com/ascii.html
+//https://dev.w3.org/html5/html-author/charref
 {
     std::string tmp=str;
 
@@ -345,9 +346,9 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     auto out=boost::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
 
     boost::replace_all(out,"\u200A\n","\n");//Przywracamy
-    boost::replace_all(out,"\u200A,",",");//Przywracamy
-    boost::replace_all(out,"\u200A)",")");//Przywracamy
-    boost::replace_all(out,"\u200A]","]");//Przywracamy
+    boost::replace_all(out,"\u200A,", ",");//Przywracamy
+    boost::replace_all(out,"\u200A)", ")");//Przywracamy
+    boost::replace_all(out,"\u200A]", "]");//Przywracamy
     boost::replace_all(out,"\u200A. ",". ");//Przywracamy
 
     boost::replace_all(out,"-->","&rarr;");
