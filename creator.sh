@@ -239,7 +239,8 @@ if [ -e "output.fac" ]
 then
    echo "Kontynuuje ze znalezionego pliku output.fac" 
    cp output.fac $PRIVATEDIR/input.fac
-   ${BINDIR}treeserver $PRIVATEDIR/input.fac -  > treeserver.log 2>&1 &
+   echo "${BINDIR}treeserver $PRIVATEDIR/input.fac" -\$1
+   ${BINDIR}treeserver $PRIVATEDIR/input.fac -\$1  > treeserver.log 2>&1 &
 else
    echo "Rozpoczęcie z pliku indeksu: $indexpath"
    ${BINDIR}treeserver $indexpath -  > treeserver.log 2>&1 &
