@@ -83,7 +83,15 @@ void foreach_node(ptree &tree,      //Korzen drzewa
                     std::string separator="." //Separator składowych klucza
             );
 
-/// Numeracja nienazwanych "dzieci"
+/// Brak nazw węzłów pochodzących z tablic json'a jest bardzo
+/// niewygodny, gdy trzeba się do nich dostać pojedynczo.
+/// Ta funkcja szuka podwęzła o danej sciężce (n. "id") i
+/// używa jego wartości do nazwania anonima.
+///
+inline void   insert_ids(ptree& pt,std::string subpath="id");
+
+/// Jak się nie uda to można po prostu użyć
+/// numeracji takich nienazwanych "dzieci" (podwęzłów)
 /// Funkcja nadaje kolejne numery wszystkim nienazwanym
 /// dzieciom każdego węzła
 ///
@@ -202,8 +210,37 @@ void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=nev
 // Brak nazw węzłów pochodzących z tablic json'a jest bardzo
 // niewygodny, gdy trzeba się do nich dostać pojedynczo.
 //
+
+// Ta funkcja szuka podwęzła o danej sciężce (n. "id") i
+// używa jego wartości do nazwania anonima.
+void insert_ids(ptree& pt,std::string subpath)
+{
+    foreach_node(pt,"",
+        [subpath](ptree& t,std::string k)
+        {
+            while(1)
+            {
+                auto fp=t.find("");
+                if(fp==t.not_found()) break;
+
+                auto idn=fp->second.find(subpath);
+                if(idn==fp->second.not_found()) break;//Nie ma to nie ma...
+
+                auto newname=idn->second.data();
+
+                //base on https://stackoverflow.com/questions/45262602/c-boost-ptree-rename-key
+                ptree::iterator it = t.to_iterator(fp);
+                t.insert(it, make_pair(newname, it->second));
+                t.erase(it);
+            }
+            return true;
+        }
+    );
+}
+
+// Ta funkcja numeruje wszystkie nienazwane dzieci
+// każdego pod-węzła
 void insert_numbers(ptree& pt)
-// Funkcja numeruje wszystkie nienazwane dzieci każdego węzła
 {
     foreach_node(pt,"",
         [](ptree& t,std::string k)
@@ -220,7 +257,6 @@ void insert_numbers(ptree& pt)
                 t.insert(it, make_pair(newname, it->second));
                 t.erase(it);
             }
-            //return id>1?true:false;//DEBUG
             return true;
         }
     );
