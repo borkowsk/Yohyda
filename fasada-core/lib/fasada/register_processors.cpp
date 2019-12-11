@@ -24,6 +24,10 @@
 #include "loader_csv.h"
 #include "loader_json.h"
 #include "view_csv.h"
+#include "save_as_csv.h"
+#include "save_as_txt.h"
+#include "save_as_json.h"
+#include "save_as_xml.h"
 
 namespace fasada
 {
@@ -37,8 +41,12 @@ void register_processors(bool WithWriters)
     static fasada::processor_find     FIND;//--//---
     static fasada::view_csv           VIEW_CSV;
     static fasada::processor_check_file CHECK_FILE;//--//---
-
-    static fasada::processor_ls       Def("default");//ale można też robić aliasy
+    static fasada::save_as_txt        SAVE_TXT;
+    static fasada::save_as_csv        SAVE_CSV;
+    static fasada::save_as_json       SAVE_JSON;
+    static fasada::save_as_xml        SAVE_XML;
+                                                            //ale można też robić aliasy
+    static fasada::processor_ls       Def("default");
     static fasada::processor_ls       Dir("dir");
     static fasada::processor_ls       Lst("lst");
     static fasada::processor_dfs     Tree("tree");
