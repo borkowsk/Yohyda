@@ -31,9 +31,11 @@ std::string loader_processor::Form=
         "\n<input name=\"long\"   type=\"hidden\" >"
         "\n<input name=\"force\"  type=\"hidden\"  value=\"true\" >"
         "\n<input name=\"ready\"  type=\"hidden\"  value=\"true\" >" ///value=\"$is_ready\" >"
-        "\n<BR><H3>REPLACE ALL CURRENT DATA BELOW ${fullpath} WITH DATA FROM FILE?</H3>"
-        ///"   <input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"
-        ///"\n<BR>..."
+        "\n<BR>REPLACE ALL CURRENT DATA BELOW"
+        "<BR><q>${fullpath}</q>"
+        "<BR>WITH DATA FROM FILE?"
+        "\n<BR><input name=\"targetpath\" type=\"input\" size=\"${size_of_targetpath}\" "
+        " value=\"${targetpath}\">"
         "\n<BR><input type=\"submit\" value=\"YES\" >"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\" >LSL</A>&nbsp;&nbsp; "
@@ -50,7 +52,11 @@ void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLpars
 
     o+=ipc::string(EXT_PRE)+"htm\n";
     o+=getHtmlHeaderDefaults(request.getFullPath())+"\n";
-    o+=replace_all_variables(Form,request);
+
+    //... default target TODO!
+    request["targetpath"]="...";
+    request["size_of_targetpath"]=STR_WIDTH_MAX_OF_FIELD;
+    o+=replace_all_variables(_get_form_template(),request);
 
     o+=getHtmlClosure();
     //throw(tree_processor_exception("PTREE LOADER PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A READER!"));
