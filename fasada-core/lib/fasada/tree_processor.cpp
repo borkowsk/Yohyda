@@ -382,7 +382,9 @@ std::string tree_processor::replace_all_variables(std::string template_version,U
     boost::replace_all(template_version,"${proc}",procName);
     boost::replace_all(template_version,"${fullpath}",fullpath);
     //MODYFIKACJE ZMIENNYMI Z REQUEST
-    //...
+    //Temporary...
+    boost::replace_all(template_version,"${targetpath}",request["targetpath"]);
+    boost::replace_all(template_version,"${size_of_targetpath}",request["size_of_targetpath"]);
     return template_version;//Już zmodyfikowana
 }
 
