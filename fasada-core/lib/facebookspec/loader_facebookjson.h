@@ -29,15 +29,17 @@ class loader_facebookJson : public loader_processor //WRITER
 protected:
     static std::string Form;//default HTML form TEMPLATE for this processor
     virtual
-         const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
+    const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
+
 public:
     loader_facebookJson(const char* name="FacebookJson");
-   ~loader_facebookJson();
- protected://implementation
- //virtual
- //    void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
- virtual
-     void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);
+    ~loader_facebookJson();
+
+protected://implementation
+    //virtual
+    //    void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
+    virtual
+    void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);
 };
 
 } //namespace "facebook"
