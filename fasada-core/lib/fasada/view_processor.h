@@ -20,14 +20,15 @@ namespace fasada
 
 class view_processor : public tree_processor //Category READER
 {
-    public:
-        view_processor(const char* name);//"generic_viewer"
-       ~view_processor();
-    protected://implementation
+public:
+    view_processor(const char* name);//"generic_viewer"
+    ~view_processor();
+
+protected://implementation
     virtual
-        void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request)=0;//Need reimplementation
+    void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request)=0;//Need reimplementation
     virtual
-        void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);//This has an error message only.
+    void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);//This has an error message only.
 };
 
 }//namespace "fasada"

@@ -23,16 +23,17 @@ class loader_processor : public form_processor //Category READER_WRITER as all f
 protected:
     static std::string Form;//default HTML form TEMPLATE for this processor
     virtual
-         const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
+    const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
+
 public:
-        loader_processor(const char* name="generic_loader");
-       ~loader_processor();
+    loader_processor(const char* name="generic_loader");
+    ~loader_processor();
 
 protected://implementation
     virtual
-        void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
+    void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
     virtual
-        void _implement_write(ShmString& o,pt::ptree& top,URLparser& request)=0;//Loaders have to reimplement this!
+    void _implement_write(ShmString& o,pt::ptree& top,URLparser& request)=0;//Loaders have to reimplement this!
 };
 
 }//namespace "fasada"

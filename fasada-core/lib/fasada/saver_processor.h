@@ -20,19 +20,20 @@ namespace fasada
 
 class saver_processor : public form_processor //Category READER_WRITER
 {
- protected:
+protected:
     static std::string Form;//default HTML form TEMPLATE for this processor
     virtual
-         const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
- public:
-        saver_processor(const char* name="generic_saver");
-       ~saver_processor();
+    const std::string& _get_form_template(){return Form;}//MUST BE REIMPLEMENTED!
 
- protected://implementation
+public:
+    saver_processor(const char* name="generic_saver");
+    ~saver_processor();
+
+protected://implementation
     virtual
-        void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
+    void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
     virtual
-        void _implement_write(ShmString& o,pt::ptree& top,URLparser& request)=0;//SAVERS MUST REIMPLEMENT THIS!
+    void _implement_write(ShmString& o,pt::ptree& top,URLparser& request)=0;//SAVERS MUST REIMPLEMENT THIS!
 };
 
 }//namespace "fasada"

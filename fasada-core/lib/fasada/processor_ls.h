@@ -20,19 +20,20 @@ namespace fasada
 
 class processor_ls : public tree_processor //Category READER!
 {
-        bool longformat;
-    public:
-        processor_ls(const char* name="ls");
-       ~processor_ls();
-    protected://implementation
+    bool longformat;
+public:
+    processor_ls(const char* name="ls");
+    ~processor_ls();
+
+protected://implementation
     virtual
-        void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
+    void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
     virtual
-        void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);
+    void _implement_write(ShmString& o,pt::ptree& top,URLparser& request);
     virtual
-        void _implement_action_panel(ShmString& o,URLparser& request);
+    void _implement_action_panel(ShmString& o,URLparser& request);
     virtual
-        void _implement_node_panel(ShmString& o,const pt::ptree& node,const std::string& fullpath,URLparser& request);
+    void _implement_node_panel(ShmString& o,const pt::ptree& node,const std::string& fullpath,URLparser& request);
 };
 
 }//namespace "fasada"
