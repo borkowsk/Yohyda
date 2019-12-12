@@ -20,14 +20,6 @@ namespace pt = boost::property_tree;
 namespace facebook
 {
 
-//default HTML form for this processor
-std::string loader_facebookJson::Form="";
-//        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-//        "\n<input name=\"html\"   type=\"hidden\" >"
-//        "FOR <B class=fasada_path>'$path'</B><BR>\n"
-//        "<input type=\"submit\" value=\"OK\">\n"
-//        "</form>";
-
 loader_facebookJson::loader_facebookJson(const char* name):
     loader_processor(name) //also may be READER if it should create its own FORM
 {}
@@ -45,8 +37,10 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
         o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
     }
 
-    std::string discPath=request["&private_directory"]+request["&path"];
-    boost::replace_all(discPath,"//","/");
+    std::string discPath=request["targetpath"];
+
+    if(discPath=="" || discPath=="...")
+            discPath=request["&private_directory"]+request["&path"];
 
     if(top.size()!=0  && request["force"]!="true" ) //Jak już jest zawartość to trzeba być pewnym
     {
