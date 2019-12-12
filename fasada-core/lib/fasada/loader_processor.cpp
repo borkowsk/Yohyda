@@ -53,15 +53,12 @@ void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLpars
     o+=ipc::string(EXT_PRE)+"htm\n";
     o+=getHtmlHeaderDefaults(request.getFullPath())+"\n";
 
-    //... default target TODO!
-    request["targetpath"]="...";
+    request["targetpath"]=get_property(top,"_source",request["&private_directory"]+request["&path"]);//... default target
     request["size_of_targetpath"]=STR_WIDTH_MAX_OF_FIELD;
-    o+=replace_all_variables(_get_form_template(),request);
+    std::string ReadyForm=replace_all_variables(_get_form_template(),request);
+    o+=ReadyForm;
 
-    o+=getHtmlClosure();
-    //throw(tree_processor_exception("PTREE LOADER PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A READER!"));
-//See: https://www.boost.org/doc/libs/1_32_0/libs/filesystem/doc/operations.htm#last_write_time
-//OR   https://en.cppreference.com/w/cpp/filesystem/last_write_time  
+    o+=getHtmlClosure(); 
 }
 
 void loader_processor::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
