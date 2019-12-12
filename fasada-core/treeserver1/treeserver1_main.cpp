@@ -28,6 +28,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+///#include <boost/property_tree/csv_parser.hpp> //Nie ma, szkoda :-D
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <iostream>
@@ -310,7 +312,11 @@ int main(int argc, char* argv[])
 
         MyMemPool.free_data("TreeServerEmp");
         pt::write_json("output.fac",root);
-        //pt::write_xml("output.xml",root);// --> https://stackoverflow.com/questions/18875437/writing-more-complex-than-trivial-xml-with-boost-property-tree
+
+        // Then write the Boost property tree to an output XML file
+        pt::xml_writer_settings<std::string> w( ' ', 2 );
+        pt::write_xml("output.fxml",root,std::locale(), w);// --> https://stackoverflow.com/questions/18875437/writing-more-complex-than-trivial-xml-with-boost-property-tree
+
         std::cerr<<MyName<<": I'm finished."<<std::endl;
         return 0;
     }
