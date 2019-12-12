@@ -43,6 +43,9 @@
 namespace fasada
 {
 
+val_string urlDecode(const val_string& str);
+val_string urlEncode(const val_string& str);
+
 class URLparser:public std::map<key_string,val_string>
 {
 protected:

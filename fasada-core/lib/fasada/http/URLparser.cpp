@@ -36,8 +36,41 @@ using std::stringstream;
 //http://cppcms.com/wikipp/en/page/ref_cppcms_url_parser ? też inna biblioteka: http://cppcms.com/wikipp/en/page/main
 namespace fasada
 {
-static
-    val_string urlDecode(val_string str)
+    //For decoding/encoding see: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+    val_string urlEncode(const val_string& str)
+    {
+        string new_str = "";
+        unsigned char c;
+        int ic;
+        const char* chars = str.c_str();
+        char bufHex[10];
+
+        int len = str.length();
+        if(len==0) return "";
+
+        for(int i=0;i<len;i++)
+        {
+            c = chars[i];
+            ic = c;
+            // uncomment this if you want to encode spaces with +
+            /* if (c==' ') new_str += '+';
+            else */
+            if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
+                new_str += c;
+            else
+            {
+                sprintf(bufHex,"%X",c);// %0X ?
+                if(ic < 16)
+                    new_str += "%0";//TODO? Check it!
+                else
+                    new_str += "%";
+                new_str += bufHex;
+            }
+        }
+        return new_str;
+     }
+
+    val_string urlDecode(const val_string& str)
     {
         val_string ret;
         char ch;
