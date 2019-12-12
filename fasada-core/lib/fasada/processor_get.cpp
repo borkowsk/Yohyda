@@ -58,24 +58,28 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
            }
            else
            {
+               auto codeContent=urlEncode(top.data());
+               auto serverTop=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"];
+               o+="&nbsp; "+getActionLink(serverTop+"?find&html&value="+codeContent,"FIND","Find similar values");
+
                if(writing_enabled())
-                   o+="&nbsp;&nbsp; "+getActionLink(fullpath+"?set&html","SET!","?set&html");
+                   o+="&nbsp; "+getActionLink(fullpath+"?set&html","SET!","?set&html");
 
                if(writing_enabled() && top.data()=="" )
-                   o+="&nbsp;&nbsp; "+getActionLink(fullpath+"?add&html","ADD!","?add&html");
+                   o+="&nbsp; "+getActionLink(fullpath+"?add&html","ADD!","?add&html");
 
                if(writing_enabled() && top.data().at(0)=='!')
-                   o+="&nbsp;&nbsp; "+getActionLink(fullpath+top.data(),"RUN!","Run link read/write ");
+                   o+="&nbsp; "+getActionLink(fullpath+top.data(),"RUN!","Run link read/write ");
                else  if(top.data().at(0)=='?')
-                   o+="&nbsp;&nbsp; "+getActionLink(fullpath+top.data(),"RUN","Run link read only ");
+                   o+="&nbsp; "+getActionLink(fullpath+top.data(),"RUN","Run link read only ");
 
                if(top.data().at(0)=='/' || (top.data().at(0)=='.' && top.data().at(1)=='/') )
-                   o+="&nbsp;&nbsp; "+getSeeLink(top.data(),request,"&#x1f441;");//:eye: == SEE
+                   o+="&nbsp; "+getSeeLink(top.data(),request,"&#x1f441;");//:eye: == SEE
                else  if(writing_enabled() && isLocalFile(top.data()))
                    o+="&nbsp; "+getActionLink(fullpath+"!checkFile?self&html","CHECK!","Check this considering as path to a file");//Plik do sprawdzenia
            }
            _implement_attributes(o,top,request);
-           o+="&nbsp;&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+           o+="&nbsp; "+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
         }
         else
         {
