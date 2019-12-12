@@ -41,8 +41,8 @@ void register_processors(bool WithWriters)
     static fasada::processor_find     FIND;//--//---
     static fasada::view_csv           VIEW_CSV;
     static fasada::processor_check_file CHECK_FILE;//--//---
-    static fasada::save_as_txt        SAVE_TXT;
-    static fasada::save_as_csv        SAVE_CSV;
+    //static fasada::save_as_txt        SAVE_TXT;//still TODO
+    //static fasada::save_as_csv        SAVE_CSV;//still TODO
     static fasada::save_as_json       SAVE_JSON;
     static fasada::save_as_xml        SAVE_XML;
                                                             //ale można też robić aliasy
@@ -51,6 +51,7 @@ void register_processors(bool WithWriters)
     static fasada::processor_ls       Lst("lst");
     static fasada::processor_dfs     Tree("tree");
     static fasada::processor_info    FasadaInfo("fasada_info");
+    static fasada::save_as_json      saveJson("saveJson");
 
     if(WithWriters)
     {

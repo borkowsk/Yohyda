@@ -31,6 +31,8 @@ public:
 
 protected://implementation
     virtual
+    std::string _make_path(const std::string& ext,URLparser& request);
+    virtual
     void _implement_read(ShmString& o,const pt::ptree& top,URLparser& request);
     virtual
     void _implement_write(ShmString& o,pt::ptree& top,URLparser& request)=0;//SAVERS MUST REIMPLEMENT THIS!

@@ -26,9 +26,8 @@ run_on_tree::~run_on_tree()
 
 void run_on_tree::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)     //TODO
 {
-    throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED AS A WRITER!"));
+    throw(tree_processor_exception("PTREE PROCESSOR "+procName+" IS NOT IMPLEMENTED YET!"));
 }
-
 
 void run_on_tree::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)     //TODO
 {

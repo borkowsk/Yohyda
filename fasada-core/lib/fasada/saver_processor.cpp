@@ -24,6 +24,23 @@ saver_processor::saver_processor(const char* name):
 saver_processor::~saver_processor()
 {}
 
+
+std::string saver_processor::_make_path(const std::string& ext,URLparser& request)
+{
+    std::string prepPath=request["targetpath"];
+
+    if(prepPath=="" || prepPath=="...")
+            prepPath=request["&private_directory"]+request["&path"];
+
+    if(ext!="")
+    {
+      if(prepPath.find(ext,0)==prepPath.npos)
+          prepPath+=ext;
+    }
+
+    return prepPath;
+}
+
 //default HTML form for this processor
 std::string saver_processor::Form=
         "<form action=\"${fullpath}!${proc}\" class=\"fasada_form\">"
@@ -66,8 +83,7 @@ void saver_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparse
         o+=ipc::string(EXT_PRE)+"htm\n";
         o+=getHtmlHeaderDefaults(fullpath)+"\n";
 
-        //... default target TODO!
-        request["targetpath"]="...";
+        request["targetpath"]=get_property(top,"_source",_make_path("",request));//... default target
         request["size_of_targetpath"]=STR_WIDTH_MAX_OF_FIELD;
         std::string ReadyForm=replace_all_variables(_get_form_template(),request);
         o+=ReadyForm;
