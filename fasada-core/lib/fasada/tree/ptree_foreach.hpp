@@ -87,15 +87,17 @@ void foreach_node(ptree &tree,      //Korzen drzewa
 /// niewygodny, gdy trzeba się do nich dostać pojedynczo.
 /// Ta funkcja szuka podwęzła o danej sciężce (n. "id") i
 /// używa jego wartości do nazwania anonima.
+/// Jednak zeby takie drzewo zapisac w XML nazwy wezlow nie mogą
+/// zaczynać się od cyfr! STĄD POTRZEBA PREFIXU
 ///
-inline void   insert_ids(ptree& pt,std::string subpath="id");
+inline void   insert_ids(ptree& pt,std::string subpath="id",std::string prefix="_");
 
 /// Jak się nie uda to można po prostu użyć
 /// numeracji takich nienazwanych "dzieci" (podwęzłów)
 /// Funkcja nadaje kolejne numery wszystkim nienazwanym
 /// dzieciom każdego węzła
 ///
-inline void   insert_numbers(ptree& pt);
+inline void   insert_numbers(ptree& pt,std::string prefix="_");
 
 /// OBSŁUGA "LINKU SYMBOLICZNEGO" DO RODZICA
 inline void   insert_ups(ptree& pt);//wstawia do ptree symboliczne linki do rodziców
@@ -213,10 +215,10 @@ void foreach_node(ptree &tree, std::string key, pred& filter, pred& before/*=nev
 
 // Ta funkcja szuka podwęzła o danej sciężce (n. "id") i
 // używa jego wartości do nazwania anonima.
-void insert_ids(ptree& pt,std::string subpath)
+void insert_ids(ptree& pt,std::string subpath,std::string prefix)
 {
     foreach_node(pt,"",
-        [subpath](ptree& t,std::string k)
+        [subpath,&prefix](ptree& t,std::string k)
         {
             while(1)
             {
@@ -227,6 +229,8 @@ void insert_ids(ptree& pt,std::string subpath)
                 if(idn==fp->second.not_found()) break;//Nie ma to nie ma...
 
                 auto newname=idn->second.data();
+                if(isdigit(newname.at(0)))
+                    newname=prefix+newname;
 
                 //base on https://stackoverflow.com/questions/45262602/c-boost-ptree-rename-key
                 ptree::iterator it = t.to_iterator(fp);
@@ -240,10 +244,10 @@ void insert_ids(ptree& pt,std::string subpath)
 
 // Ta funkcja numeruje wszystkie nienazwane dzieci
 // każdego pod-węzła
-void insert_numbers(ptree& pt)
+void insert_numbers(ptree& pt,std::string prefix)
 {
     foreach_node(pt,"",
-        [](ptree& t,std::string k)
+        [&prefix](ptree& t,std::string k)
         {
             unsigned id=1;//Trzeba nadać id węzłom o pustych nazwach?
 
@@ -253,7 +257,8 @@ void insert_numbers(ptree& pt)
                 auto fp=t.find("");
                 if(fp==t.not_found()) break;
                 ptree::iterator it = t.to_iterator(fp);
-                auto newname=boost::lexical_cast< std::string >(id++);
+                auto newname=prefix+boost::lexical_cast< std::string >(id++);
+
                 t.insert(it, make_pair(newname, it->second));
                 t.erase(it);
             }

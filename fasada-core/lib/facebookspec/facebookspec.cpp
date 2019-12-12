@@ -50,9 +50,10 @@ time_t find_minimal_timestamp(const pt::ptree& start)
 void insert_mintimestamps(pt::ptree& start)
 {
     start.add_child("_used_decoders.insert_mintimestamps",ptree{});
+    std::string prefix="dt";
 
     for_true_branches(start,"",
-        [](ptree& t,std::string k)
+        [prefix](ptree& t,std::string k)
         {
             unsigned id=1;//Trzeba nadać id węzłom o pustych nazwach, nie mającym timestampów
             bool flag=true;
@@ -67,9 +68,14 @@ void insert_mintimestamps(pt::ptree& start)
                 ptree::iterator it = t.to_iterator(fp);
                 time_t ident=find_minimal_timestamp(it->second);
                 std::string newname;
+
                 if(ident!=0)
                 {
                     newname=boost::lexical_cast< std::string >(ident);
+
+                    if(isdigit(newname.at(0)))
+                        newname=prefix+newname;
+
                     if(t.find(newname)!=t.not_found())//Już taki był!!!
                         newname=newname+"."+boost::lexical_cast< std::string >(id++);//uzupelniamy o index
 
