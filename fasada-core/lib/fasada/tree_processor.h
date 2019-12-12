@@ -41,6 +41,7 @@ namespace fasada
     /// Most important properties is "_source", "loader", "viewer", "saver", "alternative_savers", "oth_actions".
     /// Standard attributes are presented in HTML by _implement_attributes() method
     void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& PropertyValue);
+    const std::string& get_property(const pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& WnenNotPresent);
 
     /// This class ...
     /// ...
