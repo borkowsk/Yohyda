@@ -122,7 +122,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                             {
                                std::cout<<entry.path()<<":"<<std::endl;
                                std::string fpath=entry.path().parent_path().string()
-                                       +"/files/"
+                                       +"/files/_" //xml nie toleruje gołych liczb jako nazw tagów, a to przy tapisie XML będzie tag
                                        +boost::lexical_cast<std::string>(counter);
                                const char* lpath=fpath.c_str();
                                lpath+=plen+1;
