@@ -20,15 +20,27 @@ namespace fasada
 /// Each node may have special subnodes called properties saved under xmlattr subtree
 /// Most important properties is "_source", "loader", "saver", "alternative_savers", "oth_actions".
 /// Standard attributes are presented in HTML by _implement_attributes() method
+/// Maybe this should be the same as <xmlattr> but this is disputable...
+/// https://stackoverflow.com/questions/18875437/writing-more-complex-than-trivial-xml-with-boost-property-tree
+///
 void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& PropertyValue)
 {
-    Node.put_child(std::string("xmlattr.")+FasadaPropertyName,pt::ptree{PropertyValue});
+    Node.put_child(std::string("attributes.")+FasadaPropertyName,pt::ptree{PropertyValue});
 }
 
+const std::string& get_property(const pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& WhenNotPresent)
+{
+    auto child=Node.find(std::string("attributes.")+FasadaPropertyName);
+
+    if(child==Node.not_found())
+        return WhenNotPresent;
+
+     return child->second.data();
+}
 
 void tree_processor::_implement_attributes(ShmString& o,const pt::ptree& top,URLparser& request,std::string nameOfTop/*=""*/)
 {
-    auto attr=top.find("xmlattr");
+    auto attr=top.find("attributes");
 
     if(attr!=top.not_found())
     {
