@@ -41,10 +41,11 @@ std::string processor_find::Form=
         "\n<BR>FIELD VALUE: "
         "   <input name=\"value\"   type=\"$input_of_value\"   size=\"$size_of_value\"   value=\"$value\">"
         "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B> "
-        "\n&nbsp;<input type=\"submit\" value=\"OK\">"
+        "\n<BR><input type=\"submit\" value=\"OK\">"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
-        "\n<BR><a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\">LSL</A>&nbsp;&nbsp; "
-        "\n<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\">TREE</A>&nbsp;&nbsp; \n" ///TODO Not in the form!
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\">LSL</A>&nbsp;&nbsp; "
+        "\n<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\">TREE</A>&nbsp;&nbsp; \n"
+        ///TODO Maybe better LSL & TREE not in the form!?
         "</form>";
 
 void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
