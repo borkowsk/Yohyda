@@ -129,7 +129,7 @@ void view_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& requ
 
             }
             o+="</TABLE>\n<BR>";
-            o+="\n"+getHtmlClosure();
+            o+="\n"+getHtmlClosure(_compiled);
         }
         else
         {

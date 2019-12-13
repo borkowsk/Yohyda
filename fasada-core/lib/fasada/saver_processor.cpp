@@ -47,11 +47,12 @@ std::string saver_processor::Form=
         "\n<input name=\"html\"   type=\"hidden\" >"
         "\n<input name=\"long\"   type=\"hidden\" >"
         "\n<input name=\"ready\"  type=\"hidden\"  value=\"true\" >" ///value=\"$is_ready\" >"
+        "\n&#x26C1; &#x25c1; &#x25c1; &#x25c1; &#x25c1; &#x25c1; &#x25c1;  &#x26C2;"    ///&#x25c1;
         "\n<BR><input name=\"targetpath\" type=\"input\" size=\"${size_of_targetpath}\" "
         " value=\"${targetpath}\">"
         "\n&nbsp;<input name=\"force\"  type=\"checkbox\" >FORCE?"
         "\n<BR>THIS FILE WILL BE REPLACED BY DATA EXISTING BELOW"
-        "<BR><q>${fullpath}</q>?"
+        "<BR><q>${fullpath}</q>"
         "\n<BR><input type=\"submit\" value=\"YES\" >"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\" >LSL</A>&nbsp;&nbsp; "
@@ -88,7 +89,7 @@ void saver_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparse
         std::string ReadyForm=replace_all_variables(_get_form_template(),request);
         o+=ReadyForm;
 
-        o+=getHtmlClosure();
+        o+=getHtmlClosure(_compiled);
     }
 }
 

@@ -31,6 +31,7 @@ std::string loader_processor::Form=
         "\n<input name=\"long\"   type=\"hidden\" >"
         "\n<input name=\"force\"  type=\"hidden\"  value=\"true\" >"
         "\n<input name=\"ready\"  type=\"hidden\"  value=\"true\" >" ///value=\"$is_ready\" >"
+        "\n&#x26c1; &#x25ba; &#x25ba; &#x25ba; &#x25ba; &#x25ba; &#x25ba; &#x26C2;"
         "\n<BR>REPLACE ALL CURRENT DATA BELOW"
         "<BR><q>${fullpath}</q>"
         "<BR>WITH DATA FROM FILE?"
@@ -58,7 +59,7 @@ void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLpars
     std::string ReadyForm=replace_all_variables(_get_form_template(),request);
     o+=ReadyForm;
 
-    o+=getHtmlClosure(); 
+    o+=getHtmlClosure(_compiled);
 }
 
 void loader_processor::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)

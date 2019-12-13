@@ -118,7 +118,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         if(longformat) o+="</UL>\n";
         o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
         if(counter>10) _implement_action_panel(o,request);
-        o+="\n"+getHtmlClosure();
+        o+="\n"+getHtmlClosure(_compiled);
     }
 }
 

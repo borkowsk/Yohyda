@@ -20,13 +20,15 @@ namespace fasada
 std::string processor_add::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "\n<input name=\"html\"   type=\"hidden\" >"
-        "NAME:&nbsp; "
+        "\n<B>&plus; &plus; &plus; &plus; &plus; &plus; &plus;</B>"
+        "\n<BR>NAME:&nbsp; "
         "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "VALUE: "
 ///        "<input type=\"text\" name=\"value\" size=\"" STR_WIDTH_MAX_OF_FIELD "\"><br>\n"
         "<textarea name=\"value\" rows=\"1\" cols=\"" STR_WIDTH_MAX_OF_FIELD "\"></textarea><br>"
         "WILL BE ADDED TO <B class=fasada_path>'$path'</B> <br>"
         "<input type=\"submit\" value=\"OK\">"
+        "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "</form>";
 
 processor_add::processor_add(const char* name):
@@ -61,7 +63,7 @@ void processor_add::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          {
              o+="<H2>WARNING!</H2><P>Only not-leaf type nodes could be modified by '"+procName+"'</P>";
          }
-         o+=getHtmlClosure();
+         o+=getHtmlClosure(_compiled);
     }
     else
     {
@@ -101,7 +103,7 @@ void processor_add::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
        o+="DONE <B class=fasada_path>'"+name+"'</B> = <I class=\"fasada_val\">'"+top.get_child(name).data()+"'</I>";
        o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
-       o+=getHtmlClosure();
+       o+=getHtmlClosure(_compiled);
     }
     else o+="DONE '"+name+"'='"+top.get_child(name).data()+"'";
 }

@@ -20,11 +20,13 @@ namespace fasada
 std::string processor_set::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "\n<input name=\"html\"   type=\"hidden\" >"
-        "VALUE: "
-        "$INPUT_AREA"
+        "<br><B>&equals; &equals; &equals; &equals; &equals; &equals;</B>"
+        "\n<BR>VALUE: "
+        "\n$INPUT_AREA"
         "<br>\n"
         "FOR <B class=fasada_path>'$path'</B><BR>\n"
         "<input type=\"submit\" value=\"OK\">\n"
+        "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "</form>";
 
 //$INPUT_AREA possible values:
@@ -87,7 +89,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          else
              o+="<H2>WARNING!</H2><P>Only leaf type nodes could be modified by '"+procName+"'</P>";
 
-         o+=getHtmlClosure();
+         o+=getHtmlClosure(_compiled);
     }
     else
     {
@@ -132,7 +134,7 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
        o+="DONE <I class=\"fasada_val\">'"+top.data()+"'</I>";
        o+="\n"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
-       o+=getHtmlClosure();
+       o+=getHtmlClosure(_compiled);
     }
     else o+="DONE '"+top.data()+"'";
 }

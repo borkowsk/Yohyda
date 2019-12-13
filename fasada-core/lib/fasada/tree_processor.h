@@ -102,7 +102,7 @@ namespace fasada
     static
         std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
     static
-        std::string  getHtmlClosure(const char* _unit_comp="");//Compatible set of tags for end of html document
+        std::string  getHtmlClosure(const std::string& _unit_comp="");//Compatible set of tags for end of html document
     static
         std::string  getActionLink(const std::string& Href,const std::string& Content,const std::string& Title="");
     static

@@ -162,7 +162,7 @@ void processor_ls::_implement_read(ShmString& o,const pt::ptree& top,URLparser& 
         else
         o+=" NO SUBNODES ";
     }
-    if(html) o+=getHtmlClosure();
+    if(html) o+=getHtmlClosure(_compiled);
 }
 
 //<LI>

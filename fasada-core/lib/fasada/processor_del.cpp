@@ -20,10 +20,12 @@ namespace fasada
 std::string processor_del::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "\n<input name=\"html\"   type=\"hidden\" >"
-        "NAME: "
+        "<br><B>&minusd; &minusd; &minusd; &minusd; &minusd; &minusd;</B>"
+        "\n<BR>NAME: "
         "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "will be DELeted from <B class=fasada_path>'$path'</B><BR>\n"
         "<input type=\"submit\" value=\"OK\">\n"
+        "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "</form>";
 
 processor_del::processor_del(const char* name):
@@ -60,7 +62,7 @@ void processor_del::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          {
              o+="<H2>WARNING!</H2><P>Only not-leaf type nodes could be modified by '"+procName+"'</P>";
          }
-         o+=getHtmlClosure();
+         o+=getHtmlClosure(_compiled);
     }
     else
     {
@@ -100,7 +102,7 @@ void processor_del::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
        o+="DONE <B class=fasada_path>'"+request["&path"]+"/"+name+"'</B> deleted<BR>\n";
        o+="\n"+getActionLink(fullpath+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
-       o+=getHtmlClosure();
+       o+=getHtmlClosure(_compiled);
     }
     else o+="DONE '"+name+"'='"+top.get_child(name).data()+"'";
 }

@@ -23,12 +23,14 @@ namespace fasada
 std::string processor_ren::Form=
         "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
         "<input type=\"hidden\" name=\"html\" >\n"
-        "OLD NAME: "
+        "<br><B>&mnplus; &mnplus; &mnplus; &mnplus; &mnplus; &mnplus;</B>"
+        "\n<BR>OLD NAME: "
         "<input type=\"text\" name=\"old_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "NEW NAME: "
         "<input type=\"text\" name=\"new_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "will be RENamed in <B class=fasada_path>'$path'</B> <br>"
         "<input type=\"submit\" value=\"OK\">"
+        "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "</form>";
 
 
@@ -65,7 +67,7 @@ void processor_ren::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          {
              o+="<H2>WARNING!</H2><P>Only not-leaf type nodes could be modified by '"+procName+"'</P>";
          }
-         o+=getHtmlClosure();
+         o+=getHtmlClosure(_compiled);
     }
     else
     {
@@ -140,7 +142,7 @@ void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
         }
         else o+="DONE '"+old_name+"'-->'"+new_name+"'";
 
-    if(html)  o+="</P>"+getHtmlClosure();
+    if(html)  o+="</P>"+getHtmlClosure(_compiled);
 }
 
 
