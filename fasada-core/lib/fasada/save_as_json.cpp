@@ -14,8 +14,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-//boost::property_tree::ptree pt;
-
 namespace fasada
 {
 
