@@ -214,12 +214,13 @@ std::string  tree_processor::getSeeLink(const std::string& data,URLparser& reque
     return out;
 }
 
-std::string  tree_processor::getHtmlClosure(const char* _unit_comp)
+std::string  tree_processor::getHtmlClosure(const std::string& _unit_comp)
 //Compatible set of tags for end of html document
 {
-    std::string Footer="\n<HR class=\"footer_hr\"><P class=\"footer_p\">Fasada version ";
-    Footer+=_version_str+std::string(" &ofcir; Unit compiled: ")+(*_unit_comp!='\0'?_unit_comp:_compiled)+"</P>";
-    Footer+=HTMLFooter;
+    std::string Footer="\n<HR class=\"footer_hr\"><P class=\"footer_p\">"
+                       "<a href=\"https://sites.google.com/view/fasada-cpp/\" target=\"fasada_info_page\" ><b>Fasada</b></a> version ";
+    Footer+=_version_str+std::string(" &#x26C2; Unit ")+( _unit_comp.length()!=0?_unit_comp:std::string("compiled: ")+_compiled )+"</P>";
+    Footer+=HTMLFooter;// &ofcir; ?
     return Footer;
 }
 
@@ -250,29 +251,35 @@ std::string  tree_processor::getNodePanel(const pt::ptree& node,const std::strin
         }
     }
     else
-    if(writing_enabled() && data.at(0)=='!')
     {
-        bool haveQ=(data.find('?',0)!=data.npos);//Is parameter list already started?
-        o+="&nbsp; "+getActionLink(fullpath+data+(haveQ?"&html":"?self&html"),"RUN!","Run link read/write");
-    }
-    else
-    if(data.at(0)=='?')
-    {
-        o+="&nbsp; "+getActionLink(fullpath+data+"&html","run","Run link as read only");
-    }
-    else
-    if(isLink(data))
-    {
-        o+="&nbsp; "+getActionLink(data,"&#x1F30D;","Follow link");//&#x1F30D; :globe:
-    }
-    else
-    if(isLocalFile(data))
-    {
-        if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
-            o+="&nbsp; "+getSeeLink(data,request,"&#x1f441;");//Plik sprawdzony
+        if(writing_enabled() && data.at(0)=='!')
+        {
+            bool haveQ=(data.find('?',0)!=data.npos);//Is parameter list already started?
+            o+="&nbsp; "+getActionLink(fullpath+data+(haveQ?"&html":"?self&html"),"RUN!","Run link read/write");
+        }
+        else
+        if(data.at(0)=='?')
+        {
+            o+="&nbsp; "+getActionLink(fullpath+data+"&html","run","Run link as read only");
+        }
+        else
+        if(isLink(data))
+        {
+            o+="&nbsp; "+getActionLink(data,"&#x1F30D;","Follow link");//&#x1F30D; :globe:
+        }
+        else
+        if(isLocalFile(data))
+        {
+            if(data.at(0)=='/' || (data.at(0)=='.' && data.at(1)=='/' ))
+                o+="&nbsp; "+getSeeLink(data,request,"&#x1f441;");//Plik sprawdzony
 
-        else  if(writing_enabled())
-            o+="&nbsp; "+getActionLink(fullpath+"!checkFile?self&html","check!");//Plik do sprawdzenia
+            else  if(writing_enabled())
+                o+="&nbsp; "+getActionLink(fullpath+"!checkFile?self&html","check!");//Plik do sprawdzenia
+        }
+
+        auto codeContent=urlEncode(data);//TODO - raczej enkodowane powinny być całe linki CHECK IT!
+        auto serverTop=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"];//FIND!
+        o+="&nbsp; "+getActionLink(serverTop+"?find&html&sugestion="+codeContent,"&#x1F50D;","Find similar i values or node names");
     }
 
     if(writing_enabled())
@@ -329,6 +336,10 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //http://www.cplusplus.com/reference/regex/regex_replace/
 //https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp, http://defindit.com/ascii.html
 //https://dev.w3.org/html5/html-author/charref
+//https://stackoverflow.com/questions/1342103/what-unicode-character-do-you-use-in-your-website-instead-of-image-icons
+//https://stackoverflow.com/questions/12036038/is-there-unicode-glyph-symbol-to-represent-search
+//https://tutorialzine.com/2014/12/you-dont-need-icons-here-are-100-unicode-symbols-that-you-can-use
+//
 {
     std::string tmp=str;
 
@@ -357,6 +368,7 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(out,":eye:","&#x1f441;");//OKO
     boost::replace_all(out,":link:","&#x1f517;");//LINK
     boost::replace_all(out,":earth:","&#x1F30D;");//Earth globe https://www.compart.com/en/unicode/U+1F30D
+    boost::replace_all(out,":loupe:","&#x1F50D;");//monocular or magnifier
     boost::replace_all(out,":-)","&#x1F60A;");//uśmiech
     boost::replace_all(out,":)", "&#x1F642;");//inny uśmiech
     boost::replace_all(out,":-(","&#x1F61E;");//smutek

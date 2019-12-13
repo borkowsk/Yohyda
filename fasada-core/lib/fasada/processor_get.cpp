@@ -58,9 +58,9 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
            }
            else
            {
-               auto codeContent=urlEncode(top.data());
+               auto codeContent=urlEncode(top.data());//TODO - raczej enkodowane powinny być całe linki CHECK IT!
                auto serverTop=request["&protocol"]+"://"+request["&domain"]+':'+request["&port"];
-               o+="&nbsp; "+getActionLink(serverTop+"?find&html&value="+codeContent,"FIND","Find similar values");
+               o+="&nbsp; "+getActionLink(serverTop+"?find&html&sugestion="+codeContent,"FIND","Find similar values");
 
                if(writing_enabled())
                    o+="&nbsp; "+getActionLink(fullpath+"?set&html","SET!","?set&html");
@@ -90,7 +90,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     else
         o+=tmp;
 
-    if(html) o+="</P>"+getHtmlClosure();
+    if(html) o+="</P>"+getHtmlClosure(_compiled);
 }
 
 
