@@ -20,6 +20,9 @@
 #include <boost/regex.hpp>
 #include <iostream>
 #include <string>
+///See: https://en.cppreference.com/w/cpp/preprocessor/replace
+/// __STDCPP_THREADS__ (C++11)
+///  and others new macros
 
 namespace fasada
 {
@@ -354,8 +357,13 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 
     //std::regex link(URLparser::URLpattern);
     boost::regex link(URLparser::URLpattern);
-    //auto out=std::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
-    auto out=boost::regex_replace (tmp,link,"<A HREF=\"$&\">$&</A>");
+    //auto out=std::regex_replace(tmp,link,"<A HREF=\"$&\">$&</A>");
+    auto out=boost::regex_replace(tmp,link,"<A HREF=\"$&\">$&</A>");
+
+    boost::regex hashtag("(#)([A-Za-z0-9]*)");// https://www.regextester.com/96112 - improved
+    // "(?:\s|^)#[A-Za-z0-9\-\.\_]+(?:\s|$)" //Alternative REGEX is here: https://www.regextester.com/96916
+    out=boost::regex_replace(out,hashtag,"<A HREF=\"/?find&html&value=$2\">$&</A>");
+
 
     boost::replace_all(out,"\u200A\n","\n");//Przywracamy
     boost::replace_all(out,"\u200A,", ",");//Przywracamy
@@ -388,6 +396,9 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 
 //Replacing ${variable_name} with variables from request
 //First working version - not best optimised ;-)
+//See:
+//https://stackoverflow.com/questions/53849/how-do-i-tokenize-a-string-in-c
+//https://www.geeksforgeeks.org/tokenizing-a-string-cpp/
 std::string tree_processor::replace_all_variables(std::string template_version,URLparser& request)
 {
     std::string fullpath=request.getFullPath();
