@@ -72,7 +72,7 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     {
         o+="\n</PRE>\n";
         o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"]+"&nbsp;&nbsp; ");
-        o+=getHtmlClosure(_compiled);
+        o+=getHtmlClosure(std::string("<b>YoHyDa&#x3d5;</b> ") + _compiled );
     }
 }
 
