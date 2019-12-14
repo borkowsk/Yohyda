@@ -350,6 +350,7 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(tmp,", ","\u200A, " /*"\x7f"*/);
     boost::replace_all(tmp,")","\u200A)" /*"\x7f"*/);
     boost::replace_all(tmp,"]","\u200A]" /*"\x7f"*/);
+    boost::replace_all(tmp,">","\u200A>" /*"\x7f"*/);
     boost::replace_all(tmp,". ","\u200A. " /*"\x7f"*/);
     boost::replace_all(tmp,"|","\u200A| " /*"\x7f"*/);
     boost::replace_all(tmp,"\r","\x7f\r" /*"\x7f"*/);
@@ -360,15 +361,30 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     //auto out=std::regex_replace(tmp,link,"<A HREF=\"$&\">$&</A>");
     auto out=boost::regex_replace(tmp,link,"<A HREF=\"$&\">$&</A>");
 
-    boost::regex hashtag("(#)([A-Za-z0-9]*)");// https://www.regextester.com/96112 - improved
+    boost::regex hashtag("[ \\t\\n](#)([A-Za-z0-9]*)");//Może się pomylić z # pod koniec URL'a
+    // https://www.regextester.com/96112 - improved
     // "(?:\s|^)#[A-Za-z0-9\-\.\_]+(?:\s|$)" //Alternative REGEX is here: https://www.regextester.com/96916
-    out=boost::regex_replace(out,hashtag,"<A HREF=\"/?find&html&value=$2\">$&</A>");
+    out=boost::regex_replace(out,hashtag,"<A HREF=\"/?find&html&value=$2\">$& </A>");
 
+    boost::regex hashtag2("(?:\\s|^)(#)([A-Za-z0-9]*)");//Tylko od początku linii? a może całości?
+    out=boost::regex_replace(out,hashtag2,"<A HREF=\"/?find&html&value=$2  \">$& </A>");
+
+    boost::regex attag1("[ \\t\\n](@)([0-9a-zA-Z_]+)");//Może się mylic z email'em
+    out=boost::regex_replace(out,attag1,"<A HREF=\"/?find&html&sugestion=$2\" >$& </A>");
+
+    boost::regex attag2("@\\[([0-9]+):([0-9]+):([0-9a-zA-Z _][^\\]]+)\\]");//To się z mailem nie pomyli
+    //Na tym przykładzie działa świetnie: @[137501236414754:274:Memetyka] alama cota @[108325199188305:274:Pleistocene] a olapsa @[113919085285005:274:Jacek Dukaj] o filmach SF
+    //https://www.regextester.com/
+    out=boost::regex_replace(out,attag2,"<A HREF=\"/?find&html&sugestion=$&\" >$& </A>");
+
+    boost::regex email("[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*");//https://www.regextester.com/19
+    out=boost::regex_replace(out,email,"<A HREF=\"/?find&html&value=$&\" >$& </A>");
 
     boost::replace_all(out,"\u200A\n","\n");//Przywracamy
     boost::replace_all(out,"\u200A,", ",");//Przywracamy
     boost::replace_all(out,"\u200A)", ")");//Przywracamy
     boost::replace_all(out,"\u200A]", "]");//Przywracamy
+    boost::replace_all(out,"\u200A>", ">");//Przywracamy
     boost::replace_all(out,"\u200A. ",". ");//Przywracamy
 
     boost::replace_all(out,"-->","&rarr;");
@@ -380,14 +396,14 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
     boost::replace_all(out,":-)","&#x1F60A;");//uśmiech
     boost::replace_all(out,":)", "&#x1F642;");//inny uśmiech
     boost::replace_all(out,":-(","&#x1F61E;");//smutek
-    boost::replace_all(out,":(", "&#x1F61F;");//obawa
+    boost::replace_all(out,":( ", "&#x1F61F; ");//obawa
     boost::replace_all(out,":-D","&#x1F600;");//szeroki uśmiech
-    boost::replace_all(out,":D", "&#x1F603;");//inny szeroki uśmiech
-    boost::replace_all(out,":P", "&#x1F60B;");//ozorek
+    boost::replace_all(out,":D ", "&#x1F603; ");//inny szeroki uśmiech
+    boost::replace_all(out,":P ", "&#x1F60B; ");//ozorek
     boost::replace_all(out,":-P","&#x1F61B;");//ozorek centralny
-    boost::replace_all(out," :/", "&#x1F615;");//krzywa geba. skonfundowany - bez spacji niszczy linki!
+    boost::replace_all(out," :/ ", " &#x1F615; ");//krzywa geba. skonfundowany - bez spacji niszczy linki!
     boost::replace_all(out,":-/","&#x1F615;");//krzywa geba
-    boost::replace_all(out,";)", "&#x1F609;");//wink
+    boost::replace_all(out,";) ", "&#x1F609; ");//wink
     boost::replace_all(out,";-)","&#x1F609;");//wink
     boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
     boost::replace_all(out,"\n","\n<BR>");//break LINEs
