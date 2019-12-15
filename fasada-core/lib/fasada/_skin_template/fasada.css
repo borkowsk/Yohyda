@@ -56,6 +56,29 @@ a.fasada_view {
         border-radius: 8px; 
 }
 
+input {
+        font-weight: bold;
+        font-size: 10pt;
+        padding: 4px 11px; 
+        background: white; 
+        color: navy;
+        border:2 none;
+        cursor:pointer;
+        font-family: monospace;
+        border-radius: 10px; 
+}
+
+input[type=number] {
+        font-weight: bold;
+        font-size: 10pt;
+        padding: 4px 11px; 
+        background: gray; 
+        color: navy;
+        border:2 none;
+        cursor:pointer;
+        font-family: monospace;
+        border-radius: 10px; 
+}
 
 input[type=submit] {
         font-weight: bold;
@@ -136,5 +159,5 @@ table, th, td {
 
 
 th, td {
-  padding: 5px;
+  padding: 2px;
 }
