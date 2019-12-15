@@ -18,15 +18,16 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_set::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-        "\n<input name=\"html\"   type=\"hidden\" >"
-        "<br><B>&equals; &equals; &equals; &equals; &equals; &equals;</B>"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\" > "
+        "\n<input name=\"html\"   type=\"hidden\" > "
+        "\n<B>&equals; &equals; &equals; &equals; &equals; &equals;</B>"
         "\n<BR>VALUE: "
-        "\n$INPUT_AREA"
-        "<br>\n"
-        "FOR <B class=fasada_path>'$path'</B><BR>\n"
-        "<input type=\"submit\" value=\"OK\">\n"
+        "$INPUT_AREA"
+        "\n<br>FOR <B class=fasada_path>'$path'</B><BR>"
+        "\n<input type=\"submit\" value=\"OK\">"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\" >LSL</A> "
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\" >TREE</A> "
         "</form>";
 
 //$INPUT_AREA possible values:

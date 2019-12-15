@@ -21,16 +21,16 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_ren::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
-        "<input type=\"hidden\" name=\"html\" >\n"
-        "<br><B>&mnplus; &mnplus; &mnplus; &mnplus; &mnplus; &mnplus;</B>"
-        "\n<BR>OLD NAME: "
-        "<input type=\"text\" name=\"old_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
-        "NEW NAME: "
-        "<input type=\"text\" name=\"new_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
-        "will be RENamed in <B class=fasada_path>'$path'</B> <br>"
-        "<input type=\"submit\" value=\"OK\">"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "\n<input type=\"hidden\" name=\"html\" >"
+        "\n<B>&mnplus; &mnplus; &mnplus; &mnplus; &mnplus; &mnplus;</B>"
+        "\n<br>OLD NAME: <input type=\"text\" name=\"old_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\">"
+        "\n<br>NEW NAME: <input type=\"text\" name=\"new_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\">"
+        "\n<br>will be RENamed in <B class=fasada_path>'$path'</B> "
+        "\n<br><input type=\"submit\" value=\"OK\">"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\" >LSL</a> "
+         "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\" >TREE</a> "
         "</form>";
 
 

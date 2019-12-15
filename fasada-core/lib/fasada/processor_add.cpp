@@ -18,17 +18,17 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_add::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
         "\n<input name=\"html\"   type=\"hidden\" >"
         "\n<B>&plus; &plus; &plus; &plus; &plus; &plus; &plus;</B>"
-        "\n<BR>NAME:&nbsp; "
-        "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
-        "VALUE: "
-///        "<input type=\"text\" name=\"value\" size=\"" STR_WIDTH_MAX_OF_FIELD "\"><br>\n"
+        "\n<BR>NAME:&nbsp; <input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
+        "VALUE: "///        "<input type=\"text\" name=\"value\" size=\"" STR_WIDTH_MAX_OF_FIELD "\"><br>\n"
         "<textarea name=\"value\" rows=\"1\" cols=\"" STR_WIDTH_MAX_OF_FIELD "\"></textarea><br>"
         "WILL BE ADDED TO <B class=fasada_path>'$path'</B> <br>"
         "<input type=\"submit\" value=\"OK\">"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\" >LSL</a> "
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\" >TREE</a> "
         "</form>";
 
 processor_add::processor_add(const char* name):

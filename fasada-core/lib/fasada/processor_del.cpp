@@ -18,14 +18,16 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_del::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">\n"
+        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
         "\n<input name=\"html\"   type=\"hidden\" >"
-        "<br><B>&minusd; &minusd; &minusd; &minusd; &minusd; &minusd;</B>"
+        "\n<B>&minusd; &minusd; &minusd; &minusd; &minusd; &minusd;</B>"
         "\n<BR>NAME: "
         "<input type=\"text\" name=\"name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\"><br>\n"
         "will be DELeted from <B class=fasada_path>'$path'</B><BR>\n"
         "<input type=\"submit\" value=\"OK\">\n"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\" >LSL</a> "
+        "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\" >TREE</a> "
         "</form>";
 
 processor_del::processor_del(const char* name):
