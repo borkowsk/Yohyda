@@ -233,7 +233,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                                 +fullpath+pathk+"?ls&html&long\">";
                                         o+=pathk;
                                         if(html)
-                                            o+="</A></B> : <I class=\"fasada_val\">' <A HREF=\""
+                                            o+="</A></B> : <I class=\"fasada_val\"> <A HREF=\""
                                              +fullpath+pathk+"?get&html&long\">'";
                                             else o+="' : '";
                                         o+=t.data();
