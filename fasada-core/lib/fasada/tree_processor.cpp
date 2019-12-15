@@ -343,6 +343,8 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //https://stackoverflow.com/questions/12036038/is-there-unicode-glyph-symbol-to-represent-search
 //https://tutorialzine.com/2014/12/you-dont-need-icons-here-are-100-unicode-symbols-that-you-can-use
 //
+//TODO - REIMPLEMENTATION LIKE THERE:
+//https://www.boost.org/doc/libs/1_53_0/libs/regex/doc/html/boost_regex/ref/regex_replace.html
 {
     std::string tmp=str;
 
@@ -417,14 +419,57 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 //https://www.geeksforgeeks.org/tokenizing-a-string-cpp/
 std::string tree_processor::replace_all_variables(std::string template_version,URLparser& request)
 {
-    std::string fullpath=request.getFullPath();
-    boost::replace_all(template_version,"${proc}",procName);
-    boost::replace_all(template_version,"${fullpath}",fullpath);
+    std::string fullpath=request.getFullPath();//generuje też zmienną "fullpath" w request'cie
+    boost::replace_all(template_version,"${proc}",procName);//Tego nie ma w request, przynajmniej na razie
+    std::string output;
+    //boost::replace_all(template_version,"${fullpath}",fullpath);
     //MODYFIKACJE ZMIENNYMI Z REQUEST
+    auto begin=(template_version.npos,0);
+    auto index=template_version.npos;
+    while((index=template_version.find('$',begin))!=template_version.npos)
+    {
+        std::cout<<template_version.substr(begin,index-begin)<<" ###1"<<std::endl;
+        output+=template_version.substr(begin,index-begin);
+
+        std::cout<<template_version.at(index)<<" ###2"<<std::endl;
+
+        index++;
+        if(template_version.at(index)=='{')//Próbujemy podstawiać
+        {
+            std::cout<<template_version.at(index)<<" ###3"<<std::endl;
+
+            begin=index+1;
+            index=template_version.find('}',begin);
+            if(index!=template_version.npos)
+            {
+                auto varname=template_version.substr(begin,index-begin);
+                std::cout<<varname<<"   =   "<<request[varname]<<" ###4"<<std::endl;
+                output+=request[varname];
+
+                std::cout<<template_version.at(index)<<" ###5"<<std::endl;
+                begin=index+1;
+                index=template_version.npos;//Bo może już wyjść
+            }
+            else //Wadliwa zmienna, ale nie chcemy całkiem przerywać
+            {
+                std::cerr<<"INVALID VARIABLE AT "<<begin<<" ###6"<<std::endl;//begin zostaje takie
+                index=template_version.npos;//Bo może już wyjść
+            }
+        }
+        else //Takich zmiennych nie podstawiamy
+        {
+            output+='$';
+            begin=index;
+            index=template_version.npos;//Bo może już wyjść
+        }
+    }
+    std::cout<<template_version.substr(begin,index-begin)<<" ###7"<<std::endl;
+    output+=template_version.substr(begin,index-begin);
+
     //Temporary...
-    boost::replace_all(template_version,"${targetpath}",request["targetpath"]);
-    boost::replace_all(template_version,"${size_of_targetpath}",request["size_of_targetpath"]);
-    return template_version;//Już zmodyfikowana
+    //boost::replace_all(template_version,"${targetpath}",request["targetpath"]);
+    //boost::replace_all(template_version,"${size_of_targetpath}",request["size_of_targetpath"]);
+    return output;//Już zmodyfikowana
 }
 
 }//namespace "fasada"
