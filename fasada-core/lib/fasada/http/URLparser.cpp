@@ -98,7 +98,7 @@ namespace fasada
 
     val_string  URLparser::getFullPath()//Zwraca i jednoczesnie dopisuje "fullpath" do słownika
     {
-        if(FULL_path.length()==0)
+        if(FULL_path.length()==0)//Lazy generation
         {
             FULL_path=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
             (*this)["fullpath"]=FULL_path;
@@ -108,7 +108,7 @@ namespace fasada
 
     val_string  URLparser::getParentPath()//Zwraca i jednoczesnie dopisuje "parentpath" do słownika
     {
-        if(PARENT_path.length()==0)
+        if(PARENT_path.length()==0)//Lazy generation
         {
             PARENT_path=(*this)["&protocol"]+"://"+(*this)["&domain"]+':'+(*this)["&port"]+(*this)["&path"];
             int pos=PARENT_path.rfind('/');
@@ -121,7 +121,7 @@ namespace fasada
 
     bool   URLparser::asHTML()//Wymagany wynik w HTMLu
     {
-        if(HTML_output==-1)
+        if(HTML_output==-1)//Lazy generation
         {
             if(find("html")!=end() && (*this)["html"]!="false")
                 HTML_output=1;
@@ -133,7 +133,7 @@ namespace fasada
 
     bool   URLparser::asMINI()//Minimalny jednoznaczny format danych
     {
-        if(MINI_output==-1)
+        if(MINI_output==-1)//Lazy generation
         {
             if(find("minimal")!=end() && (*this)["minimal"]!="false")
                 MINI_output=1;
@@ -145,7 +145,7 @@ namespace fasada
 
     bool    URLparser::asLONG()//Format rozbudowany w HTMLu lub NIE!
     {
-        if(LONG_output==-1)
+        if(LONG_output==-1)//Lazy generation
         {
             if(find("long")!=end() && (*this)["long"]!="false")
                 LONG_output=1;
