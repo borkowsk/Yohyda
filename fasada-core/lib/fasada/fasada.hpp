@@ -24,7 +24,7 @@ namespace fasada
 {
 extern const float _version;//=FASADA_VERSION;
 extern const char* _version_str;//=FASADA_VERSION_STR;
-static const char* _compiled=__DATE__ " ;  " __TIME__;//Diferent for any compilation unit
+static const char* _compiled="compiled " __DATE__ ", " __TIME__ ";";//Diferent for any compilation unit
 
 void init(bool WithWriting);//INITIALIZE THE FASADA LIBRARY
 void register_processors(bool WithWriters); //Function for registering default set of tree_processors
