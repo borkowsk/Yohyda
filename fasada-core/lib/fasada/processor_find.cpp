@@ -35,18 +35,27 @@ std::string processor_find::Form=
         "\n<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
         "\n&#x1F50D; &#x1F50D; &#x1F50D; &#x1F50D; &#x1F50D; &#x1F50D;"
         "\n<BR>SUBPATH:     "
-        "   <input name=\"subpath\" type=\"$input_of_subpath\"   size=\"$size_of_subpath\"   value=\"$subpath\">"
+        "   <input name=\"subpath\" type=\"$input_of_subpath\" onclick=\"this.select()\" size=\"$size_of_subpath\"   value=\"$subpath\">"
         "\n<BR>FIELD NAME: "
-        "   <input name=\"field\"   type=\"$input_of_field\"   size=\"$size_of_field\"   value=\"$field\">"
+        "   <input name=\"field\"   type=\"$input_of_field\" onclick=\"this.select()\" size=\"$size_of_field\"   value=\"$field\">"
         "\n<BR>FIELD VALUE: "
-        "   <input name=\"value\"   type=\"$input_of_value\"   size=\"$size_of_value\"   value=\"$value\">"
+        "   <input name=\"value\"   type=\"$input_of_value\" onclick=\"this.select()\" size=\"$size_of_value\"   value=\"$value\">"
         "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B> "
+        "\n<BR> LIMIT: <input type=\"number\" name=\"limit\" value=\"${limit}\" min=\"25\" max=\"99999\"> "
         "\n<BR><input type=\"submit\" value=\"OK\">"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
         "\n&nbsp;<a class=\"fasada_action\" href=\"${fullpath}?ls&html&long\">LSL</A>&nbsp;&nbsp; "
         "\n<a class=\"fasada_action\" href=\"${fullpath}?dfs&html&long\">TREE</A>&nbsp;&nbsp; \n"
-        ///TODO Maybe better LSL & TREE not in the form!?
         "</form>";
+
+/*
+"<select name=\"limit\" >"
+"<option value=\"256\" >256</option>"
+"<option value=\"1024\" selected >1024</option>"
+"<option value=\"2048\" >2048</option>"
+"<option value=\"4096\" >4096</option>"
+"</select>"
+*/
 
 void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
@@ -70,7 +79,11 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
 
         o+=ipc::string(EXT_PRE)+"htm\n";
         o+=getHtmlHeaderDefaults(fullpath)+"\n";
+
+        if(request.find("limit")==request.end())
+                    request["limit"]="1024";
         std::string ReadyForm=replace_all_variables(Form,request);
+
         boost::replace_all(ReadyForm,"$path",request["&path"]);
 
         if( (request.find("subpath") != request.end() && request["subpath"]!="" )
@@ -158,16 +171,21 @@ void processor_find::_implement_action_panel(ShmString& o,URLparser& request)
 
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
 {
-    unsigned counter=0;
-    bool defret=(request["return"]!="false");
-    bool   html=request.asHTML();
+    unsigned counter=0,limit=1024;
+    if(request.find("limit")!=request.end())
+        limit=boost::lexical_cast<unsigned>(request["limit"]);
+
     std::string fullpath=request.getFullPath();
     if( *(--fullpath.end())!='/' )
         fullpath+="/";
 
+    bool defret=(request["return"]!="false");
+    bool   html=request.asHTML();
+
     std::string  subpath=request["subpath"];
     std::string    field=request["field"];
     std::string    value=request["value"];
+
     bool all_spaths=(subpath=="*");
     bool all_fields=(field=="*");
     bool all_values=(value=="*");
@@ -177,7 +195,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
         o+=ipc::string(EXT_PRE)+"htm\n";
         o+=getHtmlHeaderDefaults(request["&path"])+"\n";
         _implement_action_panel(o,request);
-        o+="\n<UL>\n";//Zawsze jest UL?
+        o+="\n<OL>\n";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
@@ -204,32 +222,34 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                                     return ( found != std::string::npos );
                                 };
 
-    auto print_lambda=[&o,defret,html,fullpath,&request,&counter,this](const ptree& t,std::string k)
+    auto print_lambda=[&o,defret,html,fullpath,&request,&counter,limit,this](const ptree& t,std::string k)
                                 {
                                     counter++;
-                                    o+=(html?"<LI>":"* ");
-                                    std::string pathk=k;
-                                    if(html) o+="<B class=fasada_path><A HREF=\""
-                                            +fullpath+pathk+"?ls&html&long\">";
-                                    o+=pathk;
-                                    if(html)
-                                        o+="</A></B> : <I class=\"fasada_val\">' <A HREF=\""
-                                         +fullpath+pathk+"?get&html&long\">'";
-                                        else o+="' : '";
-                                    o+=t.data();
-                                    o+="'";
-                                    if(html)
+                                    if(counter<limit)
                                     {
-                                        o+="</A></I>&nbsp; "+getNodePanel(t,fullpath+pathk,request);
-                                        if(t.data()=="")
+                                        o+=(html?"<LI>":"* ");
+                                        std::string pathk=k;
+                                        if(html) o+="<B class=fasada_path><A HREF=\""
+                                                +fullpath+pathk+"?ls&html&long\">";
+                                        o+=pathk;
+                                        if(html)
+                                            o+="</A></B> : <I class=\"fasada_val\">' <A HREF=\""
+                                             +fullpath+pathk+"?get&html&long\">'";
+                                            else o+="' : '";
+                                        o+=t.data();
+                                        o+="'";
+                                        if(html)
                                         {
-                                            auto pos=k.rfind('/');
-                                            _implement_attributes(o,t,request,k.substr(pos+1));
+                                            o+="</A></I>&nbsp; "+getNodePanel(t,fullpath+pathk,request);
+                                            if(t.data()=="")
+                                            {
+                                                auto pos=k.rfind('/');
+                                                _implement_attributes(o,t,request,k.substr(pos+1));
+                                            }
+                                            o+="\n";
                                         }
-                                        o+="\n";
-                                    }
-                                    else o+="\n";
-
+                                        else o+="\n";
+                                    } else { o+='.';if(counter%100==0) o+="<BR>\n";}
                                     return defret;
                                 };
 
@@ -253,8 +273,10 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
 
     if(html)
     {
-        o+="</UL>";
-        o+=boost::lexical_cast<val_string>(counter)+"<BR>\n";
+        o+="</OL>";
+        o+=boost::lexical_cast<val_string>(counter)+" nodes <BR>\n";
+        if(counter>limit)
+            o+="Use <q>limit</q> variable if not all nodes are visible! <BR>\n";
         if(counter>10) _implement_action_panel(o,request);
         o+="\n"+getHtmlClosure(_compiled);
     }
