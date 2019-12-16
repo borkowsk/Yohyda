@@ -20,13 +20,20 @@
 
 using namespace boost::filesystem;
 
-#if(1)
-#include <boost/filesystem/string_file.hpp> //only new boost
+
+#define REQUIRED "Ubuntu"
+//#if (0 == c_strcmp( DISTRIB_ID , REQUIRED )) //I tak nie działa :-/
+
+// #if ( 1 == p_greater( DISTRIB_RELEASE , 18.00 ) ) //i to tez nie :-(
+
+#if(0)
+#include <boost/filesystem/string_file.hpp> //only if new boost
 namespace fasada
 {
 
-#else
-namespace fasada
+#else//self made version will work everywere
+
+namespace fasada 
 {
 
 inline

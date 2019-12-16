@@ -93,7 +93,8 @@ add_library(facebookspec
     "${SRCPATH}/lib/facebookspec/facebookspec.cpp"
     "${SRCPATH}/lib/facebookspec/loader_facebookjson.cpp"
     )
-
+    
+add_definitions( "-DDISTRIB_ID=${DISTRIB_ID} -DDISTRIB_RELEASE=${DISTRIB_RELEASE}" )
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( indexer    PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )

@@ -33,4 +33,25 @@ bool writing_enabled();     //Is writing to tree allowed?
 
 }//namespace "fasada"
 
+/*
+// constexpr FUNCTIONS for C++ preprocessor
+//.//////////////////////////////////////////////////////////
+//
+/// compares two strings in compile time constant fashion
+/// https://stackoverflow.com/questions/2335888/how-to-compare-strings-in-c-conditional-preprocessor-directives
+// some compilers may require ((int)lhs[0] - (int)rhs[0])
+constexpr int c_strcmp( char const* lhs, char const* rhs )
+{
+    return (('\0' == lhs[0]) && ('\0' == rhs[0])) ? 0
+        :  (lhs[0] != rhs[0]) ? (lhs[0] - rhs[0])
+        : c_strcmp( lhs+1, rhs+1 );
+}
+
+/// compares double for preprocesor 
+constexpr int p_greater( double _1, double _2 )
+{
+    return (_1 >_2 ? 1: 0);
+}
+*/
+
 #endif // FASADA_HPP
