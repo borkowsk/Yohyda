@@ -4,7 +4,9 @@
 #    sudo apt-get install -y libmagic-dev #https://zoomadmin.com/HowToInstall/UbuntuPackage/libmagic-dev
 #
 # Compilation:
-g++ -std=c++11 -Wall -pedantic indexer_main.cpp -lmagic -lboost_system -lboost_filesystem \
+UMAGIC="-DUSE_MAGIC"
+LMAGIC="-lmagic"
+g++ -std=c++11 -Wall -pedantic $UMAGIC indexer_main.cpp $LMAGIC -lboost_system -lboost_filesystem \
 && echo -e "\nCompiled\n" \
 && ./a.out $1 $2 \
 && echo -e "\nReady\n"
