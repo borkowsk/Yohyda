@@ -16,7 +16,7 @@
 // Compilation and testing
 // g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp [-libmagic] -lboost_system -lboost_filesystem && ./a.out ./ [--all]
 // 
-// What about using libmagic ? See: https://github.com/file/file , https://gist.github.com/vivithemage/9489378 TODO !?
+// What about using libmagic ? See: https://github.com/file/file , https://gist.github.com/vivithemage/9489378
 //
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
@@ -25,6 +25,47 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <iostream>
 #include <cstring>
+
+#ifdef USE_MAGIC
+#include <magic.h>
+class magicFileTester
+//Restricted wraper for libmagic
+{
+    magic_t magic_cookie;
+public:
+    magicFileTester()
+    {
+        /* MAGIC_MIME tells magic to return a mime of the file, 
+           but you can specify different things	*/
+
+        magic_cookie = magic_open(MAGIC_MIME);
+	
+        if (magic_cookie == NULL) 
+        {
+                std::cerr << "\nUnable to initialize magic library" << std::endl;
+                exit( 1 );
+        }
+	
+        if (magic_load(magic_cookie, NULL) != 0) 
+        {
+                std::cerr << "\ncCannot load magic database - " << magic_error(magic_cookie) << std::endl;
+                magic_close(magic_cookie);
+                exit( 2 );
+        }
+    }
+
+    ~magicFileTester()
+    {
+        magic_close(magic_cookie); 
+    }
+
+    const char* getFileType(const std::string& p)
+    {
+        return magic_file(magic_cookie, p.c_str() );
+    }
+
+} file_tester;
+#endif
 
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
@@ -97,10 +138,17 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                     if(entry.path().extension()==".json")
                     {
                         const char* lpath=(entry.path().c_str());
+
                         lpath+=plen+1;
-                        std::cout <<"'"<< lpath <<"' is considered as a "<<ArchiveSource<<" JSON!"<<std::endl;
+                        std::cout <<"'"<< lpath <<"' is considered as a "<<ArchiveSource<<" JSON!";
 
                         curr.put(pt::ptree::path_type{lpath, '/'},"!"+ArchiveSource+"Json");
+#                       ifdef USE_MAGIC
+                        auto theType=file_tester.getFileType( entry.path().string() );
+                        std::cout <<" MIME: "<<theType;
+                        curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
+#                       endif
+                        std::cout<<std::endl;
                     }
                     else
                         if(entry.path().extension()==".js") //Maybe JavaScript
@@ -110,40 +158,69 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                             
                             if(ArchiveSource.at(0)=='T' && ArchiveSource=="Twitter" )
                             {
-                              std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!"<<std::endl;
+                              std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!";
                               curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
                             }
                             else
                             {
+                              std::cout <<"'"<< lpath <<"' is considered as JavaScript code!";
                               curr.put(pt::ptree::path_type{lpath, '/'},"!JavaScript");
                             }
+
+#                           ifdef USE_MAGIC
+                            auto theType=file_tester.getFileType( entry.path().string() );
+                            std::cout <<" MIME: "<<theType;
+                            curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
+#                           endif
+                            std::cout<<std::endl;                            
                         }
                         else
                             if(entry.path().extension()==".xml")
                             {
                                 const char* lpath=(entry.path().c_str());
                                 lpath+=plen+1;
-                                std::cout <<"'"<< lpath <<"' is a XML!"<<std::endl;
+                                std::cout <<"'"<< lpath <<"' is a XML!";
 
                                 curr.put(pt::ptree::path_type{lpath, '/'},"!Xml");
+
+#                               ifdef USE_MAGIC
+                                auto theType=file_tester.getFileType( entry.path().string() );
+                                std::cout <<" MIME: "<<theType;
+                                curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
+#                               endif
+                                std::cout<<std::endl;      
                             }
                             else
                             if(entry.path().extension()==".csv")
                             {
                                 const char* lpath=(entry.path().c_str());
                                 lpath+=plen+1;
-                                std::cout <<"'"<< lpath <<"' is a CSV!"<<std::endl;
+                                std::cout <<"'"<< lpath <<"' is a CSV!";
 
                                 curr.put(pt::ptree::path_type{lpath, '/'},"!Csv");
+
+#                               ifdef USE_MAGIC
+                                auto theType=file_tester.getFileType( entry.path().string() );
+                                std::cout <<" MIME: "<<theType;
+                                curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
+#                               endif
+                                std::cout<<std::endl; 
                             }
                             else
                                 if(entry.path().extension()==".txt")
                                 {
                                     const char* lpath=(entry.path().c_str());
                                     lpath+=plen+1;
-                                    std::cout <<"'"<< lpath <<"' is a TXT!"<<std::endl;
+                                    std::cout <<"'"<< lpath <<"' is a TXT!";
 
                                     curr.put(pt::ptree::path_type{lpath, '/'},"!Txt");
+
+#                                   ifdef USE_MAGIC
+                                    auto theType=file_tester.getFileType( entry.path().string() );
+                                    std::cout <<" MIME: "<<theType;
+                                    curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
+#                                   endif
+                                    std::cout<<std::endl; 
                                 }
                                 else
                                     if(allFiles)
@@ -152,15 +229,23 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                                        std::string fpath=entry.path().parent_path().string()
                                                +"/files/_" //XML does not accepted numbers as names of TAGs
                                                +boost::lexical_cast<std::string>(counter);
+
                                        const char* lpath=fpath.c_str();
                                        lpath+=plen+1;
 
                                        std::cout <<"'"<< lpath << "' is a file, type '"<<entry.path().extension()
-                                                 <<"', in directory "<<p.string()<<std::endl;
+                                                 <<"', in directory "<<p.string()<<" ; ";
 
                                        curr.add(pt::ptree::path_type
                                                 { lpath , '/'},
                                                 entry.path().filename().string());
+
+#                                      ifdef USE_MAGIC
+                                       auto theType=file_tester.getFileType( entry.path().string() );
+                                       std::cout <<" MIME: "<<theType;
+                                       curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
+#                                      endif
+                                       std::cout<<std::endl; 
                                     }
 
                 }
