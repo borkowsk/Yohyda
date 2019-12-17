@@ -14,8 +14,10 @@
 // and: https://theboostcpplibraries.com/boost.propertytree
 //
 // Compilation:
-// g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp -lboost_system -lboost_filesystem && ./a.out .
+// g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp -lboost_system -lboost_filesystem && ./a.out ./ -
 // 
+// What about using libmagic ? See: https://github.com/file/file , https://gist.github.com/vivithemage/9489378 TODO !?
+//
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/range/iterator_range.hpp>
@@ -27,7 +29,8 @@
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-bool isHiddenOrDots(const fs::path &p) //https://stackoverflow.com/questions/12735634/how-do-i-ignore-hidden-files-and-files-in-hidden-directories-with-boost-filesy
+bool isHiddenOrDots(const fs::path &p) 
+//https://stackoverflow.com/questions/12735634/how-do-i-ignore-hidden-files-and-files-in-hidden-directories-with-boost-filesy
 {
     std::string name = p.filename().string();
     if(name == ".." ||
@@ -122,7 +125,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                             {
                                std::cout<<entry.path()<<":"<<std::endl;
                                std::string fpath=entry.path().parent_path().string()
-                                       +"/files/_" //xml nie toleruje gołych liczb jako nazw tagów, a to przy tapisie XML będzie tag
+                                       +"/files/_" //XML does not accepted numbers as names of TAGs
                                        +boost::lexical_cast<std::string>(counter);
                                const char* lpath=fpath.c_str();
                                lpath+=plen+1;
@@ -156,7 +159,7 @@ int main(int argc, char *argv[])
     unsigned plen=p.string().length();
     std::cout<<"Path is "<<p<<"["<<plen<<"]"<<std::endl;
 
-    if(argc >= 2 && strcmp(argv[2],"--all")==0)
+    if(argc >= 2 && strcmp(argv[2],"--all")==0) //Error here TODO
         allFiles=true;
 
     if(fs::is_directory(p))
