@@ -1,0 +1,8 @@
+Kod zawarty w tym repozytorium jest wersją rozwojową mogącą zmieniać się kilka razy na dzień.
+Za ewentualne skutki uboczne oraz nieprzydatność do konkretnych zastosowań autor nie odpowiada.
+
+Użycie samego kodu lub ewentualną współpracę należy ustalić z właścicielem kodu pisząc na adres 
+Wojciech Borkowski <fasada.wb@gmail.com>
+
+Każda osoba chętna może bez kontaktu z autorem testować zawarte tu programy przez czas 
+1 miesiąca od momentu pierwszego pobrania.
