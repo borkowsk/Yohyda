@@ -61,24 +61,65 @@ fi
 
 #POSZUKIWANIE SKŁADNIKÓW
 $ECHO $COLOR2 "Szukam niezbędnych składników..." $NORMCO
-CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`; valid
-MAKE=`whereis make | cut --delimiter=' '   -f 2`; valid
-GPP=`whereis g++ | cut --delimiter=' '   -f 2`; valid
+GITIS=`whereis git   | cut --delimiter=' '   -f 2`
+BOOST=`whereis boost | cut --delimiter=' '   -f 2`
+CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`
+MAKE=`whereis make | cut --delimiter=' '   -f 2`
+GPP=`whereis g++ | cut --delimiter=' '   -f 2`
 
 $ECHO $COLOR2 "Przeszukano." $NORMCO
+
+if [ ! -e "$GITIS" ]
+then
+      $ECHO $COLOR1 "Nie widzę GITa. Jakim cudem uruchomiłeś ten skrypt?" $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)\n" $COLOR1\
+                    "sudo apt-get install git" $NORMCO
+      sudo apt-get update
+      sudo apt-get install git
+      valid $COLOR2 "Chyba się nie udało.\n"\
+                    "Musisz to zrobić w sposób właściwy dla twojego systemu."
+      $ECHO $COLOR1 "Możesz uruchomić ten skrypt ponownie" $NORMCO
+      exit 
+else
+      $ECHO $COLOR2 "git znaleziony:$COLOR1 $GITIS" $NORMCO
+fi
+
+if [ ! -e "$BOOST" ]
+then
+      $ECHO $COLOR1 "Biblioteka boost jest konieczna. Zainstaluj ten pakiet." $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)\n" $COLOR1\
+                    "sudo apt-get install libboost-all-dev" $NORMCO
+      sudo apt-get install libboost-all-dev
+      valid $COLOR2 "Chyba się nie udało.\n"\
+                    "Musisz to zrobić w sposób właściwy dla twojego systemu."
+      $ECHO $COLOR1 "Możesz uruchomić ten skrypt ponownie" $NORMCO
+      exit 
+else
+      $ECHO $COLOR2 "boost znaleziony:$COLOR1 $BOOST" $NORMCO
+fi
 
 if [ ! -e "$CMAKE" ]
 then
       $ECHO $COLOR1 "cmake jest konieczny. Zainstaluj ten program." $NORMCO
-      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+      pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)\n" $COLOR1\
+                    "sudo apt-get install cmake" $NORMCO
+      sudo apt-get install cmake
+      valid $COLOR2 "Chyba się nie udało.\n"\
+                    "Musisz to zrobić w sposób właściwy dla twojego systemu."
+      $ECHO $COLOR1 "Możesz uruchomić ten skrypt ponownie" $NORMCO
+      exit       
 else
       $ECHO $COLOR2 "cmake znaleziony:$COLOR1 $CMAKE" $NORMCO
 fi
 
 if [ ! -e "$MAKE" ]
 then
-      $ECHO $COLOR1 "make jest konieczny.  Zainstaluj ten program." $NORMCO
+      $ECHO $COLOR1 "make jest konieczny. Powinien być w każdym systemie linuxowym." $NORMCO
       pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+      sudo apt-get update
+      sudo apt-get install build-essential
+      $ECHO $COLOR1 "Możesz uruchomić ten skrypt ponownie" $NORMCO
+      exit  
 else
       $ECHO $COLOR2 "make znaleziony:$COLOR1 $MAKE" $NORMCO
 fi
@@ -86,15 +127,20 @@ fi
 
 if [ ! -e "$GPP" ]
 then
-      $ECHO $COLOR1 "g++  jest konieczny.  Zainstaluj ten program." $NORMCO
+      $ECHO $COLOR1 "g++  jest konieczny.  Powinien być w każdym systemie linuxowym." $NORMCO
       pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
+      sudo apt-get update
+      sudo apt-get install build-essential
+      sudo apt install g++
+      $ECHO $COLOR1 "Możesz uruchomić ten skrypt ponownie" $NORMCO
+      exit  
 else
       $ECHO $COLOR2 "g++ znaleziony:$COLOR1 $GPP" $NORMCO
 fi
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "AKTUALIZACJA ŹRÓDEŁ..." $NORMCO
-git pull | tee git.log
+$GITIS pull | tee git.log
 valid "Patrz na git.log"
 $ECHO $COLOR2 "WYKONANO" 
 $ECHO $NORMCO
