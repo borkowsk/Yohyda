@@ -14,7 +14,7 @@
 // and: https://theboostcpplibraries.com/boost.propertytree
 //
 // Compilation:
-// g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp -lboost_system -lboost_filesystem && ./a.out ./ -
+// g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp [-libmagic] -lboost_system -lboost_filesystem && ./a.out ./ -
 // 
 // What about using libmagic ? See: https://github.com/file/file , https://gist.github.com/vivithemage/9489378 TODO !?
 //
@@ -57,95 +57,103 @@ bool allFiles=false;
 void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
 {
     static std::string ArchiveSource="";
-    unsigned counter=0;
-
-    for(fs::directory_entry& entry : boost::make_iterator_range( fs::directory_iterator(p), {}))
+    try
     {
-        counter++;
-        if(is_directory(entry) && !isHiddenOrDots(entry.path())  ) //Ale nie ukryte ani specjalne!?
-        {
-            std::cout <<"#"<< entry.path() <<std::endl;
+            unsigned counter=0;
+            auto iterator = boost::make_iterator_range( fs::directory_iterator(p), {});
 
-            if( strncasecmp( entry.path().filename().c_str(),"facebook",8)==0)
+            for(fs::directory_entry& entry : iterator )
             {
-                StrTempVal Tmp(ArchiveSource,"Facebook");
-                list_directory(entry.path(),curr,plen);//REKURENCJA Z USTAWIONYM ArchiveSource
-            }
-            else
-            {
-                list_directory(entry.path(),curr,plen);//REKURENCJA!!!
-            }
-
-        }
-        else
-        if(is_symlink(entry))
-        {
-            std::cout <<"#"<< entry << "-> SYMLINKS ARE NOT FOLLOWED!!!"<<std::endl;
-        }
-        else
-        if(is_regular_file(entry))
-        {
-            if(entry.path().extension()==".json")
-            {
-                const char* lpath=(entry.path().c_str());
-                lpath+=plen+1;
-                std::cout <<"'"<< lpath <<"' is considered as a "<<ArchiveSource<<" JSON!"<<std::endl;
-
-                curr.put(pt::ptree::path_type{lpath, '/'},"!"+ArchiveSource+"Json");
-            }
-            else
-                if(entry.path().extension()==".js") //Maybe JavaScript
+                counter++;
+                if(is_directory(entry) && !isHiddenOrDots(entry.path())  ) //Ale nie ukryte ani specjalne!?
                 {
-                    const char* lpath=(entry.path().c_str());
-                    lpath+=plen+1;
-                    std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!"<<std::endl;
+                    std::cout <<"#"<< entry.path() <<std::endl;
 
-                    curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
+                    if( strncasecmp( entry.path().filename().c_str(),"facebook",8)==0)
+                    {
+                        StrTempVal Tmp(ArchiveSource,"Facebook");
+                        list_directory(entry.path(),curr,plen);//REKURENCJA Z USTAWIONYM ArchiveSource
+                    }
+                    else
+                    {
+                        list_directory(entry.path(),curr,plen);//REKURENCJA!!!
+                    }
+
                 }
                 else
-                    if(entry.path().extension()==".csv")
+                if(is_symlink(entry))
+                {
+                    std::cout <<"#"<< entry << "-> SYMLINKS ARE NOT FOLLOWED!!!"<<std::endl;
+                }
+                else
+                if(is_regular_file(entry))
+                {
+                    if(entry.path().extension()==".json")
                     {
                         const char* lpath=(entry.path().c_str());
                         lpath+=plen+1;
-                        std::cout <<"'"<< lpath <<"' is a CSV!"<<std::endl;
+                        std::cout <<"'"<< lpath <<"' is considered as a "<<ArchiveSource<<" JSON!"<<std::endl;
 
-                        curr.put(pt::ptree::path_type{lpath, '/'},"!Csv");
+                        curr.put(pt::ptree::path_type{lpath, '/'},"!"+ArchiveSource+"Json");
                     }
                     else
-                        if(entry.path().extension()==".txt")
+                        if(entry.path().extension()==".js") //Maybe JavaScript
                         {
                             const char* lpath=(entry.path().c_str());
                             lpath+=plen+1;
-                            std::cout <<"'"<< lpath <<"' is a TXT!"<<std::endl;
+                            std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!"<<std::endl;
 
-                            curr.put(pt::ptree::path_type{lpath, '/'},"!Txt");
+                            curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
                         }
                         else
-                            if(allFiles)
+                            if(entry.path().extension()==".csv")
                             {
-                               std::cout<<entry.path()<<":"<<std::endl;
-                               std::string fpath=entry.path().parent_path().string()
-                                       +"/files/_" //XML does not accepted numbers as names of TAGs
-                                       +boost::lexical_cast<std::string>(counter);
-                               const char* lpath=fpath.c_str();
-                               lpath+=plen+1;
+                                const char* lpath=(entry.path().c_str());
+                                lpath+=plen+1;
+                                std::cout <<"'"<< lpath <<"' is a CSV!"<<std::endl;
 
-                               std::cout <<"'"<< lpath << "' is a file, type '"<<entry.path().extension()
-                                         <<"', in directory "<<p.string()<<std::endl;
-
-                               curr.add(pt::ptree::path_type
-                                        { lpath , '/'},
-                                        entry.path().filename().string());
+                                curr.put(pt::ptree::path_type{lpath, '/'},"!Csv");
                             }
+                            else
+                                if(entry.path().extension()==".txt")
+                                {
+                                    const char* lpath=(entry.path().c_str());
+                                    lpath+=plen+1;
+                                    std::cout <<"'"<< lpath <<"' is a TXT!"<<std::endl;
 
-        }
-        else
-        if(is_other(entry))
-        {
-            std::cout <<"#"<< entry << "?\n";
-        }
-        else
-            ;//std::cout <<"#"<< entry << "???\n";
+                                    curr.put(pt::ptree::path_type{lpath, '/'},"!Txt");
+                                }
+                                else
+                                    if(allFiles)
+                                    {
+                                       std::cout<<entry.path()<<":"<<std::endl;
+                                       std::string fpath=entry.path().parent_path().string()
+                                               +"/files/_" //XML does not accepted numbers as names of TAGs
+                                               +boost::lexical_cast<std::string>(counter);
+                                       const char* lpath=fpath.c_str();
+                                       lpath+=plen+1;
+
+                                       std::cout <<"'"<< lpath << "' is a file, type '"<<entry.path().extension()
+                                                 <<"', in directory "<<p.string()<<std::endl;
+
+                                       curr.add(pt::ptree::path_type
+                                                { lpath , '/'},
+                                                entry.path().filename().string());
+                                    }
+
+                }
+                else
+                if(is_other(entry))
+                {
+                    std::cout <<"#"<< entry << "?\n";
+                }
+                else
+                    ;//std::cout <<"#"<< entry << "???\n";
+            }
+    }
+    catch (const fs::filesystem_error& ex)
+    {
+            std::cerr << ex.what() << " ; Index may be incomplete!" <<std::endl;
     }
 }
 
@@ -154,12 +162,17 @@ int main(int argc, char *argv[])
 {
     pt::ptree top;
     bool flaga=false;
+    std::cout<<"DIRECTORY INDEXER FOR \"fasada\" (see: http://sites.google.com/view/fasada-cpp/ )"<<std::endl;
+    std::cout<<"Number of parameters: "<<argc<<std::endl;
 
-    fs::path p(argc>=1? argv[1] : ".");
+    fs::path p( argc >1 ? argv[1] : ".");
     unsigned plen=p.string().length();
+    if(p.string().rfind('/')==plen-1)
+                plen--;
+
     std::cout<<"Path is "<<p<<"["<<plen<<"]"<<std::endl;
 
-    if(argc >= 2 && strcmp(argv[2],"--all")==0) //Error here TODO
+    if( argc > 2 && strcmp(argv[2],"--all")==0 )
         allFiles=true;
 
     if(fs::is_directory(p))
@@ -172,16 +185,20 @@ int main(int argc, char *argv[])
         catch (const fs::filesystem_error& ex)
         {
             flaga=true;
-            std::cerr << ex.what() << '\n';
+            std::cerr << ex.what() <<std::endl;
         }
         catch (const pt::ptree_error& ex)
         {
             flaga=true;
-            std::cerr << ex.what() << '\n';
+            std::cerr << ex.what() <<std::endl;
         }
-
+        catch ( ... )
+        {
+            flaga=true;
+            std::cerr << "Very unexpected error!" <<std::endl;;
+        }
         if(flaga)
-           std::cerr<<"Because of error index.json not saved.\a\b\a\b"<<std::endl;
+            std::cerr << "Because of serious error index.json not saved.\a\b\a\b" <<std::endl;
         else
             pt::write_json("index.json",top);
 
