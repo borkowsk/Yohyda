@@ -119,6 +119,15 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                             }
                         }
                         else
+                            if(entry.path().extension()==".xml")
+                            {
+                                const char* lpath=(entry.path().c_str());
+                                lpath+=plen+1;
+                                std::cout <<"'"<< lpath <<"' is a XML!"<<std::endl;
+
+                                curr.put(pt::ptree::path_type{lpath, '/'},"!Xml");
+                            }
+                            else
                             if(entry.path().extension()==".csv")
                             {
                                 const char* lpath=(entry.path().c_str());
