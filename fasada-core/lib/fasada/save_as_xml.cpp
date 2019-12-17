@@ -15,6 +15,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 //See: https://www.technical-recipes.com/2014/using-boostproperty_tree/
+//and: https://stackoverflow.com/questions/18875437/writing-more-complex-than-trivial-xml-with-boost-property-tree
 
 namespace fasada
 {
