@@ -13,8 +13,8 @@
 // base on: https://stackoverflow.com/questions/20923456/boost-directory-iterator-example-how-to-list-directory-files-not-recursive
 // and: https://theboostcpplibraries.com/boost.propertytree
 //
-// Compilation:
-// g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp [-libmagic] -lboost_system -lboost_filesystem && ./a.out ./ -
+// Compilation and testing
+// g++ -std=c++11 -Os -Wall -pedantic indexer_main.cpp [-libmagic] -lboost_system -lboost_filesystem && ./a.out ./ [--all]
 // 
 // What about using libmagic ? See: https://github.com/file/file , https://gist.github.com/vivithemage/9489378 TODO !?
 //
@@ -75,6 +75,12 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                         list_directory(entry.path(),curr,plen);//REKURENCJA Z USTAWIONYM ArchiveSource
                     }
                     else
+                    if( strncasecmp( entry.path().filename().c_str(),"twitter",7)==0)
+                    {
+                        StrTempVal Tmp(ArchiveSource,"Twitter");
+                        list_directory(entry.path(),curr,plen);//REKURENCJA Z USTAWIONYM ArchiveSource
+                    }
+                    else
                     {
                         list_directory(entry.path(),curr,plen);//REKURENCJA!!!
                     }
@@ -101,9 +107,16 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                         {
                             const char* lpath=(entry.path().c_str());
                             lpath+=plen+1;
-                            std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!"<<std::endl;
-
-                            curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
+                            
+                            if(ArchiveSource.at(0)=='T' && ArchiveSource=="Twitter" )
+                            {
+                              std::cout <<"'"<< lpath <<"' is considered as a Twitter JSon!"<<std::endl;
+                              curr.put(pt::ptree::path_type{lpath, '/'},"!TwitterJson");
+                            }
+                            else
+                            {
+                              curr.put(pt::ptree::path_type{lpath, '/'},"!JavaScript");
+                            }
                         }
                         else
                             if(entry.path().extension()==".csv")
@@ -162,8 +175,9 @@ int main(int argc, char *argv[])
 {
     pt::ptree top;
     bool flaga=false;
-    std::cout<<"DIRECTORY INDEXER FOR \"fasada\" (see: http://sites.google.com/view/fasada-cpp/ )"<<std::endl;
-    std::cout<<"Number of parameters: "<<argc<<std::endl;
+    std::cout<<"DIRECTORY INDEXER FOR \"fasada\" "
+               "(see: http://sites.google.com/view/fasada-cpp/ )"<<std::endl;
+    //std::cout<<"Number of parameters: "<<argc<<std::endl;
 
     fs::path p( argc >1 ? argv[1] : ".");
     unsigned plen=p.string().length();
@@ -188,6 +202,11 @@ int main(int argc, char *argv[])
             std::cerr << ex.what() <<std::endl;
         }
         catch (const pt::ptree_error& ex)
+        {
+            flaga=true;
+            std::cerr << ex.what() <<std::endl;
+        }
+        catch (const std::exception& ex)
         {
             flaga=true;
             std::cerr << ex.what() <<std::endl;
