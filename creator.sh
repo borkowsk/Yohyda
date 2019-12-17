@@ -19,9 +19,21 @@ $ECHO $NORMCO
 #NARZĘDZIA
 TIMESTAMP=`date --utc +%Y%m%d_%H%M%SZ`
 
-function pause(){
+function pause() {
    $ECHO "$*"
    read -p "?"
+}
+
+
+function valid () {
+if [ $? -eq 0 ]; 
+then
+    echo
+else
+    $ECHO $COLOR1 "Ostatnie polecenie nie udało się! $0 nie będzie kontynuowany." $NORMCO
+    $ECHO $COLOR2 $* $NORMCO
+    exit 
+fi
 }
 
 #KONFIGURACJA FASADY
@@ -49,9 +61,9 @@ fi
 
 #POSZUKIWANIE SKŁADNIKÓW
 $ECHO $COLOR2 "Szukam niezbędnych składników..." $NORMCO
-CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`
-MAKE=`whereis make | cut --delimiter=' '   -f 2`
-GPP=`whereis g++ | cut --delimiter=' '   -f 2`
+CMAKE=`whereis cmake | cut --delimiter=' '   -f 2`; valid
+MAKE=`whereis make | cut --delimiter=' '   -f 2`; valid
+GPP=`whereis g++ | cut --delimiter=' '   -f 2`; valid
 
 $ECHO $COLOR2 "Przeszukano." $NORMCO
 
@@ -71,6 +83,7 @@ else
       $ECHO $COLOR2 "make znaleziony:$COLOR1 $MAKE" $NORMCO
 fi
 
+
 if [ ! -e "$GPP" ]
 then
       $ECHO $COLOR1 "g++  jest konieczny.  Zainstaluj ten program." $NORMCO
@@ -82,6 +95,7 @@ $ECHO $NORMCO
 
 $ECHO $COLOR2 "AKTUALIZACJA ŹRÓDEŁ..." $NORMCO
 git pull | tee git.log
+valid "Patrz na git.log"
 $ECHO $COLOR2 "WYKONANO" 
 $ECHO $NORMCO
 
@@ -93,6 +107,7 @@ rm Makefile
 $ECHO $COLOR1
 CMAKEDEFS="-DDISTRIB_ID:STRING=$DISTRIB_ID -DDISTRIB_RELEASE:INTERNAL=$DISTRIB_RELEASE"
 $CMAKE . $CMAKEDEFS #| tee cmake.log
+valid
 $ECHO $NORMCO
 
 if [ ! -e Makefile ]
@@ -102,6 +117,7 @@ then
 else
       $ECHO $COLOR2 "BUDOWANIE PROJEKTU ZA POMOCĄ $MAKE" $NORMCO
       $MAKE #| tee make.log
+      valid "Nieudana kompilacja!"
 fi
 
 if [ ! -e treeserver ]
@@ -128,12 +144,12 @@ then
 fi
 
 $ECHO $COLOR2 "POSZUKIWANIE I AKTUALIZACJA DANYCH Z PORTALI SPOŁECZNOŚCIOWYCH" $NORMCO
-#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 
 pushd $PRIVATEDIR
 $ECHO
 $ECHO $COLOR2 "LISTA ARCHIWÓW W KATALOGU" $PRIVATEDIR $NORMCO
-ls -lt *.zip
+ls -lt *.zip ; valid
 ZIPS=`ls -t *.zip`
 $ECHO $COLOR2 "DO SPRAWDZENIA:" $COLOR1 $ZIPS
 $ECHO $NORMCO
@@ -148,10 +164,11 @@ do
       then
 	$ECHO $COLOR2 "\t" "TWORZĘ KATALOG" $COLOR1 $DIRNAME $NORMCO
 	mkdir $DIRNAME
+        valid
       fi
 
       $ECHO "\t" "ROZPAKOWYWANIE: $COLOR1 unzip -u $file -d $DIRNAME $NORMCO"
-      unzip -u $file -d $DIRNAME
+      unzip -u $file -d $DIRNAME ; valid
       $ECHO $COLOR2 "\t" "ROZPAKOWYWANIE ZAKOŃCZONE"
       $ECHO $NORMCO
 done
@@ -174,18 +191,18 @@ fi
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "INDEKSOWANIE ZAWARTOŚCI KATALOGU" $PRIVATEDIR $NORMCO
-#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 pwd
 $ECHO $COLOR2
 $BINDIR/indexer "." $INDEXPAR > indexer.log #| grep -v "#"  #$INDEXPAR may be --all, means ALL FILES!!!
+valid "Patrz na indexer.log"
 $ECHO $COLOR1 "WYKONANO." $COLOR2 "Dokładna lista normalnych działań w pliku" $COLOR1 "indexer.log"
 $ECHO $NORMCO
 
 popd
 
-
 $ECHO $COLOR2 "POSZUKIWANIE I INDEKSOWANIE WYKONANE" 
-pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 $ECHO $NORMCO
 
 SKIN="$PRIVATEDIR/_skin/"
@@ -194,11 +211,12 @@ then
   $ECHO $COLOR2 "TWORZĘ KATALOG $COLOR1 $SKIN $COLOR2 i JEGO OBOWIĄZKOWĄ ZAWARTOŚĆ" $NORMCO
   mkdir "$SKIN"
   cp fasada-core/lib/fasada/_skin_template/* "$SKIN"
+  valid
 fi
 $ECHO $NORMCO
 
 $ECHO $COLOR2 "TESTOWE ODPALENIE SERWISU" $COLOR1
-pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 
 if [ -e "output.fac" ]
 then
@@ -207,23 +225,26 @@ then
 fi
 
 $ECHO $COLOR2 "URUCHOMIENIE SERWISU..." $NORMCO
-#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $COLOR1
+#pause $COLOR2 "KONTYNUOWAĆ? (ENTER lub Ctrl-C żeby przerwać)" $NORMCO
 $ECHO
 indexpath=`realpath "$PRIVATEDIR/index.json"`
 
 $ECHO $COLOR1 "treeserver" "$COLOR2$indexpath" "--force" $NORMCO
 $BINDIR/treeserver $indexpath --force &
+valid
 sleep 5
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
 
 $ECHO
 $ECHO $COLOR1 "wwwserver localhost $COLOR2 $PRIVATEPORT $PRIVATEDIR" $NORMCO
-$BINDIR/wwwserver localhost $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
+$BINDIR/wwwserver "localhost" $PRIVATEPORT $PRIVATEDIR > wwwserver.log &
+valid "Patrz na wwwserver.log"
 sleep 2
 pause $COLOR2 "Naciśnij ENTER" $NORMCO
 
 $ECHO $COLOR1 $browser "http:localhost:$PRIVATEPORT/?ls&html&long" $NORMCO
 $browser "http:localhost:$PRIVATEPORT/?ls&html&long"
+valid
 sleep 1
 $ECHO
 pause $COLOR2 "Nacisniej ENTER gdy skończysz testowanie" $NORMCO
@@ -253,11 +274,12 @@ EOF
 
 cat > stop.sh <<EOF 
 #!/bin/bash
-#FINISHING FASADA - WHEN WWWSERVER STOPS, ALL ATHERS PARTS ALSO EXIT
+#FINISHING FASADA - WHEN WWWSERVER STOPS, ALL OTHERS PARTS ALSO EXIT
 $browser "http:localhost:$PRIVATEPORT/!!!!"
 EOF
 
 chmod +x *.sh
+valid
 
 wait
 $ECHO $COLOR1 "NIE MAM JUŻ NIC WIĘCEJ DO ZROBIENIA" $NORMCO
