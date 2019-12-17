@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "tree_attributes"
 #include "fasada.hpp"
 #include "tree_processor.h"
 #include "tree/ptree_foreach.hpp"

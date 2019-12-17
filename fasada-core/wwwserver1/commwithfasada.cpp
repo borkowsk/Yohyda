@@ -17,7 +17,7 @@
 /// This version work correctly with txt & html input from fasada and most type of common
 /// file types used in WWW communication.
 ///
-
+#define UNIT_IDENTIFIER "wwwserver-for-fasada"
 #include "request.hpp"
 #include "reply.hpp"
 #include "tree_types.h"

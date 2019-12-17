@@ -11,7 +11,7 @@
 //Base class for all json data processors working inside
 //local server of "fasada" resources stored
 //
-
+#define UNIT_IDENTIFIER "Core_units"
 #include "fasada.hpp"
 #include "tree_processor.h"
 #include <boost/lexical_cast.hpp>
@@ -222,7 +222,7 @@ std::string  tree_processor::getHtmlClosure(const std::string& _unit_comp)
 {
     std::string Footer="\n<HR class=\"footer_hr\"><P class=\"footer_p\">"
                        "<a href=\"https://sites.google.com/view/fasada-cpp/\" target=\"fasada_info_page\" ><b>Fasada</b></a> version ";
-    Footer+=_version_str+std::string(" &#x26C2; Unit ")+( _unit_comp.length()!=0?_unit_comp:std::string("compiled: ")+_compiled )+"</P>";
+    Footer+=_version_str+std::string(" &#x26C2; ")+( _unit_comp.length()!=0? _unit_comp : _compiled )+"</P>";
     Footer+=HTMLFooter;// &ofcir; ?
     return Footer;
 }

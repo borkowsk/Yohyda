@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "processor_find"
 #include "fasada.hpp"
 #include "processor_find.h"
 #include "tree/ptree_foreach.hpp"

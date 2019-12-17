@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "loader_txt"
 #include "fasada.hpp"
 #include "loader_txt.h"
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c

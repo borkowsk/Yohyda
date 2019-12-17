@@ -9,6 +9,7 @@
 ///
 
 //Procesory danych json w postaci STATYCZNYCH zmiennych lokalnych autorejestrowanych w konstruktorach
+#define UNIT_IDENTIFIER "register_processors"
 #include "fasada.hpp"
 #include "processor_get.h"
 #include "processor_set.h"

@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "treeedit"
 //Local tree console editor for "fasada"
 //
 #include "memory_pool.h"

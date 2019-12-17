@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "save_as_json"
 #include "fasada.hpp"
 #include "save_as_json.h"
 #include "saver_processor.h"

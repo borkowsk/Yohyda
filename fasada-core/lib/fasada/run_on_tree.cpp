@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "run_on_tree"
 #include "fasada.hpp"
 #include "run_on_tree.h"
 #include <boost/lexical_cast.hpp>

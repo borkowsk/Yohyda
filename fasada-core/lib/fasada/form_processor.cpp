@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "form_processor"
 #include "fasada.hpp"
 #include "form_processor.h"
 #include <boost/lexical_cast.hpp>

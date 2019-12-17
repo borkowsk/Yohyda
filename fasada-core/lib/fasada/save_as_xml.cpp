@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "save_as_xml"
 #include "fasada.hpp"
 #include "save_as_xml.h"
 #include <string>

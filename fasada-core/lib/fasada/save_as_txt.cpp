@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "save_as_txt"
 #include "fasada.hpp"
 #include "save_as_txt.h"
 #include <boost/lexical_cast.hpp>

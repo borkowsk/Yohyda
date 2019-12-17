@@ -22,11 +22,28 @@
 
 // SEE ALSO: https://www.mongodb.com/
 
+#define __TO_STRING_HELPER(y) #y
+#define STRING_FROM_DEFINE(x) __TO_STRING_HELPER(x)
+
+#ifndef DISTRIB_ID
+#error "System distribution indentifier DISTRIB_ID not defined!"
+#endif
+
+#ifndef DISTRIB_RELEASE
+#error "System distribution release number DISTRIB_RELEASE not defined!"
+#endif
+
+#ifndef UNIT_IDENTIFIER
+#define UNIT_IDENTIFIER "Unit" __FILE__
+#endif
+
 namespace fasada
 {
+extern const char* _distribId;//= STRING_FROM_DEFINE(DISTRIB_ID) ;
+extern const float _distribRe;//= DISTRIB_RELEASE ;
 extern const float _version;//=FASADA_VERSION;
 extern const char* _version_str;//=FASADA_VERSION_STR;
-static const char* _compiled="compiled " __DATE__ ", " __TIME__ ";";//Diferent for any compilation unit
+static const char* _compiled= UNIT_IDENTIFIER " compiled for " STRING_FROM_DEFINE(DISTRIB_ID) " " STRING_FROM_DEFINE(DISTRIB_RELEASE) " "  __DATE__ ", " __TIME__ ";";//Diferent for any compilation unit
 
 void init(bool WithWriting);//INITIALIZE THE FASADA LIBRARY
 void register_processors(bool WithWriters); //Function for registering default set of tree_processors

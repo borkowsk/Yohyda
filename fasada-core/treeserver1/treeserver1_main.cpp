@@ -17,7 +17,7 @@
 //      https://www.boost.org/doc/libs/1_71_0/doc/html/boost/interprocess/message_queue_t.html
 //
 // Treeserver, which loads the json file in a ptree and serve it's content
-
+#define UNIT_IDENTIFIER "treeserver"
 #include "facebookspec.h"
 #include "fasada.hpp"
 #include "memory_pool.h"

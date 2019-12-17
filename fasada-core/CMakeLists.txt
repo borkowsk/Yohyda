@@ -93,14 +93,23 @@ add_library(facebookspec
     "${SRCPATH}/lib/facebookspec/facebookspec.cpp"
     "${SRCPATH}/lib/facebookspec/loader_facebookjson.cpp"
     )
-    
-add_definitions( "-DDISTRIB_ID=${DISTRIB_ID} -DDISTRIB_RELEASE=${DISTRIB_RELEASE}" )
+
+if(NOT DEFINED DISTRIB_ID )
+    set(DISTRIB_ID "GenericUnix" )
+endif(NOT DEFINED DISTRIB_ID)
+
+if(NOT DEFINED DISTRIB_RELEASE )
+    set(DISTRIB_RELEASE 0.01 )
+endif(NOT DEFINED DISTRIB_RELEASE)
+
+add_definitions( "-DDISTRIB_ID=${DISTRIB_ID}"  "-DDISTRIB_RELEASE=${DISTRIB_RELEASE}" )
+target_compile_options( fasada     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( treeserver PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( treeedit   PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( indexer    PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( wwwserver  PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
-target_compile_options( fasada     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
 target_compile_options( facebookspec     PRIVATE "${CMAKE_CXX_FLAGS}" "-std=c++11" )
+
 
 target_link_libraries(treeserver LINK_PUBLIC
     fasada

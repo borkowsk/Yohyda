@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "processor_dfs"
 #include "fasada.hpp"
 #include "processor_dfs.h"
 #include "tree/ptree_foreach.hpp"

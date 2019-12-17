@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "view_csv"
 #include "fasada.hpp"
 #include "view_csv.h"
 #include <boost/lexical_cast.hpp>

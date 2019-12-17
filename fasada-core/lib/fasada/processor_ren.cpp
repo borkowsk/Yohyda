@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "processor_ren"
 #include "fasada.hpp"
 #include "processor_ren.h"
 #include <boost/property_tree/ptree.hpp>

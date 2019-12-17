@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "processor_info"
 #include "fasada.hpp"
 #include "processor_info.h"
 #include <boost/lexical_cast.hpp>

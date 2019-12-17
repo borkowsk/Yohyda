@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "processor_del"
 #include "fasada.hpp"
 #include "processor_del.h"
 #include <boost/lexical_cast.hpp>

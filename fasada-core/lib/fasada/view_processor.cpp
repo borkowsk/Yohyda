@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "view_processor"
 #include "fasada.hpp"
 #include "view_processor.h"
 #include <boost/lexical_cast.hpp>

@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "processor_check_file"
 #include "processor_check_file.h"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>

@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "saver_processor"
 #include "fasada.hpp"
 #include "saver_processor.h"
 #include <boost/lexical_cast.hpp>

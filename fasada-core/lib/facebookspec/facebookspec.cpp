@@ -7,7 +7,7 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+#define UNIT_IDENTIFIER "Facebook_units"
 #include "facebookspec.h"
 #include "loader_facebookjson.h"
 #include "tree/ptree_foreach.hpp"
