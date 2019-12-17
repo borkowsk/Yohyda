@@ -2,14 +2,12 @@
 
 Project FASADA version 0.01 (top level README)
 ==============================================================================
+FASADA to napisany w C++ zestaw bibliotek i aplikacji (mini-framework) umożliwiający komunikację na wzór WWW pomiędzy przystosowanymi programami, a za pośrednictwem własnego mini-serwera WWW także z dowolnymi programami rozumiejącymi protokół HTTP, przynajmniej w sieci lokalnej.
 
-FASADA to system bibliotek i aplikacji umożliwiający komunikację na wzór WWW pomiędzy przystosowanymi programami, a za pośrednictwem własnego mini-serwera WWW także z dowolnymi programami rozumiejącymi protokoł HTTP, przynajmniej w sieci lokalnej.
+Także głównym interfejsem użytkownika jest przeglądarka WWW.
 
-Także głównym interfejsem użytkownika jest przegladarka WWW.
-
-Użycie standardowych formatów plików, takich jak TXT,JSON,HTML,CSV i przeglądarki WWW uniezależnia aplikacje używające FASADY od specyfiki lokalnego systemu.
-
-Daje to różnorodne możliwości twórcom prostych aplikacji użytkowych i rozrywkowych. 
+Użycie standardowych formatów plików, takich jak  JSON, XML, CSV, TXT i przeglądarki jako interfejsu uniezależnia aplikacje używające tego frameworku od specyfiki lokalnego systemu operacyjnego, a jednocześnie pozwala zachować wydajność języka C++.
+Daje to różnorodne możliwości twórcom prostych aplikacji użytkowych i rozrywkowych.
 
 Pierwszym zastosowaniem Fasady jest system "yo-hy-da"* umożliwiający przeglądanie zasobów jakie użytkownik wygenerował w takich sieciach społecznościowych jak Facebook, Twitter, LinkedIn i Google+, które sieci te zgodnie z wymaganiami prawa udostępniają, ale w formie praktycznie bezużytecznej dla "zwykłego zjadacza bitów".
 
@@ -18,6 +16,7 @@ Innym, zaplanowanym, przykładem jest prosta gra WWW, działająca w sieci lokal
 Jeszcze inna możliwość to właczenie interfejsu FASADY (poprzez bibliotekę) programom symulacyjnym i obliczeniowym, dzięki czemu kontrola ich działania i podgląd wyników będzie możliwy bezpośrednio przez przeglądarkę WWW, bez konieczności konfigurowania.
 
 Po za tym aplikacje oparte o FASADĘ mogą umożliwiać, a przynajmniej ułatwiać, użytkownikowi nie znającemu się tworzeniu kontentu WWW aktywne korzystanie z takiej możlowości w sieci lokalnej, a także, pośrednio, globalnej.
+
 
 *UWAGA - BOOST!*
 
@@ -29,7 +28,8 @@ sudo apt-get install libboost-all-dev
 
 https://www.linuxquestions.org/questions/programming-9/git-my-remote-repository-moved-how-do-i-tell-my-local-repo-to-use-the-new-one-781785/
 
-TYMCZASOWA WITRYNA PROJEKTU:
+*TYMCZASOWA WITRYNA PROJEKTU:*
+
 https://sites.google.com/view/fasada-cpp/
 
 * yo(ur)-hy(per)-da(ta)
