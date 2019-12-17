@@ -14,6 +14,8 @@
 #include <boost/regex.hpp> //https://bravenewmethod.com/2016/09/17/quick-and-robust-c-csv-reader-with-boost/
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <boost/property_tree/ptree.hpp>
+// See: https://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
+// or : https://stackoverflow.com/questions/18365463/how-to-parse-csv-using-boostspirit
 
 namespace fasada
 {
