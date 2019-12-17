@@ -37,6 +37,7 @@ using std::stringstream;
 namespace fasada
 {
     //For decoding/encoding see: https://stackoverflow.com/questions/154536/encode-decode-urls-in-c
+    //See also: https://wendys.tistory.com/91
     val_string urlEncode(const val_string& str)
     {
         string new_str = "";
