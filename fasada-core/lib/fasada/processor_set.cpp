@@ -13,6 +13,10 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 
+//We need special version for edition of big fields using the JavaScript editor & POST METHOD
+//See here: https://smartbear.com/blog/develop/five-free-javascript-libraries-to-add-text-editing/
+
+
 namespace fasada
 {
 
