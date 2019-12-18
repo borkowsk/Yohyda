@@ -15,10 +15,18 @@ Założenia systemu (nazwa robocza projektu: "Facies")
 6) OTWARTE OCENY - oceny użytkowników dotyczące innych użytkowników są publiczną informacją, z której każdy może korzystać, ale nie musi. Może też podobnie jak w przypadku innych komunikatów w pełni określić swoje preferencje - ocenom jakich grup ufa i bierze je pod uwagę, a które ignoruje.
 7) NIEOGRANICZONY PRZEPŁYW ZASOBÓW SPOŁECZNOŚCIOWYCH - przynajmniej jednokierunkowe spięcie systemu z istniejącymi portalami społecznościowymi - to co użytkownik pisze na Facebooku, Twitterze, LinkedIn, ResearchGate etc. może być także automatycznie udostępniane za pośrednictwem systemu. Także komentarze w tych systemach są śledzone i linkowane do postu. Zapis postów w jednolitym otwartym kodzie XML (albo jako JSON) może z czasem służyć wypromowaniu standardu wymiany informacji między portalami społecznościowymi co pozwoli na włączenie starszych portali społecznościowych do systemu na równych zasadach. 
 
-LINKI SPOŁECZNOŚCIOWE
+Być może wymagania te spełnia nowy system społecznościowy związany ze społecznością blockchainu:
+
+https://pocketnet.app/about
+
+
+WAŻNE LINKI
 ---------------------
 
 Link do grupy na Facebooku: https://www.facebook.com/groups/141043869907657/permalink/141998329812211/
+
+Link do strony projektu Fasada, który byłby szkieletem technologicznym dla implementacji Facies: https://sites.google.com/view/fasada-cpp/
+
 Link do "społeczności" na G+: https://plus.google.com/communities/107225354537883894305 (obsolete)
 
 
