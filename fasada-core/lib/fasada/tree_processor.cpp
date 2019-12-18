@@ -413,63 +413,13 @@ std::string tree_processor::preprocessIntoHtml(const std::string& str)
 }
 
 //Replacing ${variable_name} with variables from request
-//First working version - not best optimised ;-)
-//See:
-//https://stackoverflow.com/questions/53849/how-do-i-tokenize-a-string-in-c
-//https://www.geeksforgeeks.org/tokenizing-a-string-cpp/
 std::string tree_processor::replace_all_variables(std::string template_version,URLparser& request)
 {
-    std::string fullpath=request.getFullPath();//generuje też zmienną "fullpath" w request'cie
-    boost::replace_all(template_version,"${proc}",procName);//Tego nie ma w request, przynajmniej na razie
-    std::string output;
-    //boost::replace_all(template_version,"${fullpath}",fullpath);
-    //MODYFIKACJE ZMIENNYMI Z REQUEST
-    auto begin=(template_version.npos,0);
-    auto index=template_version.npos;
-    while((index=template_version.find('$',begin))!=template_version.npos)
-    {
-        std::cout<<template_version.substr(begin,index-begin)<<" ###1"<<std::endl;
-        output+=template_version.substr(begin,index-begin);
+    request.getFullPath();//generuje też "fullpath" w request'cie jak jej nie bylo
+    request["proc"]=procName;//Tego nie ma w request, albo moze byc nieprawidlowe
 
-        std::cout<<template_version.at(index)<<" ###2"<<std::endl;
-
-        index++;
-        if(template_version.at(index)=='{')//Próbujemy podstawiać
-        {
-            std::cout<<template_version.at(index)<<" ###3"<<std::endl;
-
-            begin=index+1;
-            index=template_version.find('}',begin);
-            if(index!=template_version.npos)
-            {
-                auto varname=template_version.substr(begin,index-begin);
-                std::cout<<varname<<"   =   "<<request[varname]<<" ###4"<<std::endl;
-                output+=request[varname];
-
-                std::cout<<template_version.at(index)<<" ###5"<<std::endl;
-                begin=index+1;
-                index=template_version.npos;//Bo może już wyjść
-            }
-            else //Wadliwa zmienna, ale nie chcemy całkiem przerywać
-            {
-                std::cerr<<"INVALID VARIABLE AT "<<begin<<" ###6"<<std::endl;//begin zostaje takie
-                index=template_version.npos;//Bo może już wyjść
-            }
-        }
-        else //Takich zmiennych nie podstawiamy
-        {
-            output+='$';
-            begin=index;
-            index=template_version.npos;//Bo może już wyjść
-        }
-    }
-    std::cout<<template_version.substr(begin,index-begin)<<" ###7"<<std::endl;
-    output+=template_version.substr(begin,index-begin);
-
-    //Temporary...
-    //boost::replace_all(template_version,"${targetpath}",request["targetpath"]);
-    //boost::replace_all(template_version,"${size_of_targetpath}",request["size_of_targetpath"]);
-    return output;//Już zmodyfikowana
+    //MODYFIKACJE ZMIENNYMI Z REQUEST I ODDANIE
+    return substitute_variables(template_version,request);//Już zmodyfikowana
 }
 
 }//namespace "fasada"

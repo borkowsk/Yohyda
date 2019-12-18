@@ -245,4 +245,72 @@ namespace fasada
 
         }
     }
+
+    //Make string from pattern substituting variables of form ${var_namke} from map.
+    //Of course ${} are removed. NESTED calls not alloved!!!
+    val_string& substitute_variables(const val_string& pattern,const std::map<key_string,val_string>& variables)
+    {
+        bool debug=variables.find("subst_debug")!=variables.end();
+
+        thread_local static val_string output;//Because of MULTI THREATING. But nested calls not alloved!!!
+        auto begin=(pattern.npos,0);
+        auto index=pattern.npos;
+        output="";//Czyszczenie bo smiecie z poprzednich uzyc są!
+
+        while((index=pattern.find('$',begin))!=pattern.npos)
+        {
+            if(debug) std::cout<<pattern.substr(begin,index-begin)<<" ###1"<<std::endl;
+            output+=pattern.substr(begin,index-begin);
+
+            if(debug) std::cout<<pattern.at(index)<<" ###2"<<std::endl;
+
+            index++;
+            if(pattern.at(index)=='{')//Próbujemy podstawiać
+            {
+                if(debug) std::cout<<pattern.at(index)<<" ###3"<<std::endl;
+
+                begin=index+1;
+                index=pattern.find('}',begin);
+                if(index!=pattern.npos)
+                {
+                    auto varname=pattern.substr(begin,index-begin);
+                    auto varref = variables.find(varname);
+
+                    if(varref!=variables.end())
+                    {
+                      if(debug) std::cout<<varname<<"   =   "<< varref->second <<" ###4"<<std::endl;
+                      output+=varref->second;
+
+                      if(debug) std::cout<<pattern.at(index)<<" ###5"<<std::endl;
+                      begin=index+1;
+                      index=pattern.npos;//Bo może już wyjść
+                    }
+                    else //Brakujaca zmienna
+                    {
+                        std::cerr<<"NOT FOUND ERROR for "<<varname<<"!  ###4"<<std::endl;
+                        output+="(NOT FOUND ERROR for "+varname+")";
+                        begin=index+1;
+                        index=pattern.npos;//Bo może już wyjść
+                    }
+                }
+                else //Wadliwa zmienna, ale nie chcemy całkiem przerywać
+                {
+                    std::cerr<<"INVALID VARIABLE AT "<<begin<<" ###6"<<std::endl;//begin zostaje takie
+                    index=pattern.npos;//Bo może już w ogóle wyjść
+                }
+            }
+            else //Takich zmiennych nie podstawiamy
+            {
+                output+='$';
+                begin=index;
+                index=pattern.npos;//Bo może już wyjść
+            }
+        }
+
+        if(debug) std::cout<<pattern.substr(begin,index-begin)<<" ###7"<<std::endl;
+        output+=pattern.substr(begin,index-begin);
+
+        return output;
+    }
+
 }
