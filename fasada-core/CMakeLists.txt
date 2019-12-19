@@ -56,6 +56,7 @@ add_executable( wwwserver
 add_library(fasada
     #base
     "${SRCPATH}/lib/fasada/fasada.cpp"
+    "${SRCPATH}/lib/fasada/format_toolbox.cpp"
     "${SRCPATH}/lib/fasada/tree_processor.cpp"
     "${SRCPATH}/lib/fasada/tree_attributes.cpp"
     "${SRCPATH}/lib/fasada/form_processor.cpp"
