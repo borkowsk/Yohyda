@@ -1,9 +1,11 @@
 /// This file is a part of Fasada toolbox
 /// ---------------------------------------------------
 /// @author Wojciech Borkowski <wborkowsk@gmail.com>
+/// @footnote Technical mail: <fasada.wb@gmail.com>
 /// @copyright 2019
-/// 
-/// See licence file!
+/// @version 0.01
+///
+///  See CURRENT licence file!
 ///
 
 #ifndef TREE_PROCESSOR_H
@@ -13,14 +15,11 @@
 #  pragma once
 #endif
 
-#include "fasada.hpp"
+#include "format_toolbox.h"
 #include "tree_types.h"
-#include "http/URLparser.hpp"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/exceptions.hpp>
 #include <string>
-
-namespace pt = boost::property_tree;
 
 namespace fasada
 {
@@ -35,24 +34,14 @@ namespace fasada
         public:
             tree_processor_exception(std::string msg):pt::ptree_error(msg)
             {}
-    };
 
-    /// Each node may have special subnodes called properties saved under xmlattr subtree
-    /// Most important properties is "_source", "loader", "viewer", "saver", "alternative_savers", "oth_actions".
-    /// Standard attributes are presented in HTML by _implement_attributes() method
-    void insert_property(pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& PropertyValue);
-    const std::string& get_property(const pt::ptree& Node,const std::string& FasadaPropertyName,const std::string& WnenNotPresent);
+            ~tree_processor_exception() throw() {}
+    };
 
     /// This class ...
     /// ...
-    class tree_processor
+    class tree_processor : public format_toolbox //
     {
-    protected://Theese below should be changed into configurable dictionary TODO
-        static std::string HTMLHeader;//Full HEAD of HTML page
-        static std::string HTMLFooter;//Compatible footer of HTML page
-        static std::string HTMLAction;//HTML contruction for action link
-        static std::string HTMLBack;  //"UP","RETURN","WRÓĆ" of "<---"
-
     public: //SUBTYPES
         enum Category {CONTROL=4,WRITER_READER=3,WRITER=2,READER=1};
 
@@ -76,6 +65,9 @@ namespace fasada
     virtual
         void _implement_attributes(ShmString& o,const pt::ptree& top,URLparser& request,std::string nameOfTop="");
 
+    virtual//Replacing ${variable_name} with variables from request introducing procName as ${proc}
+        std::string replace_all_variables(std::string template_version,URLparser& request);
+
     public://Construction, destruction etc.
         tree_processor(Category cat,const char* name);
     virtual
@@ -96,27 +88,6 @@ namespace fasada
         void read_tree(ShmString& o,const pt::ptree& top,URLparser& request);//may throw TODO readFromTree?
         //Does some work, calls _implement_read, cleans, adds MEM_END & returns
         void write_tree(ShmString& o,pt::ptree& top,URLparser& request);//may throw TODO writeToTree?
-    virtual//Replacing ${variable_name} with variables from request
-        std::string replace_all_variables(std::string template_version,URLparser& request);
-    protected: //Tools for childrens - theese below schould be changed into "mixin" TODO!!! Expected large changes!!!
-    static
-        std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
-    static
-        std::string  getHtmlClosure(const std::string& _unit_comp="");//Compatible set of tags for end of html document
-    static
-        std::string  getActionLink(const std::string& Href,const std::string& Content,const std::string& Title="");
-    static
-        std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
-    static
-        std::string  getNodePanel(const pt::ptree& node,const std::string& fullpath,URLparser& request);
-    static
-        std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags & unicode chars
-    static
-        bool isLink(std::string str);//Checks for whole str looks like URL
-    static
-        bool isLocalFile(std::string str);//Checks for whole str looks like filename
-    static
-        unsigned int countCharacters(std::string str,char c);//Count \n / . or other importatnt characters in the string str
 };
 
 }//namespace "fasada"
