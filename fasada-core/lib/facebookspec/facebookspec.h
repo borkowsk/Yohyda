@@ -19,7 +19,12 @@
 namespace facebook
 {
 
+namespace pt = boost::property_tree;
+
+//Call all recoders needed for JSON from facebook
 void call_recoders(pt::ptree& start,bool PL);
+
+//Standard library initialisation for fasada
 void register_processors();
 
 }
