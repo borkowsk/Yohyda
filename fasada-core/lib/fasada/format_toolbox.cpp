@@ -7,7 +7,8 @@
 ///
 ///  See CURRENT licence file!
 ///
-
+/// See also: https://en.cppreference.com/w/cpp/preprocessor/replace
+///
 #define UNIT_IDENTIFIER "Format_toolbox"
 #include "fasada.hpp"
 #include "format_toolbox.h"
@@ -15,12 +16,130 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <boost/regex.hpp>
-///See: https://en.cppreference.com/w/cpp/preprocessor/replace
-///
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <iostream>
+
+
 namespace fasada
 {
 
 format_toolbox::format_toolbox(){}
+
+/// Informative functions
+/// //////////////////////////////////////////////////////////////////////
+
+/// How many 'c' characters in a string?
+unsigned int format_toolbox::countCharacters(std::string str,char c)
+//https://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string-in-c
+{
+int count = 0, size=str.size();
+
+for (int i = 0; i < size; i++)
+  if (str[i] == c)
+        count++;
+
+return count;
+}
+
+/// Is protocol in allowed set of protocols?
+std::string allowedFileProtocols= "http: https: ftp: ftps: ";
+
+bool format_toolbox::isLink(const std::string& str)
+{
+    auto pos=str.find(":");
+
+    //std::cerr<<"'"<<str<<"' "<<pos<<std::endl;
+
+    if(pos==str.npos || pos>7 || pos<2 )
+        return false;
+
+    auto prot=str.substr(0,pos+1)+" ";
+
+    //std::cerr<<"'"<<str<<"' "<<pos<<"   "<<prot<<std::endl;
+
+    if(allowedFileProtocols.find(prot,0)!=allowedFileProtocols.npos) // Extension in string of allowed.
+    {
+        //std::cerr<<"'"<<prot<<"' -> '"<<str<<"' "<<std::endl;
+        return true;
+    }
+/*
+    return str.find("http:",0)==0 || str.find("https:",0)==0
+            || str.find("ftp:",0)==0 || str.find("ftps:",0)==0
+            ;//More? mail? what else? TODO
+*/
+    return false;
+}
+
+/*
+std::vector<std::string> allowedFileTypes{".html",".htm",".css",".js"
+                                         ,".json",".xml",".csv",".txt",".log"
+                                         ,".jpeg",".jpg",".png",".gif"
+                                         ,".mpeg",".mp4",".mp3",".mov"
+                                         ,".md",".sh",".ls",".cpp",".hpp",".h"
+                                         };
+*/
+
+/// Is en extension from a set of allowed file types?
+std::string allowedFileTypes=   ".html .htm .css .js"
+                                ".json .xml .csv .txt .log"
+                                ".jpeg .jpg .png .gif"
+                                ".mpeg .mp4 .mp3 .mov"
+                                ".md .sh .ls .cpp .hpp .h";
+
+inline
+bool isExtAllowed(const std::string& str)
+{
+    auto pos=str.rfind(".");
+
+    if(pos!=str.npos)
+    {
+        auto ext=str.substr(pos)+" ";
+        if(ext.size()>7)//Extensions are not longer than 5 characters
+            return false;
+
+//        std::cerr<<ext<<"; ";
+        if(allowedFileTypes.find(ext,0)!=allowedFileTypes.npos) // Extension in string of allowed.
+            return true;
+/*
+        if (std::find(allowedFileTypes.begin(), allowedFileTypes.end(), ext) != allowedFileTypes.end())
+        {
+             return true;// Element in vector.
+        }
+*/
+    }
+    else return false;
+}
+
+/// Is a path to a local allowed type file?
+bool format_toolbox::isLocalFile(const std::string& str)
+{
+    return  str.length() >4
+            && !isLink(str)
+            && isExtAllowed(str);
+            /*
+            && str.find("http:",0)==str.npos && str.find("https:",0)==str.npos
+            && str.find("ftp:",0)==str.npos && str.find("ftps:",0)==str.npos
+            &&
+            (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
+            || str.rfind(".css", len-4)==len-4 || str.rfind(".js", len-3)==len-3
+            || str.rfind(".json",len-5)==len-5 || str.rfind(".md", len-3)==len-3
+            || str.rfind(".txt", len-4)==len-4 || str.rfind(".sh", len-3)==len-3
+            || str.rfind(".log", len-4)==len-4 || str.rfind(".ls", len-3)==len-3
+            || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
+            || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
+            || str.rfind(".mpeg",len-5)==len-5 || str.rfind(".mp4",len-4)==len-4
+            || str.rfind(".mov" ,len-4)==len-4
+            || str.rfind(".cpp", len-4)==len-4 || str.rfind(".h", len-2)==len-2 ||  str.rfind(".hpp", len-4)==len-4
+            )
+            ;// TODO - dictionary of less popular file extensions
+            */
+}
+
+
+/// HTML construction functions
+/// ////////////////////////////////////////////////////////////////////////
 
 //Replacing ${variable_name} with variables from request
 //This is virtual!
@@ -31,6 +150,11 @@ std::string format_toolbox::replace_all_variables(std::string template_version,U
     return substitute_variables(template_version,request);//Już zmodyfikowana
 }
 
+//SOME SYMBOLS
+// &#x1F3F0; - castle eur.
+// &#x1F3E0; - house building
+// &#x2302;  - house (simple)
+// &#x1F3E2; - office building (skyscraper)
 //PAGE HEADING
 std::string format_toolbox::HTMLHeader=
         "<HTML>\n<HEAD>\n"
@@ -56,7 +180,7 @@ std::string  format_toolbox::getHtmlClosure(const std::string& _unit_comp)
 {
     std::string Footer="\n<HR class=\"footer_hr\"><P class=\"footer_p\">"
                        "<a href=\"https://sites.google.com/view/fasada-cpp/\" target=\"fasada_info_page\" ><b>Fasada</b></a> version ";
-    Footer+=_version_str+std::string(" &#x26C2; ")+( _unit_comp.length()!=0? _unit_comp : _compiled )+"</P>";
+    Footer+=_version_str+std::string(" &#x2302;&Cap;&cuvee;&#x26C2;&cuvee;&Cap;&#x2302; ")+( _unit_comp.length()!=0? _unit_comp : _compiled )+"</P>";
     Footer+=HTMLFooter;// &ofcir; ?
     return Footer;
 }
@@ -68,21 +192,21 @@ std::string format_toolbox::HTMLBack=
 //Action links on pages (READ or WRITE)
 std::string format_toolbox::HTMLAction=
         "<A HREF=\""
-        "$action_href"
+        "${action_href}"
         "\" class=\"fasada_action\""
         " title=\""
-        "$title_href"
+        "${title_href}"
         "\">"
-        "$link_content"
+        "${link_content}"
         "</A>"
         ;
 
 std::string  format_toolbox::getActionLink(const std::string& Href,const std::string& Content,const std::string& Title)
 {
     std::string ReadyLink=HTMLAction;
-    boost::replace_all(ReadyLink,"$action_href",Href);
-    boost::replace_all(ReadyLink,"$title_href",Title);
-    boost::replace_all(ReadyLink,"$link_content",Content);
+    boost::replace_all(ReadyLink,"${action_href}",Href);
+    boost::replace_all(ReadyLink,"${title_href}",Title);
+    boost::replace_all(ReadyLink,"${link_content}",Content);
     return ReadyLink;
 }
 
@@ -187,46 +311,6 @@ std::string  format_toolbox::getNodePanel(const pt::ptree& node,const std::strin
     o+="&nbsp;"+getActionLink(parentpath+"?ls&html"+proplong,"&isin;","Is node of "+parentpath);
 
     return o;
-}
-
-unsigned int format_toolbox::countCharacters(std::string str,char c)
-//https://stackoverflow.com/questions/3867890/count-character-occurrences-in-a-string-in-c
-{
-int count = 0, size=str.size();
-
-for (int i = 0; i < size; i++)
-  if (str[i] == c)
-        count++;
-
-return count;
-}
-
-bool format_toolbox::isLink(std::string str)
-{
-    return str.find("http:",0)==0 || str.find("https:",0)==0
-            || str.find("ftp:",0)==0 || str.find("ftps:",0)==0
-            ;//More? mail? what else? TODO
-}
-
-bool format_toolbox::isLocalFile(std::string str)
-{
-    auto len=str.length();
-    return len>4
-            && str.find("http:",0)==str.npos && str.find("https:",0)==str.npos
-            && str.find("ftp:",0)==str.npos && str.find("ftps:",0)==str.npos
-            &&
-            (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
-            || str.rfind(".css", len-4)==len-4 || str.rfind(".js", len-3)==len-3
-            || str.rfind(".json",len-5)==len-5 || str.rfind(".md", len-3)==len-3
-            || str.rfind(".txt", len-4)==len-4 || str.rfind(".sh", len-3)==len-3
-            || str.rfind(".log", len-4)==len-4 || str.rfind(".ls", len-3)==len-3
-            || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
-            || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
-            || str.rfind(".mpeg",len-5)==len-5 || str.rfind(".mp4",len-4)==len-4
-            || str.rfind(".mov" ,len-4)==len-4
-            || str.rfind(".cpp", len-4)==len-4 || str.rfind(".h", len-2)==len-2 ||  str.rfind(".hpp", len-4)==len-4
-            )
-            ;// TODO - dictionary of less popular file extensions
 }
 
 std::string format_toolbox::preprocessIntoHtml(const std::string& str)

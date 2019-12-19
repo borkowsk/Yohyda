@@ -61,9 +61,9 @@ public:
     static
         std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags & unicode chars
     static
-        bool isLink(std::string str);//Checks for whole str looks like URL
+        bool isLink(const std::string& str);//Checks for whole str looks like URL
     static
-        bool isLocalFile(std::string str);//Checks for whole str looks like filename
+        bool isLocalFile(const std::string& str);//Checks for whole str looks like filename
     static
         unsigned int countCharacters(std::string str,char c);//Count \n / . or other importatnt characters in the string str
 
