@@ -64,11 +64,7 @@ bool format_toolbox::isLink(const std::string& str)
         //std::cerr<<"'"<<prot<<"' -> '"<<str<<"' "<<std::endl;
         return true;
     }
-/*
-    return str.find("http:",0)==0 || str.find("https:",0)==0
-            || str.find("ftp:",0)==0 || str.find("ftps:",0)==0
-            ;//More? mail? what else? TODO
-*/
+
     return false;
 }
 
@@ -118,23 +114,6 @@ bool format_toolbox::isLocalFile(const std::string& str)
     return  str.length() >4
             && !isLink(str)
             && isExtAllowed(str);
-            /*
-            && str.find("http:",0)==str.npos && str.find("https:",0)==str.npos
-            && str.find("ftp:",0)==str.npos && str.find("ftps:",0)==str.npos
-            &&
-            (  str.rfind(".html",len-5)==len-5 || str.rfind(".htm",len-4)==len-4
-            || str.rfind(".css", len-4)==len-4 || str.rfind(".js", len-3)==len-3
-            || str.rfind(".json",len-5)==len-5 || str.rfind(".md", len-3)==len-3
-            || str.rfind(".txt", len-4)==len-4 || str.rfind(".sh", len-3)==len-3
-            || str.rfind(".log", len-4)==len-4 || str.rfind(".ls", len-3)==len-3
-            || str.rfind(".jpeg",len-5)==len-5 || str.rfind(".jpg",len-4)==len-4
-            || str.rfind(".gif" ,len-4)==len-4 || str.rfind(".png",len-4)==len-4
-            || str.rfind(".mpeg",len-5)==len-5 || str.rfind(".mp4",len-4)==len-4
-            || str.rfind(".mov" ,len-4)==len-4
-            || str.rfind(".cpp", len-4)==len-4 || str.rfind(".h", len-2)==len-2 ||  str.rfind(".hpp", len-4)==len-4
-            )
-            ;// TODO - dictionary of less popular file extensions
-            */
 }
 
 
@@ -150,15 +129,26 @@ std::string format_toolbox::replace_all_variables(std::string template_version,U
     return substitute_variables(template_version,request);//Już zmodyfikowana
 }
 
-//SOME SYMBOLS
-// &#x1F3F0; - castle eur.
-// &#x1F3E0; - house building
-// &#x2302;  - house (simple)
-// &#x1F3E2; - office building (skyscraper)
+/// SOME SYMBOLS
+/// ///////////////////////////////////////////
+std::map<std::string,std::string> HTMLcodes=
+    {
+        {":castle:" ,"&#x1F3F0;"}
+        ,{":house:" ,"&#x1F3E0;"}
+        ,{":office:","&#x1F3E2;"}
+        ,{":cabin:" ,"&#x2302;"}
+        ,{":eye:"   ,"&#x1f441;"}
+        ,{":link:"  ,"&#x1f517;"}
+        ,{":earth:" ,"&#x1F30D;"}
+        ,{":loupe:" ,"&#x1F50D;"}
+        //,{"",""}
+    };
+
+
 //PAGE HEADING
 std::string format_toolbox::HTMLHeader=
         "<HTML>\n<HEAD>\n"
-        "<TITLE>$page_title</TITLE>\n"
+        "<TITLE>${page_title}</TITLE>\n"
         "<meta charset=\"utf-8\">\n"
         "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n"
         "</HEAD>\n<BODY>\n";
@@ -167,7 +157,7 @@ std::string  format_toolbox::getHtmlHeaderDefaults(const std::string& Title)
 //Default set of html <HEAD> lines finishing by <BODY>
 {
     std::string ReadyHeader=HTMLHeader;
-    boost::replace_all(ReadyHeader,"$page_title",Title);
+    boost::replace_all(ReadyHeader,"${page_title}",Title);
     return ReadyHeader;
 }
 
@@ -211,38 +201,22 @@ std::string  format_toolbox::getActionLink(const std::string& Href,const std::st
 }
 
 
-//See only link (READ., newer WRITE)
+//See only link (READ., never WRITE)
 std::string  format_toolbox::getSeeLink(const std::string& data,URLparser& request,const std::string& Content)
 {
     std::string out="";
-    if(request["&debug"]=="true")
-    {
-        out+="\n<pre>";
-        out+="\ndata: "+data+"\nprivate_directory: "+request["&private_directory"]+"\npath: "+request["&path"];
-        std::string link="file://"+request["&private_directory"]+request["&path"]+"/"+data;
-        out+="\n<a href=\""+link+"\" > "+Content+" "+link+"</a>";
 
-        link="http://"+request["&domain"]+":"+request["&port"];
-        if(data.at(0)=='/')
-            link+=data;
-        else
-            link+=request["&path"]+"/"+data;
-        out+="\n<a href=\""+link+"\" > "+Content+" "+link+"</a>";
-        out+="</pre>\n";
-    }
-    else
-    {
-        std::string link="http://"+request["&domain"]+":"+request["&port"];
-        if(data.at(0)=='/')
-            link+=data;
-        else if(data.at(0)=='.' && data.at(1)=='/')
+    std::string link="http://"+request["&domain"]+":"+request["&port"];
+    if(data.at(0)=='/')
+        link+=data;
+    else if(data.at(0)=='.' && data.at(1)=='/')
             link=request.getParentPath()+(data.c_str()+1)+"?self&html";
         else
             link+=request["&path"]+"?checkFile&html";//Awaryjnie
 
-        out+="<a class=\"fasada_view\" href=\""+link+"\"";
-        out+=">"+Content+"</a>";
-    }
+    out+="<a class=\"fasada_view\" href=\""+link+"\"";
+    out+=">"+Content+"</a>";
+
     return out;
 }
 
@@ -322,7 +296,7 @@ std::string format_toolbox::preprocessIntoHtml(const std::string& str)
 //https://stackoverflow.com/questions/12036038/is-there-unicode-glyph-symbol-to-represent-search
 //https://tutorialzine.com/2014/12/you-dont-need-icons-here-are-100-unicode-symbols-that-you-can-use
 //
-//TODO - REIMPLEMENTATION LIKE THERE:
+//TODO !!! - REIMPLEMENTATION USING REGEX LIKE THERE:
 //https://www.boost.org/doc/libs/1_53_0/libs/regex/doc/html/boost_regex/ref/regex_replace.html
 {
     std::string tmp=str;
@@ -368,25 +342,29 @@ std::string format_toolbox::preprocessIntoHtml(const std::string& str)
     boost::replace_all(out,"\u200A>", ">");//Przywracamy
     boost::replace_all(out,"\u200A. ",". ");//Przywracamy
 
+    boost::replace_all(out," :( ", " &#x1F61F; ");//obawa
+    boost::replace_all(out," :) ", " &#x1F642; ");//inny uśmiech
+    boost::replace_all(out," :D ", " &#x1F603; ");//inny szeroki uśmiech
+    boost::replace_all(out," :P ", " &#x1F60B; ");//ozorek
+    boost::replace_all(out," ;) ", " &#x1F609; ");//wink
+    boost::replace_all(out," :/ ", " &#x1F615; ");//krzywa geba. skonfundowany - bez spacji niszczy linki!
+
     boost::replace_all(out,"-->","&rarr;");
     boost::replace_all(out,"==>","&rArr;");
-    boost::replace_all(out,":eye:","&#x1f441;");//OKO
-    boost::replace_all(out,":link:","&#x1f517;");//LINK
-    boost::replace_all(out,":earth:","&#x1F30D;");//Earth globe https://www.compart.com/en/unicode/U+1F30D
-    boost::replace_all(out,":loupe:","&#x1F50D;");//monocular or magnifier
+
+    boost::replace_all(out,":eye:",HTMLcodes[":eye:"]);//OKO
+    boost::replace_all(out,":link:",HTMLcodes[":link:"]);//LINK
+    boost::replace_all(out,":earth:",HTMLcodes[":earth:"]);//Earth globe https://www.compart.com/en/unicode/U+1F30D
+    boost::replace_all(out,":loupe:",HTMLcodes[":loupe:"]);//monocular or magnifier
+
     boost::replace_all(out,":-)","&#x1F60A;");//uśmiech
-    boost::replace_all(out,":)", "&#x1F642;");//inny uśmiech
     boost::replace_all(out,":-(","&#x1F61E;");//smutek
-    boost::replace_all(out,":( ", "&#x1F61F; ");//obawa
     boost::replace_all(out,":-D","&#x1F600;");//szeroki uśmiech
-    boost::replace_all(out,":D ", "&#x1F603; ");//inny szeroki uśmiech
-    boost::replace_all(out,":P ", "&#x1F60B; ");//ozorek
     boost::replace_all(out,":-P","&#x1F61B;");//ozorek centralny
-    boost::replace_all(out," :/ ", " &#x1F615; ");//krzywa geba. skonfundowany - bez spacji niszczy linki!
     boost::replace_all(out,":-/","&#x1F615;");//krzywa geba
-    boost::replace_all(out,";) ", "&#x1F609; ");//wink
     boost::replace_all(out,";-)","&#x1F609;");//wink
     boost::replace_all(out,":^)","&#x1F921;");//uśmiechnięty klown
+
     boost::replace_all(out,"\n","\n<BR>");//break LINEs
     return out;
 }
