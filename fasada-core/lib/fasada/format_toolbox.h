@@ -39,33 +39,49 @@ public:
 class format_toolbox
 {
 protected://Theese below should be changed into configurable dictionary TODO
-    static std::string HTMLHeader;//Full HEAD of HTML page
-    static std::string HTMLFooter;//Compatible footer of HTML page
+    static std::string HTMLHeaderBegin;//Beginng of HEAD of HTML page
+    static std::string HTMLTitleBegin;//<TITLE> tag with attributes
+    static std::string HTMLHeaderEnd;//And of header & BODY start
+    static std::string HTMLBack;  // Symbol for returning to higher level;
+    static std::string HTMLBodyEnd;//Compatible finishing of HTML page
     static std::string HTMLAction;//HTML contruction for action link
-    static std::string HTMLBack;  //"UP","RETURN","WRÓĆ" of "<---"
 
 public:
     format_toolbox();
-    virtual//Replacing ${variable_name} with variables from request
-        std::string replace_all_variables(std::string template_version,URLparser& request);
+
+    /// Coding page elements
+    static //Default set of html <HEAD> lines, then optionally definitions from parameter, finishing by <BODY>
+        std::string  getPageHeader(const std::string& Title,
+                                   const std::string AddHeaderDefs="");
+
     static
-        std::string  getHtmlHeaderDefaults(const std::string& Title);//Default set of html <HEAD> lines finishing by <BODY>
-    static
-        std::string  getHtmlClosure(const std::string& _unit_comp="");//Compatible set of tags for end of html document
+        std::string  getPageClosure(const std::string& unitCompilation="",
+                                    const std::string AddToFooter=""
+                                    );//Compatible set of tags for end of html document
+
     static
         std::string  getActionLink(const std::string& Href,const std::string& Content,const std::string& Title="");
+
     static
         std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
+
     static
         std::string  getNodePanel(const pt::ptree& node,const std::string& fullpath,URLparser& request);
+
     static
-        std::string  preprocessIntoHtml(const std::string& tmp);//Preprocess links and other markers into HTML tags & unicode chars
+        std::string  preprocessRawTxt(const std::string& tmp);//Preprocess links and other markers into HTML tags & unicode chars
+
+    /// Informative functions
     static
         bool isLink(const std::string& str);//Checks for whole str looks like URL
     static
         bool isLocalFile(const std::string& str);//Checks for whole str looks like filename
     static
         unsigned int countCharacters(std::string str,char c);//Count \n / . or other importatnt characters in the string str
+
+    /// For backward compatibility ;-)
+    virtual//Replacing ${variable_name} with variables from request
+        std::string replace_all_variables(std::string template_version,URLparser& request);
 
 };
 

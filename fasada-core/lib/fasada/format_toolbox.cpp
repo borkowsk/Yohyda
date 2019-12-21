@@ -133,7 +133,12 @@ std::string format_toolbox::replace_all_variables(std::string template_version,U
 /// ///////////////////////////////////////////
 std::map<std::string,std::string> HTMLcodes=
     {
-        {":castle:" ,"&#x1F3F0;"}
+         {"Fasada.TM","<b>Fasada</b>"}
+        ,{"Fasada.link","<a class=\"fasada_a\" href=\"https://sites.google.com/view/fasada-cpp/\" target=\"fasada_info_page\" >"}
+        ,{"lang.version","version "}
+        ,{":fasada:"," &#x2302;&Cap;&cuvee;&ofcir;&cuvee;&Cap;&#x2302; "}
+        ,{":goback:","&nwarhk;"}
+        ,{":castle:","&#x1F3F0;"}
         ,{":house:" ,"&#x1F3E0;"}
         ,{":office:","&#x1F3E2;"}
         ,{":cabin:" ,"&#x2302;"}
@@ -141,43 +146,67 @@ std::map<std::string,std::string> HTMLcodes=
         ,{":link:"  ,"&#x1f517;"}
         ,{":earth:" ,"&#x1F30D;"}
         ,{":loupe:" ,"&#x1F50D;"}
+        ,{":ramdisc","&#x26C2;"}
         //,{"",""}
     };
 
 
 //PAGE HEADING
-std::string format_toolbox::HTMLHeader=
-        "<HTML>\n<HEAD>\n"
-        "<TITLE>${page_title}</TITLE>\n"
+std::string format_toolbox::HTMLHeaderBegin=
+        "<HTML>\n"
+        "<HEAD>\n"
         "<meta charset=\"utf-8\">\n"
-        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n"
+        "<link rel=\"stylesheet\" type=\"text/css\" href=\"/_skin/fasada.css\">\n";
+
+std::string format_toolbox::HTMLTitleBegin=
+        "<TITLE>";
+
+std::string format_toolbox::HTMLHeaderEnd=
         "</HEAD>\n<BODY>\n";
 
-std::string  format_toolbox::getHtmlHeaderDefaults(const std::string& Title)
+std::string  format_toolbox::getPageHeader(const std::string& title,
+                                           const std::string addHeaderDefs)
 //Default set of html <HEAD> lines finishing by <BODY>
 {
-    std::string ReadyHeader=HTMLHeader;
-    boost::replace_all(ReadyHeader,"${page_title}",Title);
+    std::string ReadyHeader=HTMLHeaderBegin;
+    ReadyHeader+=addHeaderDefs;
+    ReadyHeader+=HTMLTitleBegin;
+    ReadyHeader+=title;
+    ReadyHeader+="</TITLE>";
+    ReadyHeader+=HTMLHeaderEnd;
     return ReadyHeader;
 }
 
 //PAGE FOOTING ;-)
-std::string format_toolbox::HTMLFooter=
+std::string format_toolbox::HTMLBodyEnd=
         "\n</BODY></HTML>\n";
 
-std::string  format_toolbox::getHtmlClosure(const std::string& _unit_comp)
-//Compatible set of tags for end of html document - TODO change using replace_all_variables()
+std::string  format_toolbox::getPageClosure(const std::string& unitCompilation,
+                                            const std::string  addToFooter
+                                            )
+//Compatible set of tags for end of html document - TODO change using replace_all_variables() //&ofcir;  ?
 {
-    std::string Footer="\n<HR class=\"footer_hr\"><P class=\"footer_p\">"
-                       "<a href=\"https://sites.google.com/view/fasada-cpp/\" target=\"fasada_info_page\" ><b>Fasada</b></a> version ";
-    Footer+=_version_str+std::string(" &#x2302;&Cap;&cuvee;&#x26C2;&cuvee;&Cap;&#x2302; ")+( _unit_comp.length()!=0? _unit_comp : _compiled )+"</P>";
-    Footer+=HTMLFooter;// &ofcir; ?
-    return Footer;
+    static std::string FasadaTrademark=HTMLcodes["Fasada.TM"];//                       "<b>Fasada</b>"
+    static std::string FasadaLink=HTMLcodes["Fasada.link"];//"<a class="fasada_a" href=\"https://sites.google.com/view/fasada-cpp/\" target=\"fasada_info_page\" >";
+    static std::string FasadaSymbol=HTMLcodes[":fasada:"];//" &#x2302;&Cap;&cuvee;&#x26C2;&cuvee;&Cap;&#x2302; "
+    static std::string VersionLa=HTMLcodes["lang.version"];//"version "
+
+    std::string ReadyFooter="\n<HR class=\"footer_hr\"><P class=\"footer_p\">";
+    ReadyFooter+=FasadaLink;
+    ReadyFooter+=FasadaTrademark;
+    ReadyFooter+="</a>\n";
+    ReadyFooter+=VersionLa;
+    ReadyFooter+=_version_str;
+    ReadyFooter+=FasadaSymbol;
+    ReadyFooter+=( unitCompilation.length()!=0? unitCompilation : _compiled );
+    ReadyFooter+=+"</P>";
+    ReadyFooter+=addToFooter;
+    ReadyFooter+=HTMLBodyEnd;
+    return ReadyFooter;
 }
 
-//To jest bardzo często stosowane w wielu miejscach
-std::string format_toolbox::HTMLBack=
-        "&nwarhk;";///"UP", "RETURN","WRÓĆ" or "<--|";
+//This is used many many times!
+std::string format_toolbox::HTMLBack=HTMLcodes[":goback:"];/// Symbol for returning to higher level;
 
 //Action links on pages (READ or WRITE)
 std::string format_toolbox::HTMLAction=
@@ -199,7 +228,6 @@ std::string  format_toolbox::getActionLink(const std::string& Href,const std::st
     boost::replace_all(ReadyLink,"${link_content}",Content);
     return ReadyLink;
 }
-
 
 //See only link (READ., never WRITE)
 std::string  format_toolbox::getSeeLink(const std::string& data,URLparser& request,const std::string& Content)
@@ -287,7 +315,7 @@ std::string  format_toolbox::getNodePanel(const pt::ptree& node,const std::strin
     return o;
 }
 
-std::string format_toolbox::preprocessIntoHtml(const std::string& str)
+std::string format_toolbox::preprocessRawTxt(const std::string& str)
 //Preprocess links and other markers into HTML tags.
 //http://www.cplusplus.com/reference/regex/regex_replace/
 //https://en.wikipedia.org/wiki/Emoticon, https://www.w3schools.com/charsets/ref_emoji_smileys.asp, http://defindit.com/ascii.html
