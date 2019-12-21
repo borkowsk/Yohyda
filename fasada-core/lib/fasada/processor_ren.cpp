@@ -53,7 +53,7 @@ void processor_ren::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     if(html)//TYPE HEADER AND HTML HEADER
     {
          o+=ipc::string(EXT_PRE)+"htm\n";
-         o+=getHtmlHeaderDefaults(fullpath)+"\n";
+         o+=getPageHeader(fullpath)+"\n";
          if(top.data()=="")
          {
              //Podmienić ścieżkę i wartość domyślną
@@ -67,7 +67,7 @@ void processor_ren::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          {
              o+="<H2>WARNING!</H2><P>Only not-leaf type nodes could be modified by '"+procName+"'</P>";
          }
-         o+=getHtmlClosure(_compiled);
+         o+=getPageClosure(_compiled);
     }
     else
     {
@@ -98,7 +98,7 @@ void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     {
         fullpath=request.getFullPath();
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(fullpath)+"\n<P>";
+        o+=getPageHeader(fullpath)+"\n<P>";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
@@ -142,7 +142,7 @@ void processor_ren::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
         }
         else o+="DONE '"+old_name+"'-->'"+new_name+"'";
 
-    if(html)  o+="</P>"+getHtmlClosure(_compiled);
+    if(html)  o+="</P>"+getPageClosure(_compiled);
 }
 
 

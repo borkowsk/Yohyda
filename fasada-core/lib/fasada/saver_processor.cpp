@@ -81,14 +81,14 @@ void saver_processor::_implement_read(ShmString& o,const pt::ptree& top,URLparse
             throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT PREPARE FORM OTHER THAN HTML!"));
 
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(fullpath)+"\n";
+        o+=getPageHeader(fullpath)+"\n";
 
         request["targetpath"]=get_property(top,"_source",_make_path("",request));//... default target
         request["size_of_targetpath"]=STR_WIDTH_MAX_OF_FIELD;
         std::string ReadyForm=replace_all_variables(_get_form_template(),request);
         o+=ReadyForm;
 
-        o+=getHtmlClosure(_compiled);
+        o+=getPageClosure(_compiled);
     }
 }
 

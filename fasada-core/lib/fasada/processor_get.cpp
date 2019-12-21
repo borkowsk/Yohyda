@@ -32,7 +32,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"])+"<P>";
+        o+=getPageHeader(request["&path"])+"<P>";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
@@ -40,7 +40,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     std::string tmp=top.get_value<std::string>();
     if(longer)
     {
-        tmp=preprocessIntoHtml(tmp);//Preprocess links and other markers into HTML tags.
+        tmp=preprocessRawTxt(tmp);//Preprocess links and other markers into HTML tags.
     }
 
     if(request["verbose"]=="true" || longer)
@@ -90,7 +90,7 @@ void processor_get::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     else
         o+=tmp;
 
-    if(html) o+="</P>"+getHtmlClosure(_compiled);
+    if(html) o+="</P>"+getPageClosure(_compiled);
 }
 
 

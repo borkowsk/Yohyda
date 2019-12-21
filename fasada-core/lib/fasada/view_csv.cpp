@@ -97,7 +97,7 @@ void view_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& requ
         if(request.asHTML())
         {
             o+=ipc::string(EXT_PRE)+"htm\n";//TYPE HEADER
-            o+=getHtmlHeaderDefaults(request["&path"]);
+            o+=getPageHeader(request["&path"]);
             bool tabhead=true;
             o+=getActionLink(request.getFullPath()+"?"+procName+"&html"+(!longer?"&long":""),(longer?"Less":"More"),
                              (longer?"View in short format":"View in long format"))
@@ -123,7 +123,7 @@ void view_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& requ
                     o+="<TR> ";
                     for(auto field:row)
                     {
-                        if(longer) field=preprocessIntoHtml(field);
+                        if(longer) field=preprocessRawTxt(field);
                         o+="<TD>"+field+"</TD> ";
                     }
                     o+="</TR>\n";
@@ -131,7 +131,7 @@ void view_csv::_implement_read(ShmString& o,const pt::ptree& top,URLparser& requ
 
             }
             o+="</TABLE>\n<BR>";
-            o+="\n"+getHtmlClosure(_compiled);
+            o+="\n"+getPageClosure(_compiled);
         }
         else
         {

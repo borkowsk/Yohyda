@@ -59,7 +59,7 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
     if(html)
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
+        o+=getPageHeader(request.getFullPath())+"\n<PRE>\n";
     }
 
     o+="\nChecking file path in "+request["&path"]+"\n";//Nagłówek
@@ -150,7 +150,7 @@ void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URL
     if(html)
     {
         o+="\n</PRE>\n";
-        o+=getHtmlClosure(_compiled);
+        o+=getPageClosure(_compiled);
     }
 }
 
@@ -173,7 +173,7 @@ void processor_check_file::_implement_write(ShmString& o,pt::ptree& top,URLparse
             {
                 o+="\n</PRE>\n";
                 o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
-                o+=getHtmlClosure(_compiled);
+                o+=getPageClosure(_compiled);
             }
     }
 }

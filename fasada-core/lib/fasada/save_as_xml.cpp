@@ -33,7 +33,7 @@ void save_as_xml::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
      if(html)
      {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request.getFullPath())+"\n<PRE>\n";
+        o+=getPageHeader(request.getFullPath())+"\n<PRE>\n";
      }
 
      std::string discPath=_make_path(".xml",request);
@@ -51,7 +51,7 @@ void save_as_xml::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
      {
         o+="\n</PRE>\n";
         o+=getActionLink(request.getFullPath()+"?ls&html&long","LSL","List as long content of "+request["&path"])+"&nbsp;&nbsp; ";
-        o+=getHtmlClosure(_compiled);
+        o+=getPageClosure(_compiled);
      }
 }
 

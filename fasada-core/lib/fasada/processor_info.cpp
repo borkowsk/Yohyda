@@ -33,7 +33,7 @@ void processor_info::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"]);
+        o+=getPageHeader(request["&path"]);
         o+="<H2>INFO UNIT IN HTML MODE</H2><BR>\n";
         if(longer) o+="<P>";
     }
@@ -53,7 +53,7 @@ void processor_info::_implement_read(ShmString& o,const pt::ptree& top,URLparser
         {
             if(longer)
             {
-                value=preprocessIntoHtml(value);//Preprocess links and other markers into HTML tags.
+                value=preprocessRawTxt(value);//Preprocess links and other markers into HTML tags.
             }
 
             o+=std::string("<B class=fasada_path>'")+request["&path"]+ "'</B> :\n<BR>"+"<I class=\"fasada_val\">'" + value + "'</I><BR>\n";
@@ -90,7 +90,7 @@ void processor_info::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     if(html)
     {
         o+="<BR>"+getActionLink(parepath+"?ls&long&html",HTMLBack,"Go back");
-        if(longer) o+="</P>"+getHtmlClosure(_compiled);
+        if(longer) o+="</P>"+getPageClosure(_compiled);
     }
 }
 

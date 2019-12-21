@@ -78,7 +78,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
             throw(tree_processor_exception("PTREE PROCESSOR "+procName+" CANNOT PREPARE FORM OTHER THAN HTML!"));
 
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(fullpath)+"\n";
+        o+=getPageHeader(fullpath)+"\n";
 
         if(request.find("limit")==request.end())
                     request["limit"]="1024";
@@ -152,7 +152,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
         }
 
         o+=ReadyForm;
-        o+=getHtmlClosure(_compiled);
+        o+=getPageClosure(_compiled);
     }
 }
 
@@ -193,7 +193,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"])+"\n";
+        o+=getPageHeader(request["&path"])+"\n";
         _implement_action_panel(o,request);
         o+="\n<OL>\n";
     }
@@ -278,7 +278,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
         if(counter>limit)
             o+="Use <q>limit</q> variable if not all nodes are visible! <BR>\n";
         if(counter>10) _implement_action_panel(o,request);
-        o+="\n"+getHtmlClosure(_compiled);
+        o+="\n"+getPageClosure(_compiled);
     }
 }
 

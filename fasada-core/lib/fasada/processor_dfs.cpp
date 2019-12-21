@@ -63,7 +63,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     if(html)//TYPE HEADER AND HTML HEADER
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(request["&path"]);
+        o+=getPageHeader(request["&path"]);
          _implement_action_panel(o,request);
         o+=(longformat?"<BR><UL>\n":"<BR>\n");
     }
@@ -126,7 +126,7 @@ void processor_dfs::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
         if(counter>limit)
             o+="Use <q>limit</q> variable if not all nodes are visible! <BR>\n";
         if(counter>10) _implement_action_panel(o,request);
-        o+="\n"+getHtmlClosure(_compiled);
+        o+="\n"+getPageClosure(_compiled);
     }
 }
 

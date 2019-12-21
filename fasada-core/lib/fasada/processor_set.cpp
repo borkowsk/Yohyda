@@ -59,7 +59,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
     if(html)//TYPE HEADER AND HTML HEADER
     {
          o+=ipc::string(EXT_PRE)+"htm\n";
-         o+=getHtmlHeaderDefaults(fullpath)+"\n";
+         o+=getPageHeader(fullpath)+"\n";
 
          if(noc==0)
          {
@@ -94,7 +94,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
          else
              o+="<H2>WARNING!</H2><P>Only leaf type nodes could be modified by '"+procName+"'</P>";
 
-         o+=getHtmlClosure(_compiled);
+         o+=getPageClosure(_compiled);
     }
     else
     {
@@ -127,7 +127,7 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
     {
         fullpath=request.getFullPath();
         o+=ipc::string(EXT_PRE)+"htm\n";
-        o+=getHtmlHeaderDefaults(fullpath)+"\n<P>";
+        o+=getPageHeader(fullpath)+"\n<P>";
     }
     else
         o+=ipc::string(EXT_PRE)+"txt\n";
@@ -139,7 +139,7 @@ void processor_set::_implement_write(ShmString& o,pt::ptree& top,URLparser& requ
        o+="DONE <I class=\"fasada_val\">'"+top.data()+"'</I>";
        o+="\n"+getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
        o+="</P>";
-       o+=getHtmlClosure(_compiled);
+       o+=getPageClosure(_compiled);
     }
     else o+="DONE '"+top.data()+"'";
 }
