@@ -66,6 +66,9 @@ public:
         std::string  getSeeLink(const std::string& data,URLparser& request,const std::string& Content);
 
     static
+        std::string  getActionsPanel(URLparser& request);
+
+    static
         std::string  getNodePanel(const pt::ptree& node,const std::string& fullpath,URLparser& request);
 
     static
