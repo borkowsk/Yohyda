@@ -32,7 +32,7 @@ std::string processor_find::Form=
         "<form action=\"${fullpath}!${proc}\" class=\"fasada_form\">"
         "\n<input name=\"html\"   type=\"hidden\" >"
         "\n<input name=\"long\"   type=\"hidden\" >"
-        "\n<input name=\"ready\"   type=\"hidden\"   value=\"$is_ready\" >"
+        "\n<input name=\"ready\"  type=\"hidden\"   value=\"$is_ready\" >"
         "\n&#x1F50D; &#x1F50D; &#x1F50D; &#x1F50D; &#x1F50D; &#x1F50D;"
         "\n<BR>SUBPATH:     "
         "   <input name=\"subpath\" type=\"$input_of_subpath\" onclick=\"this.select()\" size=\"$size_of_subpath\"   value=\"$subpath\">"
@@ -40,7 +40,10 @@ std::string processor_find::Form=
         "   <input name=\"field\"   type=\"$input_of_field\" onclick=\"this.select()\" size=\"$size_of_field\"   value=\"$field\">"
         "\n<BR>FIELD VALUE: "
         "   <input name=\"value\"   type=\"$input_of_value\" onclick=\"this.select()\" size=\"$size_of_value\"   value=\"$value\">"
-        "\n<BR>WILL BE FIND IN <B class=fasada_path>'$path'</B> "
+
+        "\n&nbsp;<input name=\"regex\"  type=\"checkbox\" value=\"true\" ${regex_checked} ><a href=\"https://regexr.com/\">Use regular expressions?</a>"
+
+        "\n<BR>WILL BE FIND IN <B class=fasada_path>'${&path}'</B> "
         "\n<BR> LIMIT: <input type=\"number\" name=\"limit\" value=\"${limit}\" min=\"25\" max=\"99999\"> "
         "\n<BR><input type=\"submit\" value=\"OK\">"
         "\n&nbsp;<input type=\"button\" value=\"CANCEL\" onclick=\"window.history.back();\" >"
@@ -81,10 +84,16 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
         o+=getPageHeader(fullpath)+"\n";
 
         if(request.find("limit")==request.end())
-                    request["limit"]="1024";
+             request["limit"]="1024";
+
+        if(request.find("regex")==request.end())
+             request["regex_checked"]="";
+        else
+             request["regex_checked"]="checked";
+
         std::string ReadyForm=replace_all_variables(Form,request);
 
-        boost::replace_all(ReadyForm,"$path",request["&path"]);
+        //boost::replace_all(ReadyForm,"$path",request["&path"]);
 
         if( (request.find("subpath") != request.end() && request["subpath"]!="" )
         &&  (request.find( "field" ) != request.end() && request["field"]!="" )
@@ -117,7 +126,7 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
                 std::string replacer=(request["subpath"]+"\"><I class=\"fasada_val\">"+request["subpath"]+"</I>");
                 boost::replace_all(ReadyForm,"$subpath\">",replacer);
                 boost::replace_all(ReadyForm,"$size_of_subpath","1");        boost::replace_all(ReadyForm,"$proc",procName);
-                boost::replace_all(ReadyForm,"$fullpath",fullpath);
+                boost::replace_all(ReadyForm,"${fullpath}",fullpath);
             }
 
             ///<input name="field"   type="$input_of_field"    value="$field"   size="$size_of_field">
@@ -156,19 +165,6 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     }
 }
 
-void processor_find::_implement_action_panel(ShmString& o,URLparser& request)
-//Górny i dolny panel akcji dotyczących całej listy
-{
-    std::string fullpath=request.getFullPath();
-    o+="\n";//For cleaner HTML code
-    o+=getActionLink(fullpath+"?find&html","FIND","Find subnodes")+"&nbsp;&nbsp; ";
-    o+=getActionLink(fullpath+"?dfs&html&long","TREE","View tree in long format")+"&nbsp;&nbsp; ";
-    o+=getActionLink(fullpath+"?ls&html&long","LSL","Lista as long")+"&nbsp;&nbsp; ";
-    o+=getActionLink(fullpath+"?ls&html","LSS","Lista as short")+"&nbsp;&nbsp; ";
-    o+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
-    o+="\n";//For cleaner HTML code
-}
-
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     unsigned counter=0,limit=1024;
@@ -194,7 +190,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
     {
         o+=ipc::string(EXT_PRE)+"htm\n";
         o+=getPageHeader(request["&path"])+"\n";
-        _implement_action_panel(o,request);
+        o+=getActionsPanel(request);
         o+="\n<OL>\n";
     }
     else
@@ -262,7 +258,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
                 print_lambda(t,k);
     };
 
-//  It would be easier, but compiler don't cooperate ;-) :-/
+//  It would be easier, but compiler don't cooperate :-/ ;-)
 //      "error: operands to ?: have different types" ?????????
 //  auto real_lambda=( all_spaths ? always_lambda : subpath_lambda );
 
@@ -277,7 +273,8 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
         o+=boost::lexical_cast<val_string>(counter)+" nodes <BR>\n";
         if(counter>limit)
             o+="Use <q>limit</q> variable if not all nodes are visible! <BR>\n";
-        if(counter>10) _implement_action_panel(o,request);
+        if(counter>10)
+            o+=getActionsPanel(request);
         o+="\n"+getPageClosure(_compiled);
     }
 }
@@ -285,7 +282,7 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
 void processor_find::_implement_regex_find(ShmString& o,pt::ptree& top,URLparser& request)
 //Called in _implement_write
 {
-
+    throw(tree_processor_exception("REGEX find not implemented in PTREE PROCESSOR "+procName+"\n"));
 }
 
 void processor_find::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
@@ -296,7 +293,10 @@ void processor_find::_implement_write(ShmString& o,pt::ptree& top,URLparser& req
     }
     else
     {
-        _implement_substring_find(o,top,request);
+        if(request["regex"]=="true")
+            _implement_regex_find(o,top,request);
+        else
+            _implement_substring_find(o,top,request);
     }
 }
 
