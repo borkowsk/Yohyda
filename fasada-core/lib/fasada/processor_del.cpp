@@ -18,7 +18,7 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_del::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "<form action=\"${fullpath}!$proc\" class=\"fasada_form\">"
         "\n<input name=\"html\"   type=\"hidden\" >"
         "\n<B>&minusd; &minusd; &minusd; &minusd; &minusd; &minusd;</B>"
         "\n<BR>NAME: "
@@ -56,7 +56,7 @@ void processor_del::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
              //Podmienić ścieżkę i wartość domyślną
              std::string ReadyForm=Form;
              boost::replace_all(ReadyForm,"$proc",procName);
-             boost::replace_all(ReadyForm,"$fullpath",fullpath);
+             boost::replace_all(ReadyForm,"${fullpath}",fullpath);
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              o+=ReadyForm;
          }

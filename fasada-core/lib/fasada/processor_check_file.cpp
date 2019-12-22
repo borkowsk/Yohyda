@@ -56,6 +56,8 @@ static bool find_file( const path & dir_path,  // in this directory,
 void processor_check_file::_implement_read(ShmString& o,const pt::ptree& top,URLparser& request)
 {
     bool        html=request.asHTML();
+    auto fullpath=request.getFullPath();
+
     if(html)
     {
         o+=ipc::string(EXT_PRE)+"htm\n";

@@ -22,7 +22,7 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_set::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\" > "
+        "<form action=\"${fullpath}!$proc\" class=\"fasada_form\" > "
         "\n<input name=\"html\"   type=\"hidden\" > "
         "\n<B>&equals; &equals; &equals; &equals; &equals; &equals;</B>"
         "\n<BR>VALUE: "
@@ -86,7 +86,7 @@ void processor_set::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
              }
 
              boost::replace_all(ReadyForm,"$proc",procName);//https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
-             boost::replace_all(ReadyForm,"$fullpath",fullpath);
+             boost::replace_all(ReadyForm,"${fullpath}",fullpath);
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              boost::replace_all(ReadyForm,"$value",tmp);
              o+=ReadyForm;

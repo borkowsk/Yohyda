@@ -21,7 +21,7 @@ namespace fasada
 
 //default HTML form for this processor
 std::string processor_ren::Form=
-        "<form action=\"$fullpath!$proc\" class=\"fasada_form\">"
+        "<form action=\"${fullpath}!$proc\" class=\"fasada_form\">"
         "\n<input type=\"hidden\" name=\"html\" >"
         "\n<B>&mnplus; &mnplus; &mnplus; &mnplus; &mnplus; &mnplus;</B>"
         "\n<br>OLD NAME: <input type=\"text\" name=\"old_name\" size=\"" STR_DEFAULT_LEN_OF_NAME "\">"
@@ -59,7 +59,7 @@ void processor_ren::_implement_read(ShmString& o,const pt::ptree& top,URLparser&
              //Podmienić ścieżkę i wartość domyślną
              std::string ReadyForm=Form;
              boost::replace_all(ReadyForm,"$proc",procName);
-             boost::replace_all(ReadyForm,"$fullpath",fullpath);        //ptree::iterator
+             boost::replace_all(ReadyForm,"${fullpath}",fullpath);        //ptree::iterator
              boost::replace_all(ReadyForm,"$path",request["&path"]);
              o+=ReadyForm;
          }
