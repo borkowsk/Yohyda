@@ -13,8 +13,8 @@
 #include "fasada.hpp"
 #include "format_toolbox.h"
 #include <boost/lexical_cast.hpp>
-#include <boost/exception/diagnostic_information.hpp>
-#include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+#include <boost/exception/diagnostic_information.hpp> ///
+#include <boost/algorithm/string/replace.hpp> /// https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <boost/regex.hpp>
 #include <vector>
 #include <string>
@@ -55,7 +55,7 @@ bool format_toolbox::isLink(const std::string& str)
     if(pos==str.npos || pos>7 || pos<2 )
         return false;
 
-    auto prot=str.substr(0,pos+1)+" ";
+    std::string prot=str.substr(0,pos+1)+" ";
 
     //std::cerr<<"'"<<str<<"' "<<pos<<"   "<<prot<<std::endl;
 
@@ -91,13 +91,20 @@ bool isExtAllowed(const std::string& str)
 
     if(pos!=str.npos)
     {
-        auto ext=str.substr(pos)+" ";
-        if(ext.size()>7)//Extensions are not longer than 5 characters
-            return false;
+        std::string ext=str.substr(pos)+" ";
+//        std::cerr<<ext<<" : ";
 
-//        std::cerr<<ext<<"; ";
+        if(ext.size()>7)//Extensions are not longer than 5 characters
+        {
+//            std::cerr<<"TO SHORT!"<<std::endl;
+            return false;
+        }
+
         if(allowedFileTypes.find(ext,0)!=allowedFileTypes.npos) // Extension in string of allowed.
+        {
+//            std::cerr<<"OK! "<<str<<std::endl;
             return true;
+        }
 /*
         if (std::find(allowedFileTypes.begin(), allowedFileTypes.end(), ext) != allowedFileTypes.end())
         {
@@ -105,13 +112,15 @@ bool isExtAllowed(const std::string& str)
         }
 */
     }
-    else return false;
+
+//    std::cerr<<"NOT ALLOWED! "<<str<<std::endl;
+    return false;
 }
 
 /// Is a path to a local allowed type file?
 bool format_toolbox::isLocalFile(const std::string& str)
 {
-    return  str.length() >4
+    return  str.length() > 4
             && !isLink(str)
             && isExtAllowed(str);
 }
@@ -245,6 +254,21 @@ std::string  format_toolbox::getSeeLink(const std::string& data,URLparser& reque
     out+="<a class=\"fasada_view\" href=\""+link+"\"";
     out+=">"+Content+"</a>";
 
+    return out;
+}
+
+std::string  format_toolbox::getActionsPanel(URLparser& request)
+//Górny i dolny panel akcji dotyczących całej listy
+{
+    std::string fullpath=request.getFullPath();
+    std::string out="";
+    out+="\n";//For cleaner HTML code
+    out+=getActionLink(fullpath+"?find&html","FIND","Find subnodes")+"&nbsp;&nbsp; ";
+    out+=getActionLink(fullpath+"?dfs&html&long","TREE","View tree in long format")+"&nbsp;&nbsp; ";
+    out+=getActionLink(fullpath+"?ls&html&long","LSL","Lista as long")+"&nbsp;&nbsp; ";
+    out+=getActionLink(fullpath+"?ls&html","LSS","Lista as short")+"&nbsp;&nbsp; ";
+    out+=getActionLink(request.getParentPath()+"?ls&long&html",HTMLBack,"Go back");
+    out+="\n";//For cleaner HTML code
     return out;
 }
 
