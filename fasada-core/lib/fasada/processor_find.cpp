@@ -12,6 +12,7 @@
 #include "processor_find.h"
 #include "tree/ptree_foreach.hpp"
 #include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 #include <boost/algorithm/string/replace.hpp> ///https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 #include <iostream>
 
@@ -165,7 +166,129 @@ void processor_find::_implement_read(ShmString& o,const pt::ptree& top,URLparser
     }
 }
 
+void processor_find::_implement_regex_find(ShmString& o,const pt::ptree& top,URLparser& request)
+{
+    unsigned counter=0,limit=1024;
+    if(request.find("limit")!=request.end())
+        limit=boost::lexical_cast<unsigned>(request["limit"]);
+
+    std::string fullpath=request.getFullPath();
+    if( *(--fullpath.end())!='/' )
+        fullpath+="/";
+
+    bool defret=(request["return"]!="false");
+    bool   html=request.asHTML();
+
+    std::string  subpath=request["subpath"];
+    std::string    field=request["field"];
+    std::string    value=request["value"];
+
+    bool all_spaths=(subpath=="*");
+    bool all_fields=(field=="*");
+    bool all_values=(value=="*");
+
+    boost::regex rx_spaths;
+    boost::regex rx_fields;
+    boost::regex rx_values;
+
+    if(html)//TYPE HEADER AND HTML HEADER
+    {
+        o+=ipc::string(EXT_PRE)+"htm\n";
+        o+=getPageHeader(request["&path"])+"\n";
+        o+=getActionsPanel(request);
+        o+="\n<OL>\n";
+    }
+    else
+        o+=ipc::string(EXT_PRE)+"txt\n";//TYPE HEADER
+
+    if(!all_spaths)
+        rx_spaths.assign(subpath);
+    if(!all_fields)
+        rx_fields.assign(field);
+    if(!all_values)
+        rx_values.assign(value);
+
+    auto subpath_lambda= [rx_spaths](const ptree& t,std::string k)
+                                {
+                                    return boost::regex_match(k.c_str(),rx_spaths);
+                                };
+
+    auto field_lambda= [rx_fields](const ptree& t,std::string k)
+                                {
+                                    auto lslas=k.rfind('/');
+                                    if(lslas==k.npos)
+                                        return false;
+                                    return boost::regex_match(k.c_str()+lslas,rx_fields);
+                                };
+
+    auto value_lambda= [rx_values](const ptree& t,std::string k)
+                                {
+                                    return boost::regex_match(t.data().c_str(),rx_values);
+                                };
+
+    auto print_lambda=[&o,defret,html,fullpath,&request,&counter,limit,this](const ptree& t,std::string k)
+                                {
+                                    counter++;
+                                    if(counter<limit)
+                                    {
+                                        o+=(html?"<LI>":"* ");
+                                        std::string pathk=k;
+                                        if(html) o+="<B class=fasada_path><A HREF=\""
+                                                +fullpath+pathk+"?ls&html&long\">";
+                                        o+=pathk;
+                                        if(html)
+                                            o+="</A></B> : <I class=\"fasada_val\"> <A HREF=\""
+                                             +fullpath+pathk+"?get&html&long\">'";
+                                            else o+="' : '";
+                                        o+=t.data();
+                                        o+="'";
+                                        if(html)
+                                        {
+                                            o+="</A></I>&nbsp; "+getNodePanel(t,fullpath+pathk,request);
+                                            if(t.data()=="")
+                                            {
+                                                auto pos=k.rfind('/');
+                                                _implement_attributes(o,t,request,k.substr(pos+1));
+                                            }
+                                            o+="\n";
+                                        }
+                                        else o+="\n";
+                                    } else { o+='.';if(counter%100==0) o+="<BR>\n";}
+                                    return defret;
+                                };
+
+    auto and_lambda=[all_fields,field_lambda,all_values,value_lambda,print_lambda](const ptree& t,std::string k)
+    {
+        return (all_fields || field_lambda(t,k))
+                &&
+               (all_values || value_lambda(t,k))
+                &&
+                print_lambda(t,k);
+    };
+
+//  It would be easier, but compiler don't cooperate :-/ ;-)
+//      "error: operands to ?: have different types" ?????????
+//  auto real_lambda=( all_spaths ? always_lambda : subpath_lambda );
+
+    if(all_spaths)
+        foreach_node( top,"",always, and_lambda, never, "/" );
+    else
+        foreach_node( top,"",subpath_lambda, and_lambda, never, "/" );
+
+    if(html)
+    {
+        o+="</OL>";
+        o+=boost::lexical_cast<val_string>(counter)+" nodes <BR>\n";
+        if(counter>limit)
+            o+="Use <q>limit</q> variable if not all nodes are visible! <BR>\n";
+        if(counter>10)
+            o+=getActionsPanel(request);
+        o+="\n"+getPageClosure(_compiled);
+    }
+}
+
 void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request)
+//Called in _implement_write
 {
     unsigned counter=0,limit=1024;
     if(request.find("limit")!=request.end())
@@ -277,12 +400,6 @@ void processor_find::_implement_substring_find(ShmString& o,const pt::ptree& top
             o+=getActionsPanel(request);
         o+="\n"+getPageClosure(_compiled);
     }
-}
-
-void processor_find::_implement_regex_find(ShmString& o,pt::ptree& top,URLparser& request)
-//Called in _implement_write
-{
-    throw(tree_processor_exception("REGEX find not implemented in PTREE PROCESSOR "+procName+"\n"));
 }
 
 void processor_find::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)

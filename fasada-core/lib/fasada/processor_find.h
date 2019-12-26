@@ -41,7 +41,7 @@ protected:
     void _implement_substring_find(ShmString& o,const pt::ptree& top,URLparser& request);//Called in _implement_write
 
     virtual
-    void _implement_regex_find(ShmString& o,pt::ptree& top,URLparser& request);//Called in _implement_write
+    void _implement_regex_find(ShmString& o,const pt::ptree& top,URLparser& request);//Called in _implement_write
 
 };
 
