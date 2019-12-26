@@ -165,7 +165,7 @@ namespace fasada
     //May throw on errors!
     {
         using split_vector_type=vector< string >;
-        boost::regex ex(URLpattern);
+        boost::regex ex(URLpattern);//TODO -globalize this variable? Or maybe static would be enogh?
         boost::cmatch what;
 
         bakURL=URL;
