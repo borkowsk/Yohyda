@@ -32,7 +32,7 @@ std::string loader_processor::Form=
         "\n<input name=\"force\"  type=\"hidden\"  value=\"true\" >"
         "\n<input name=\"ready\"  type=\"hidden\"  value=\"true\" >" ///value=\"$is_ready\" >"
         "\n&#x26c1; &#x25ba; &#x25ba; &#x25ba; &#x25ba; &#x25ba; &#x25ba; &#x26C2;"
-        "\n<BR>REPLACE ALL CURRENT DATA BELOW"
+        "\n<BR>REPLACE ALL CURRENT DATA BELOW NODE "
         "<BR><q>${fullpath}</q>"
         "<BR>WITH DATA FROM FILE?"
         "\n<BR><input name=\"targetpath\" type=\"input\" size=\"${size_of_targetpath}\" "
