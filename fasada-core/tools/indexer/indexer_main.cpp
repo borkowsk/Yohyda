@@ -27,44 +27,8 @@
 #include <cstring>
 
 #ifdef USE_MAGIC
-#include <magic.h>
-class magicFileTester
-//Restricted wraper for libmagic
-{
-    magic_t magic_cookie;
-public:
-    magicFileTester()
-    {
-        /* MAGIC_MIME tells magic to return a mime of the file, 
-           but you can specify different things	*/
-
-        magic_cookie = magic_open(MAGIC_MIME);
-	
-        if (magic_cookie == NULL) 
-        {
-                std::cerr << "\nUnable to initialize magic library" << std::endl;
-                exit( 1 );
-        }
-	
-        if (magic_load(magic_cookie, NULL) != 0) 
-        {
-                std::cerr << "\ncCannot load magic database - " << magic_error(magic_cookie) << std::endl;
-                magic_close(magic_cookie);
-                exit( 2 );
-        }
-    }
-
-    ~magicFileTester()
-    {
-        magic_close(magic_cookie); 
-    }
-
-    const char* getFileType(const std::string& p)
-    {
-        return magic_file(magic_cookie, p.c_str() );
-    }
-
-} file_tester;
+#include "magic_file_tester.h"
+magic_file_tester file_tester;
 #endif
 
 namespace fs = boost::filesystem;
@@ -144,7 +108,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
 
                         curr.put(pt::ptree::path_type{lpath, '/'},"!"+ArchiveSource+"Json");
 #                       ifdef USE_MAGIC
-                        auto theType=file_tester.getFileType( entry.path().string() );
+                        auto theType=file_tester.getFileInfo( entry.path().string() );
                         std::cout <<" MIME: "<<theType;
                         curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
 #                       endif
@@ -168,7 +132,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                             }
 
 #                           ifdef USE_MAGIC
-                            auto theType=file_tester.getFileType( entry.path().string() );
+                            auto theType=file_tester.getFileInfo( entry.path().string() );
                             std::cout <<" MIME: "<<theType;
                             curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
 #                           endif
@@ -184,7 +148,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                                 curr.put(pt::ptree::path_type{lpath, '/'},"!Xml");
 
 #                               ifdef USE_MAGIC
-                                auto theType=file_tester.getFileType( entry.path().string() );
+                                auto theType=file_tester.getFileInfo( entry.path().string() );
                                 std::cout <<" MIME: "<<theType;
                                 curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
 #                               endif
@@ -200,7 +164,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                                 curr.put(pt::ptree::path_type{lpath, '/'},"!Csv");
 
 #                               ifdef USE_MAGIC
-                                auto theType=file_tester.getFileType( entry.path().string() );
+                                auto theType=file_tester.getFileInfo( entry.path().string() );
                                 std::cout <<" MIME: "<<theType;
                                 curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
 #                               endif
@@ -216,7 +180,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                                     curr.put(pt::ptree::path_type{lpath, '/'},"!Txt");
 
 #                                   ifdef USE_MAGIC
-                                    auto theType=file_tester.getFileType( entry.path().string() );
+                                    auto theType=file_tester.getFileInfo( entry.path().string() );
                                     std::cout <<" MIME: "<<theType;
                                     curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
 #                                   endif
@@ -241,7 +205,7 @@ void list_directory(const fs::path& p,pt::ptree& curr,unsigned plen)
                                                 entry.path().filename().string());
 
 #                                      ifdef USE_MAGIC
-                                       auto theType=file_tester.getFileType( entry.path().string() );
+                                       auto theType=file_tester.getFileInfo( entry.path().string() );
                                        std::cout <<" MIME: "<<theType;
                                        curr.put( pt::ptree::path_type{lpath + std::string(".mime"), '/'}, theType );
 #                                      endif
