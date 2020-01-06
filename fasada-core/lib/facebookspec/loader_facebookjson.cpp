@@ -53,6 +53,7 @@ void loader_facebookJson::_implement_write(ShmString& o,pt::ptree& top,URLparser
     o+=discPath;
     o+="\n";
     pt::read_json(discPath, top);
+    _implement_magic_file_test(o,top,discPath,request);
 
     // Most important properties is "source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_source",discPath+" ");//SPACE is intentional. It blocs the next CHECKs.

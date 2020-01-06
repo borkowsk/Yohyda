@@ -10,6 +10,7 @@
 #define UNIT_IDENTIFIER "loader_processor"
 #include "fasada.hpp"
 #include "loader_processor.h"
+#include "magic_file_tester.h"
 #include <boost/lexical_cast.hpp>
 #include <string>
 
@@ -61,6 +62,18 @@ void loader_processor::_implement_read(ShmString& o,const pt::ptree& top,URLpars
 
     o+=getPageClosure(_compiled);
 }
+
+void  loader_processor::_implement_magic_file_test(ShmString& o,pt::ptree& top,std::string Path,URLparser& request)
+{
+    static magic_file_tester magicTester( MAGIC_EXTENSION | MAGIC_TESTER_DEFAULTS | MAGIC_CONTINUE | MAGIC_MIME | MAGIC_APPLE | MAGIC_EXTENSION );
+    std::string Info=magicTester.getFileInfo(Path);
+    //Info+=magicTester.getFileInfo(Path);
+    o+='\n';
+    o+=Info;
+    o+='\n';
+    insert_property(top,"_magic_info",Info);
+}
+
 
 void loader_processor::_implement_write(ShmString& o,pt::ptree& top,URLparser& request)
 {

@@ -70,6 +70,7 @@ void loader_json::_implement_write(ShmString& o,pt::ptree& top,URLparser& reques
 
     //Jeśli nie ma wyjątku to nazwę procesora likwidujemy
     top.data()="";
+    _implement_magic_file_test(o,top,discPath,request);
 
     // Most important properties is "_source", "loader", "viewer", "saver", "alternative_savers", "oth_actions":
     insert_property(top,"_lead",line);

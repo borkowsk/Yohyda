@@ -122,6 +122,7 @@ target_link_libraries(treeserver LINK_PUBLIC
     ${Boost_LOCALE}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    magic
     rt
     )
 

@@ -5,6 +5,8 @@
 #include <string>
 #include <stdexcept>
 
+#define MAGIC_TESTER_DEFAULTS (MAGIC_PRESERVE_ATIME | MAGIC_COMPRESS | MAGIC_DEVICES )
+
 class magic_file_tester
 //Restricted wraper for libmagic
 {
@@ -12,7 +14,7 @@ class magic_file_tester
 public:
     magic_file_tester();
 
-    magic_file_tester(unsigned magicFlags=MAGIC_MIME):magic_cookie(NULL)
+    magic_file_tester(unsigned magicFlags):magic_cookie(NULL)
     {
         open(magicFlags);
     }
