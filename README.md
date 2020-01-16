@@ -24,13 +24,25 @@ Projekt został oparty na bibliotece BOOST. Wymaga jej do kompilacji i działani
 
 sudo apt-get install libboost-all-dev
 
+*UWAGA - LIBMAGIC*
+
+Do dedukowania typów plików używana jest biblioteka libMagic. Trzeba ją zainstalować:
+
+sudo apt-get install libmagic-dev
+
 *CO ZROBIĆ GDY ZMIENI SIĘ NAZWA REPOZYTORIUM?*
 
 https://www.linuxquestions.org/questions/programming-9/git-my-remote-repository-moved-how-do-i-tell-my-local-repo-to-use-the-new-one-781785/
+
+*TWITTER PROJEKTU*
+
+https://twitter.com/fasada02964935
 
 *TYMCZASOWA WITRYNA PROJEKTU:*
 
 https://sites.google.com/view/fasada-cpp/
 
 * yo(ur)-hy(per)-da(ta)
+
+
  
