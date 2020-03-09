@@ -44,7 +44,9 @@ https://sites.google.com/view/fasada-cpp/
 
 * yo(ur)-hy(per)-da(ta)
 
-Podobny, ale dużo bardziej zaawansowany projekthierrchiczno-obiektowej bazy danych to:
+
+Podobny, ale dużo bardziej zaawansowany projekt hiersrchiczno-obiektowej bazy danych to:
+
 https://www.mongodb.com/
 
  
