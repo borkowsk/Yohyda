@@ -18,17 +18,17 @@ Jeszcze inna możliwość to właczenie interfejsu FASADY (poprzez bibliotekę) 
 Po za tym aplikacje oparte o FASADĘ mogą umożliwiać, a przynajmniej ułatwiać, użytkownikowi nie znającemu się tworzeniu kontentu WWW aktywne korzystanie z takiej możlowości w sieci lokalnej, a także, pośrednio, globalnej.
 
 
-*UWAGA - BOOST!*
+*__UWAGA - BOOST!__*
 
 Projekt został oparty na bibliotece BOOST. Wymaga jej do kompilacji i działania. Instalacja boost na UBUNTU 16.04: 
 
-sudo apt-get install libboost-all-dev
+__sudo apt-get install libboost-all-dev__
 
 *UWAGA - LIBMAGIC*
 
 Do dedukowania typów plików używana jest biblioteka libMagic. Trzeba ją zainstalować:
 
-sudo apt-get install libmagic-dev
+__sudo apt-get install libmagic-dev__
 
 *CO ZROBIĆ GDY ZMIENI SIĘ NAZWA REPOZYTORIUM?*
 
@@ -44,5 +44,7 @@ https://sites.google.com/view/fasada-cpp/
 
 * yo(ur)-hy(per)-da(ta)
 
+Podobny, ale dużo bardziej zaawansowany projekthierrchiczno-obiektowej bazy danych to:
+https://www.mongodb.com/
 
  
