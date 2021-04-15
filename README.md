@@ -29,4 +29,10 @@ https://sites.google.com/view/fasada-cpp/
 
 * yo(ur)-hy(per)-da(ta)
 
+**Licencing**
+
+You can use this software freely for educational and private purposes, but if you feel that it would be appropriate to repay somehow, please finance me a big coffee :-)
+
+https://www.paypal.com/paypalme/wborkowsk
+
  
