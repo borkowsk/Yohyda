@@ -14,6 +14,16 @@ project(facjata)
 
 set( SRCPATH "./") #Directory where this CMakeList.txt is put!
 
+IF (WIN32) #added 2022.11
+  # set stuff for windows
+  message( "MS Windows platform assumed.\n\tInside C/C++ code automatic _MSC_VER variable will be used!" )
+  #set( WINDOWS_ONLY_SRC  "" )
+ELSE()
+  # set stuff for other systems
+  message( "Linux/unix platform assumed.")
+  #set( X_ONLY_SRC  "" )
+ENDIF()
+
 FIND_PACKAGE( Threads REQUIRED)
 FIND_PACKAGE( Boost 1.58 COMPONENTS system program_options filesystem regex locale REQUIRED )
 SET(Boost_USE_MULTITHREADED ON)
